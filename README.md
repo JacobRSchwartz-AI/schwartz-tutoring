@@ -36,3 +36,7 @@ Copyright (c) 2026 Jacob Schwartz. Licensed [CC BY-NC 4.0](LICENSE). Use it, sha
 ## Adding a skill
 
 Put it in `plugins/schwartz/skills/<skill-name>/SKILL.md` (it runs as `/schwartz:<skill-name>`), bump `version` in both `plugin.json` and `.claude-plugin/marketplace.json`, and note the change in that skill's `CHANGELOG.md`.
+
+## Releasing
+
+Bump `version` in both manifests and add a `## vX.Y.Z (date)` section to the skill's `CHANGELOG.md` in the same merge request. When it merges to `main` on GitLab, CI tags the version, the push mirror carries the tag to GitHub, and a GitHub Action publishes the release with `tutoring.zip` and that changelog section as the notes. Tags have to start on GitLab, because the mirror deletes tags that exist only on GitHub.
