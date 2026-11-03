@@ -1,0 +1,18 @@
+{
+  "name": "schwartz-tutoring",
+  "owner": {
+    "name": "Schwartz Tutoring",
+    "email": "management@schwartztutoring.com"
+  },
+  "plugins": [
+    {
+      "name": "schwartz",
+      "description": "Schwartz Tutoring skills for Claude Code. tutoring: tutor the way Jacob does (method, subject playbooks, analogies, rare situations, conduct rules).",
+      "version": "2.1.0",
+      "source": "./plugins/schwartz"
+    }
+  ],
+  "metadata": {
+    "description": "Schwartz Tutoring's Claude Code plugins"
+  }
+}
