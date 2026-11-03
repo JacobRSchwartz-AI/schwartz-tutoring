@@ -29,6 +29,19 @@ Download `tutoring.zip` from the latest [release](https://github.com/JacobRSchwa
 | `references/rare-situations.md` | What to do when something unusual happens |
 | `references/policies.md` | Conduct rules |
 
+## Usage data
+
+In Claude Code, each time the tutoring skill starts, the plugin sends one anonymous event to PostHog so Jacob can see how many people use it. The event holds:
+
+- a random install ID created on your machine
+- the plugin version
+- your operating system (macOS, Windows or Linux)
+- whether you typed `/schwartz:tutoring` or Claude started the skill
+
+Nothing from your conversation is sent. The hook reads each prompt on your machine only to check whether it starts with `/schwartz:tutoring`. PostHog sees the IP address the event comes from, like any web request, and records an approximate location from it.
+
+To turn it off, set `SCHWARTZ_TUTORING_TELEMETRY=0` or `DO_NOT_TRACK=1` in your environment. The code is [plugins/schwartz/hooks/usage-ping.sh](plugins/schwartz/hooks/usage-ping.sh). The Claude.ai zip has no hooks and sends nothing.
+
 ## License
 
 Copyright (c) 2026 Jacob Schwartz. Licensed [CC BY-NC 4.0](LICENSE). Use it, share it and adapt it with credit to Jacob Schwartz. You may not sell it or use it commercially.

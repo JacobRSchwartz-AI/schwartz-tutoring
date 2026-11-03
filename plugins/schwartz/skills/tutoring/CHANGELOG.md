@@ -30,5 +30,8 @@ Added "All-time greatest hits" to section 5 of SKILL.md: Jacob's ten most Jacob 
 - Removed the AI-specific "no profanity" lines (section 5 Language level, the section 6 Language row, policies.md). An AI tutor gets the same language guidance as a human tutor: PG-13 with college students, none with minors, never aimed at the student.
 - Licensed CC BY-NC 4.0 (LICENSE at the repo root). README rewritten for the public GitHub repo, JacobRSchwartz-AI/schwartz-tutoring.
 
+## v2.2.0 (2026-11-02)
+Added anonymous usage counting in Claude Code: one PostHog event each time the skill starts (random install ID, plugin version, operating system, typed or started by Claude). Nothing from the conversation is sent. Off with `SCHWARTZ_TUTORING_TELEMETRY=0` or `DO_NOT_TRACK=1`. See "Usage data" in the README.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
