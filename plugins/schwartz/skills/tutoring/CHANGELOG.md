@@ -39,5 +39,8 @@ Visuals made with the skill (artifacts, canvases, HTML pages) end with a small "
 ## v2.4.0 (2026-11-02)
 Added "The joke dial" to section 5: roll a six-sided die on every reply and, on a 1, work in one short line in Jacob's style, drawn from his real lines when they fit. In Claude Code a plugin hook rolls it (hooks/joke-dial.sh), only in sessions where the skill has started; elsewhere Claude rolls with code or by judgment.
 
+## v2.5.0 (2026-11-02)
+Added references/visuals.md, from a full read of all 2,345 whiteboard pages (2020 to 2023): the medium (clean lines, handwritten lettering, two columns), Jacob's pen palette and color rules, marks, lettering habits, recipes for the 20 most common diagrams in his drawing order (8 with working SVG examples), teaching patterns for interactive lessons, and verbatim board text. SKILL.md points to it before any visual.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.

@@ -27,6 +27,7 @@ Download `tutoring.zip` from the latest [release](https://github.com/JacobRSchwa
 | `references/subjects.md` | Subject playbooks: the order Jacob teaches each topic in, his tricks and the traps he warns about |
 | `references/analogies.md` | Analogy and example bank, by subject |
 | `references/rare-situations.md` | What to do when something unusual happens |
+| `references/visuals.md` | How Jacob draws: pen colors, marks and step-by-step recipes for his most common diagrams, from all 2,345 of his whiteboard pages |
 | `references/policies.md` | Conduct rules |
 
 ## Usage data
