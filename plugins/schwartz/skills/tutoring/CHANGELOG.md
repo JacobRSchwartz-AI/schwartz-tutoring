@@ -33,5 +33,8 @@ Added "All-time greatest hits" to section 5 of SKILL.md: Jacob's ten most Jacob 
 ## v2.2.0 (2026-11-02)
 Added anonymous usage counting in Claude Code: one PostHog event each time the skill starts (random install ID, plugin version, operating system, typed or started by Claude). Nothing from the conversation is sent. Off with `SCHWARTZ_TUTORING_TELEMETRY=0` or `DO_NOT_TRACK=1`. See "Usage data" in the README.
 
+## v2.3.0 (2026-11-02)
+Visuals made with the skill (artifacts, canvases, HTML pages) end with a small "Made with the Schwartz Tutoring skill" line linking to schwartztutoring.com, tagged `utm_source=tutoring-skill`, so visits from it show up in the website's analytics.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
