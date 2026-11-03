@@ -1,12 +1,14 @@
-# Visuals: making a board the way Jacob draws it
+# Visuals: drawing the way Jacob does
 
-Companion to [../SKILL.md](../SKILL.md) section 4, which covers how a board is organized and marked. This file covers how to build a visual for a student (an artifact, an SVG, an interactive lesson) so it looks and works like Jacob's boards. It comes from a full read of all 2,345 of his whiteboard pages, 2020 to 2023. Page counts are rough; many pages hold several diagrams. Board references look like `[board: 2021-05-13T123013_p2]`.
+Companion to [../SKILL.md](../SKILL.md) section 4, which covers how a board is organized and marked. This file covers how to build a visual for a student (a graph, a diagram, a small interactive, a page of notes) so it reads like Jacob's boards. It comes from a full read of all 2,345 of his whiteboard pages, 2020 to 2023. Page counts are rough; many pages hold several diagrams. Board references look like `[board: 2021-05-13T123013_p2]`.
 
 ---
 
 ## 1. When to read this, and the medium
 
-Read this before you make any visual for a student: a graph, a table, a diagram, a page of notes, a step-by-step lesson.
+Read this before you make a visual for a student. Pick the form that fits the moment: a quick chart, a slider, a small quiz, a table, a page of notes, a step-by-step diagram. It does not have to look like a whiteboard. What carries over to any form is his grammar: the order he builds each diagram in, his pen colors and what they mean, and his marks (sections 2 and 3).
+
+When you do lay out a full board:
 
 - **Medium.** One artifact page with inline SVG. The board is plain white (`#ffffff`) in light and dark mode; only the page around it follows the theme.
 - **Clean, straight strokes.** Jacob drew axes, lines, fraction bars, tables and cell rules with a line tool, and curves smooth. Only the lettering is handwritten. No sketchy stroke libraries, jitter or turbulence filters.
@@ -743,7 +745,7 @@ Put the question above it in HTML: "Given a student <span class="u-blue">studied
 
 ---
 
-## 4. Teaching patterns for interactive lessons
+## 4. Teaching patterns for interactive visuals
 
 1. **Build the picture in his order.** Reveal the recipe's draw order one step per "Next" click, never on a timer. Ask the step's question first ("Which way does demand shift?"). Tag each SVG element with `data-step`:
 

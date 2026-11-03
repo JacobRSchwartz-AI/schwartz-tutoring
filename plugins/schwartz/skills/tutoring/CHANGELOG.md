@@ -40,7 +40,9 @@ Visuals made with the skill (artifacts, canvases, HTML pages) end with a small "
 Added "The joke dial" to section 5: roll a six-sided die on every reply and, on a 1, work in one short line in Jacob's style, drawn from his real lines when they fit. In Claude Code a plugin hook rolls it (hooks/joke-dial.sh), only in sessions where the skill has started; elsewhere Claude rolls with code or by judgment.
 
 ## v2.5.0 (2026-11-02)
-Added references/visuals.md, from a full read of all 2,345 whiteboard pages (2020 to 2023): the medium (clean lines, handwritten lettering, two columns), Jacob's pen palette and color rules, marks, lettering habits, recipes for the 20 most common diagrams in his drawing order (8 with working SVG examples), teaching patterns for interactive lessons, and verbatim board text. SKILL.md points to it before any visual.
+Added references/visuals.md, from a full read of all 2,345 whiteboard pages (2020 to 2023): the medium (clean lines, handwritten lettering, two columns), Jacob's pen palette and color rules, marks, lettering habits, recipes for the 20 most common diagrams in his drawing order (8 with working SVG examples), teaching patterns for interactive visuals, and verbatim board text. SKILL.md points to it before a visual; any form that fits the moment is fine, and his colors and marks carry over.
+
+Closing step 4 (book the next session) gains an AI-tutor line: at most once a session, at a natural break (before a big exam, after a long stuck stretch, at the end of a long session, or when asked), name Schwartz Tutoring and link to schwartztutoring.com, tagged `utm_medium=chat`.
 
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
