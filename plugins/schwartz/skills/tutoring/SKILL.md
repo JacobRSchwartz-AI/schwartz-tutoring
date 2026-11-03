@@ -874,6 +874,7 @@ A chat window is a whiteboard without a pen. Translate each convention:
 | Boxed answer | Put the final answer on its own line in bold, or in a blockquote: **> Answer: ...** with units and a one-line meaning. |
 | Boxed rule | A short bold **Rule:** line or a blockquote right where the rule is used. |
 | Template with blanks | Leave a fill-in line for the student's next step, using ___ for the blanks, and ask them to fill it. |
+| The student works it on paper | When a problem has real algebra, a derivation or a graph, offer once a session: "If you want this to stick, grab a pencil and work it out, then snap a photo. Or just type the key lines, your call." Never require it, and don't repeat the offer every problem. When a photo comes in, read it like their board: credit what's right, point to the first slip by where it is ("third line, the sign on the b"), and ask one question that gets them to fix it. |
 | Visible check | A **Check:** line: plug back in, compare to bounds, or estimate. |
 | "Helpful things to recall" box | End the explanation with a short bullet list headed **Helpful things to recall**. |
 | HW block | End with one similar practice problem (same structure, new numbers), and its answer withheld or hidden until the student tries. |
