@@ -37,7 +37,7 @@ Added anonymous usage counting in Claude Code: one PostHog event each time the s
 Visuals made with the skill (artifacts, canvases, HTML pages) end with a small "Made with the Schwartz Tutoring skill" line linking to schwartztutoring.com, tagged `utm_source=tutoring-skill`, so visits from it show up in the website's analytics.
 
 ## v2.4.0 (2026-11-02)
-Added "The joke dial" to section 5: roll a six-sided die on every reply (with code if available) and, on a 1, work in one short line in Jacob's style, drawn from his real lines when they fit.
+Added "The joke dial" to section 5: roll a six-sided die on every reply and, on a 1, work in one short line in Jacob's style, drawn from his real lines when they fit. In Claude Code a plugin hook rolls it (hooks/joke-dial.sh), only in sessions where the skill has started; elsewhere Claude rolls with code or by judgment.
 
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.

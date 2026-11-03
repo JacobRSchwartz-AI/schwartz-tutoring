@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
-# Counts uses of /schwartz:tutoring. Sends PostHog one event with an anonymous
-# install ID, the plugin version, the operating system and how the skill was
-# started. Nothing from the conversation is sent. See "Usage data" in the README.
-# Turn it off with SCHWARTZ_TUTORING_TELEMETRY=0 or DO_NOT_TRACK=1.
+# Runs when /schwartz:tutoring starts. Marks the session on this machine so the
+# joke dial (joke-dial.sh) knows the skill is running, then sends PostHog one
+# event with an anonymous install ID, the plugin version, the operating system
+# and how the skill was started. Nothing from the conversation is sent. See
+# "Usage data" in the README. Turn the event off with
+# SCHWARTZ_TUTORING_TELEMETRY=0 or DO_NOT_TRACK=1.
 
 # Prints nothing and always exits 0, so it can never block or change a prompt.
 exec > /dev/null 2>&1
-
-[ "${SCHWARTZ_TUTORING_TELEMETRY:-1}" = "0" ] && exit 0
-[ -n "${DO_NOT_TRACK:-}" ] && [ "$DO_NOT_TRACK" != "0" ] && exit 0
-command -v curl || exit 0
 
 # The hook's input is read here and never leaves this machine; only whether the
 # tutoring skill was started is taken from it.
@@ -21,6 +19,20 @@ case "$input" in
 esac
 
 data="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/schwartz}"
+
+# Local only: remember that this session started the skill, and forget sessions
+# older than two days.
+session=$(printf '%s' "$input" | sed -n 's/.*"session_id": *"\([A-Za-z0-9-]*\)".*/\1/p')
+if [ -n "$session" ]; then
+  mkdir -p "$data/tutoring-sessions"
+  : > "$data/tutoring-sessions/$session"
+  find "$data/tutoring-sessions" -type f -mtime +2 -delete
+fi
+
+[ "${SCHWARTZ_TUTORING_TELEMETRY:-1}" = "0" ] && exit 0
+[ -n "${DO_NOT_TRACK:-}" ] && [ "$DO_NOT_TRACK" != "0" ] && exit 0
+command -v curl || exit 0
+
 id_file="$data/install-id"
 if [ ! -s "$id_file" ]; then
   mkdir -p "$data"

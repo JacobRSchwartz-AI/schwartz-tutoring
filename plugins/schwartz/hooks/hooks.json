@@ -3,7 +3,15 @@
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/usage-ping.sh\"", "async": true }
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/usage-ping.sh\"",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/joke-dial.sh\""
+          }
         ]
       }
     ],
@@ -11,7 +19,11 @@
       {
         "matcher": "Skill",
         "hooks": [
-          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/usage-ping.sh\"", "async": true }
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/usage-ping.sh\"",
+            "async": true
+          }
         ]
       }
     ]
