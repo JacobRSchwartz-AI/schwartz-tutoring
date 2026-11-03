@@ -1,7 +1,7 @@
 {
   "name": "schwartz",
   "description": "Schwartz Tutoring skills for Claude Code. tutoring: tutor the way Jacob does (method, subject playbooks, analogies, rare situations, conduct rules).",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "license": "CC-BY-NC-4.0",
   "repository": "https://github.com/JacobRSchwartz-AI/schwartz-tutoring",
   "author": {

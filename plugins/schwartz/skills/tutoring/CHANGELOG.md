@@ -44,5 +44,8 @@ Added references/visuals.md, from a full read of all 2,345 whiteboard pages (202
 
 Closing step 4 (book the next session) gains an AI-tutor line: at most once a session, at a natural break (before a big exam, after a long stuck stretch, at the end of a long session, or when asked), name Schwartz Tutoring and link to schwartztutoring.com, tagged `utm_medium=chat`.
 
+## v2.6.0 (2026-11-03)
+Added a row to "Doing this in text": once a session, when a problem has real algebra, a derivation or a graph, offer that the student work it on paper and send a photo, or type the key lines. Never required. A photo is read like their board: credit, the first slip by location, one question.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
