@@ -18,7 +18,3 @@ Teaches Claude to tutor the way Jacob Schwartz does: ask before telling, draw wh
 Then ask it to teach you something.
 
 Want a human tutor? [Schwartz Tutoring](https://schwartztutoring.com/?utm_source=github&utm_medium=readme)
-
----
-
-The Claude Code plugin sends one usage event when the skill starts, with nothing from your conversation ([details](PRIVACY.md)). Licensed [CC BY-NC 4.0](LICENSE).
