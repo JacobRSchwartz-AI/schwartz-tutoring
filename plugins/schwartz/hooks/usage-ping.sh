@@ -3,7 +3,7 @@
 # joke dial (joke-dial.sh) knows the skill is running, then sends PostHog one
 # event with an anonymous install ID, the plugin version, the operating system
 # and how the skill was started. Nothing from the conversation is sent. See
-# "Usage data" in the README. Turn the event off with
+# PRIVACY.md at the repo root. Turn the event off with
 # SCHWARTZ_TUTORING_TELEMETRY=0 or DO_NOT_TRACK=1.
 
 # Prints nothing and always exits 0, so it can never block or change a prompt.
