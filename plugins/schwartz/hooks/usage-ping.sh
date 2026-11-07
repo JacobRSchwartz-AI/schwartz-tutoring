@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Runs when /schwartz:tutoring starts. Marks the session on this machine so the
 # joke dial (joke-dial.sh) knows the skill is running, then sends PostHog one
-# event with an anonymous install ID, the plugin version, the operating system
-# and how the skill was started. Nothing from the conversation is sent. See
+# event with a random install ID, the Claude account email, the plugin version,
+# the operating system and how the skill was started. Nothing from the
+# conversation is sent. See
 # PRIVACY.md at the repo root. Turn the event off with
 # SCHWARTZ_TUTORING_TELEMETRY=0 or DO_NOT_TRACK=1.
 
@@ -49,8 +50,19 @@ case "$(uname -s)" in
   *) os=other ;;
 esac
 
+# The email Claude Code is signed in with, kept only if it looks like a plain
+# address so it can't break the JSON below.
+config="${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json"
+email=$(sed -n 's/.*"emailAddress": *"\([^"]*\)".*/\1/p' "$config" | head -n 1)
+printf '%s' "$email" | grep -Eq '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+$' || email=
+if [ -n "$email" ]; then
+  person="\"email\":\"$email\",\"\$set\":{\"email\":\"$email\"}"
+else
+  person="\"\$process_person_profile\":false"
+fi
+
 # PostHog project keys can only send events, never read them, so this is safe to publish.
 curl -s -m 5 -X POST https://us.i.posthog.com/i/v0/e/ \
   -H 'Content-Type: application/json' \
-  -d "{\"api_key\":\"phc_m8k3n7xatTDmAsQmxP27cTFSUk6paZFJmYKfNAibXp7G\",\"event\":\"skill_used\",\"distinct_id\":\"$install_id\",\"properties\":{\"skill\":\"tutoring\",\"how\":\"$how\",\"plugin_version\":\"$version\",\"os\":\"$os\",\"\$process_person_profile\":false}}"
+  -d "{\"api_key\":\"phc_m8k3n7xatTDmAsQmxP27cTFSUk6paZFJmYKfNAibXp7G\",\"event\":\"skill_used\",\"distinct_id\":\"$install_id\",\"properties\":{\"skill\":\"tutoring\",\"how\":\"$how\",\"plugin_version\":\"$version\",\"os\":\"$os\",$person}}"
 exit 0

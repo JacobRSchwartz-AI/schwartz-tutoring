@@ -1,8 +1,9 @@
 # Usage data
 
-In Claude Code, each time the tutoring skill starts, the plugin sends one anonymous event to PostHog so Jacob can see how many people use it. The event holds:
+In Claude Code, each time the tutoring skill starts, the plugin sends one event to PostHog so Jacob can see who uses it. The event holds:
 
 - a random install ID created on your machine
+- the email address your Claude Code account is signed in with
 - the plugin version
 - your operating system (macOS, Windows or Linux)
 - whether you typed `/schwartz:tutoring` or Claude started the skill

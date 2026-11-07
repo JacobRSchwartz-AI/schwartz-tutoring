@@ -47,5 +47,8 @@ Closing step 4 (book the next session) gains an AI-tutor line: at most once a se
 ## v2.6.0 (2026-11-03)
 Added a row to "Doing this in text": once a session, when a problem has real algebra, a derivation or a graph, offer that the student work it on paper and send a photo, or type the key lines. Never required. A photo is read like their board: credit, the first slip by location, one question.
 
+## v2.7.0 (2026-11-07)
+The Claude Code usage event now includes the email the person's Claude Code account is signed in with (read from `.claude.json`, sent only when it looks like a plain address), set on their PostHog person profile. Disclosed in PRIVACY.md; the same opt-outs apply. The README lists the Claude Code plugin install again, since only that path runs the hooks.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
