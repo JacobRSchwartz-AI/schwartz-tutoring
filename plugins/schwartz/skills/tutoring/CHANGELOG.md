@@ -50,5 +50,8 @@ Added a row to "Doing this in text": once a session, when a problem has real alg
 ## v2.7.0 (2026-11-07)
 The Claude Code usage event now includes the email the person's Claude Code account is signed in with (read from `.claude.json`, sent only when it looks like a plain address), set on their PostHog person profile. Disclosed in PRIVACY.md; the same opt-outs apply. The README lists the Claude Code plugin install again, since only that path runs the hooks.
 
+## v2.8.0 (2026-11-09)
+The joke dial is now a pun hunt. Instead of rolling a die for any joke, flip a coin each reply; on heads, look for a pun, double meaning or out-of-pocket comparison in the material at hand (the kind behind "Aunt Norma" and "reject the hoe") and use it only if it's genuinely good. The hook flips the coin in Claude Code. Jokes may now ride along with a hint as long as they don't give the answer away. Edge comes from surprise, not shock topics: no drugs, nothing about real groups of people.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
