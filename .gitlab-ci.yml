@@ -7,7 +7,7 @@ variables:
   GIT_DEPTH: 0
   # The first commit on internal (it adds INTERNAL.md). Anything descended from
   # it came from internal.
-  INTERNAL_ROOT: 1c0e2e2b0ae193c456711b38740c32f4d94e447f
+  INTERNAL_ROOT: "1c0e2e2b0ae193c456711b38740c32f4d94e447f"
   GITHUB_REPO: git@github.com:JacobRSchwartz-AI/schwartz-tutoring.git
   # GitHub's ed25519 host key, SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
   GITHUB_HOST_KEY: github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
@@ -59,7 +59,7 @@ publish:
     - apk add --no-cache git openssh-client
     - mkdir -p ~/.ssh
     - echo "$GITHUB_HOST_KEY" > ~/.ssh/known_hosts
-    - { cat "$GITHUB_DEPLOY_KEY"; echo; } > ~/.ssh/id_ed25519
+    - (cat "$GITHUB_DEPLOY_KEY"; echo) > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
   script:
     - git push --force "$GITHUB_REPO" "$CI_COMMIT_SHA:refs/heads/main"
