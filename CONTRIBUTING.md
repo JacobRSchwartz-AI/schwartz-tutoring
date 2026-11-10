@@ -17,4 +17,4 @@ Put it in `plugins/schwartz/skills/<skill-name>/SKILL.md` (it runs as `/schwartz
 
 ## Releasing
 
-Bump `version` in both manifests and add a `## vX.Y.Z (date)` section to the skill's `CHANGELOG.md` in the same merge request. When it merges to `main` on GitLab, CI tags the version, the push mirror carries the tag to GitHub, and a GitHub Action publishes the release with `tutoring.zip` and that changelog section as the notes. Tags have to start on GitLab, because the mirror deletes tags that exist only on GitHub.
+Bump `version` in both manifests and add a `## vX.Y.Z (date)` section to the skill's `CHANGELOG.md` in the same merge request. When it merges to `main` on GitLab, CI pushes `main` to GitHub, tags the version and pushes the tag, and a GitHub Action publishes the release with `tutoring.zip` and that changelog section as the notes. Only `main` and version tags ever go to GitHub, and only after CI confirms nothing came from `internal` (see CLAUDE.md).
