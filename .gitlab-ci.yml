@@ -1,20 +1,78 @@
-# When main has a plugin version with no tag yet, tag it. The push mirror carries
-# the tag to GitHub, where .github/workflows/release.yml publishes the release.
-# Tags must start here: the mirror deletes tags that exist only on GitHub.
-tag-release:
+# main is public: the publish job pushes it to GitHub. The internal branch holds
+# private data (data/) and must never reach main, so no-internal fails any merge
+# request into main that comes from internal, and runs again on main before
+# anything is published. Merges need a passing pipeline (Settings > Merge
+# requests), so a failed check blocks the merge.
+variables:
+  GIT_DEPTH: 0
+  # The first commit on internal (it adds INTERNAL.md). Anything descended from
+  # it came from internal.
+  INTERNAL_ROOT: "1c0e2e2b0ae193c456711b38740c32f4d94e447f"
+  GITHUB_REPO: git@github.com:JacobRSchwartz-AI/schwartz-tutoring.git
+  # GitHub's ed25519 host key, SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
+  GITHUB_HOST_KEY: github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+
+stages:
+  - check
+  - publish
+
+no-internal:
+  stage: check
   image: alpine:3.20
   rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
     - apk add --no-cache git
   script:
     - |
-      VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' plugins/schwartz/.claude-plugin/plugin.json)
-      test -n "$VERSION"
-      REPO="https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
-      if git ls-remote --exit-code --tags "$REPO" "refs/tags/v$VERSION" > /dev/null; then
-        echo "v$VERSION is already tagged"
+      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ] && [ "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" != "main" ]; then
+        echo "Target is $CI_MERGE_REQUEST_TARGET_BRANCH_NAME, not main. Nothing to check."
         exit 0
       fi
-    - git tag "v$VERSION" "$CI_COMMIT_SHA"
-    - git push "$REPO" "v$VERSION"
+      fail() {
+        echo "BLOCKED: $1"
+        echo "This branch comes from internal, which holds private data, and main is public."
+        echo "If you branched off internal, change this merge request's target branch to internal."
+        exit 1
+      }
+      if git merge-base --is-ancestor "$INTERNAL_ROOT" HEAD 2> /dev/null; then
+        fail "it descends from the first commit on internal ($INTERNAL_ROOT)."
+      fi
+      touched=$(git log --format='%h %s' HEAD -- data INTERNAL.md)
+      if [ -n "$touched" ]; then
+        printf '%s\n' "$touched"
+        fail "these commits touch data/ or INTERNAL.md, so the data would be in main's history."
+      fi
+      echo "No trace of internal."
+
+# Pushes main to GitHub, then tags any new plugin version and pushes the tag
+# too, where .github/workflows/release.yml publishes the release. Only main and
+# version tags ever leave GitLab. GITHUB_DEPLOY_KEY is a protected file variable
+# holding a write deploy key for the GitHub repo.
+publish:
+  stage: publish
+  image: alpine:3.20
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  before_script:
+    - apk add --no-cache git openssh-client
+    - mkdir -p ~/.ssh
+    - echo "$GITHUB_HOST_KEY" > ~/.ssh/known_hosts
+    - (cat "$GITHUB_DEPLOY_KEY"; echo) > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+  script:
+    - git push --force "$GITHUB_REPO" "$CI_COMMIT_SHA:refs/heads/main"
+    - |
+      VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' plugins/schwartz/.claude-plugin/plugin.json)
+      test -n "$VERSION"
+      GITLAB_REPO="https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      if ! git ls-remote --exit-code --tags "$GITLAB_REPO" "refs/tags/v$VERSION" > /dev/null; then
+        git push "$GITLAB_REPO" "$CI_COMMIT_SHA:refs/tags/v$VERSION"
+      fi
+      if git ls-remote --exit-code --tags "$GITHUB_REPO" "refs/tags/v$VERSION" > /dev/null; then
+        echo "v$VERSION is already on GitHub"
+      else
+        TAGGED=$(git ls-remote --tags "$GITLAB_REPO" "refs/tags/v$VERSION" | cut -f1)
+        git push "$GITHUB_REPO" "$TAGGED:refs/tags/v$VERSION"
+      fi
