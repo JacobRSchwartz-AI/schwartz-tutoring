@@ -6,7 +6,14 @@ Teaches your AI to tutor the way Jacob Schwartz does: ask before telling, draw w
 
 **Claude or ChatGPT app:** download [tutoring.zip](https://github.com/JacobRSchwartz-AI/schwartz-tutoring/releases/latest/download/tutoring.zip) and upload it as a skill (in Claude, Customize > Skills; in ChatGPT, Skills).
 
-**Coding agents** (Claude Code, Codex, Cursor and others):
+**Claude Code:**
+
+```
+/plugin marketplace add JacobRSchwartz-AI/schwartz-tutoring
+/plugin install schwartz@schwartz-tutoring
+```
+
+**Other coding agents** (Codex, Cursor and others):
 
 ```
 npx skills add JacobRSchwartz-AI/schwartz-tutoring
