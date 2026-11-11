@@ -23,4 +23,6 @@ Or just ask your agent to install the skill from this repo.
 
 Then ask it to teach you something.
 
+The Claude Code plugin sends basic usage data to Schwartz Tutoring: your account email, the plugin version and when the skill starts. Nothing from your conversations is sent. Details are in [PRIVACY.md](PRIVACY.md).
+
 Want a human tutor? [Schwartz Tutoring](https://schwartztutoring.com/?utm_source=github&utm_medium=readme)
