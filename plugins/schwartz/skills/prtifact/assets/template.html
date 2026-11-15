@@ -191,6 +191,13 @@ main h2:not(:first-child) { margin-top: 26px; }
 svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) { animation-delay: 0.35s; }
 @media (max-width: 900px) { .row { grid-template-columns: minmax(0, 1fr); gap: 8px; } .thread { padding-top: 0; } }
 @media (prefers-reduced-motion: reduce) { .msg.fresh, .msg.typing span { animation: none; } }
+main > section.change { max-width: none; }
+.boards { max-width: none; }
+.row { grid-template-columns: minmax(0, 860px) minmax(280px, 1fr); gap: 22px; }
+.row.waiting { display: none; }
+.msg { max-width: 640px; font-size: 16px; }
+.speed { margin-left: auto; }
+.speed button { padding: 4px 10px; font-family: var(--mono); font-size: 12.5px; }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -331,7 +338,7 @@ svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) 
   fold.addEventListener('click', function () { shell.classList.toggle('folded'); });
   all('a', header).forEach(function (a) { a.title = a.textContent; a.setAttribute('aria-label', a.textContent); a.textContent = '↗'; a.className = 'out'; });
 
-  var view = 'both', current = 0, timer = null, built = [];
+  var current = 0, timer = null, built = [];
   function navButton(label, badge) {
     var b = el('button'); b.type = 'button';
     b.appendChild(el('span', 'n', badge)); b.appendChild(el('span', 'name', label)); b.title = label;
@@ -343,7 +350,10 @@ svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) 
     built.forEach(function (b) { if (b.playButton) { b.playButton.textContent = 'Play'; } });
   }
   // long enough to read the sentence that just appeared
-  function pause(text) { return Math.max(2600, Math.min(7500, 1900 + 55 * (text || '').length)); }
+  function pause(text) { return Math.max(2600, Math.min(7500, 1900 + 55 * (text || '').length)) / speed; }
+  var SPEEDS = [1, 1.5, 2], speed = 1;
+  try { var saved = +localStorage.getItem('prtifact-speed'); if (SPEEDS.indexOf(saved) >= 0) { speed = saved; } } catch (error) { /* a convenience only */ }
+  function markSpeed() { all('.speed button').forEach(function (b) { b.setAttribute('aria-pressed', +b.getAttribute('data-speed') === speed ? 'true' : 'false'); }); }
 
   side.appendChild(el('div', 'group', header.getAttribute('data-list') || 'The changes'));
   changeSections.forEach(function (section, index) {
@@ -364,17 +374,18 @@ svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) 
 
     // the options sit on top: the view, and the controls that move through the steps
     var bar = el('div', 'bar'), seg = el('div', 'seg'), stepper = el('div', 'stepper');
-    var viewButtons = [['before', labels[0]], ['now', labels[1]], ['both', 'Both']].map(function (pair) {
-      var b = el('button', '', pair[1]); b.type = 'button'; seg.appendChild(b);
-      b.addEventListener('click', function () { stopPlay(); view = pair[0]; step = 0; paint(false); });
-      return { view: pair[0], node: b };
+    // how fast Play goes, shared by every entry
+    seg.className = 'seg speed'; seg.setAttribute('aria-label', 'Play speed');
+    SPEEDS.forEach(function (x) {
+      var b = el('button', '', x + '×'); b.type = 'button'; b.setAttribute('data-speed', String(x)); b.title = 'Play at ' + x + '× speed'; seg.appendChild(b);
+      b.addEventListener('click', function () { speed = x; try { localStorage.setItem('prtifact-speed', String(x)); } catch (error) { /* a convenience only */ } markSpeed(); });
     });
     var playButton = el('button', 'go', 'Play'), back = el('button', 'one', '‹'), next = el('button', 'one', '›'), count = el('span', 'count');
     back.title = 'One step back'; back.setAttribute('aria-label', 'One step back'); next.title = 'One step forward'; next.setAttribute('aria-label', 'One step forward');
     var onward = el('button', 'onward', index + 1 < changeSections.length ? 'Next: ' + changeSections[index + 1].getAttribute('data-name') + ' →' : '');
     onward.type = 'button'; onward.addEventListener('click', function () { stopPlay(); show(index + 1); built[index + 1].restart(); });
     [playButton, back, next].forEach(function (b) { b.type = 'button'; stepper.appendChild(b); }); stepper.appendChild(count);
-    bar.appendChild(seg); bar.appendChild(stepper);
+    bar.appendChild(stepper); bar.appendChild(seg);
     if (section.getAttribute('data-href')) {
       var out = el('a', 'out', '↗'); out.href = section.getAttribute('data-href'); out.title = 'Open this change'; out.setAttribute('aria-label', 'Open this change'); bar.appendChild(out);
     }
@@ -383,7 +394,7 @@ svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) 
     section.appendChild(onward);
 
     var step = 0;
-    function shown() { return boards.filter(function (b) { return view === 'both' || b.view === view; }); }
+    function shown() { return boards; }
     function total() { return shown().reduce(function (sum, b) { return sum + b.steps; }, 0); }
     function paintBoards(animate) {
       var list = shown(), offset = 0, text = '';
@@ -403,14 +414,14 @@ svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) 
           n.classList.toggle('off', off);
           n.classList.toggle('fresh', Boolean(animate) && wasOff && !off);
         });
-        b.figure.classList.toggle('waiting', local < 1 && list.length > 1 && list.indexOf(b) > 0);
+        b.row.classList.toggle('waiting', local < 1 && list.indexOf(b) > 0);
         if (local >= 1 && local <= b.steps) { text = b.says[local - 1] || ''; }
         offset += b.steps;
       });
       return text;
     }
     function paint(animate) {
-      viewButtons.forEach(function (b) { b.node.setAttribute('aria-pressed', b.view === view ? 'true' : 'false'); });
+      markSpeed();
       var text = paintBoards(animate), of = total();
       if (of && step === 0 && shown().length) { shown()[0].thread.appendChild(el('p', 'hint', 'Press Play to watch it, or the arrow to go one step at a time.')); }
       count.textContent = of ? step + ' / ' + of : '';
@@ -433,6 +444,7 @@ svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) 
       var thread = nextThread();
       if (!thread) { stopPlay(); return; }
       all('.hint', section).forEach(function (n) { n.remove(); });
+      thread.parentNode.classList.remove('waiting');
       var dots = el('div', 'msg typing'); dots.setAttribute('aria-label', 'Writing');
       dots.appendChild(el('span')); dots.appendChild(el('span')); dots.appendChild(el('span'));
       thread.appendChild(dots);
@@ -441,11 +453,10 @@ svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) 
         var text = forward();
         if (text === null) { stopPlay(); return; }
         timer = setTimeout(run, pause(text));
-      }, 1100);
+      }, 1100 / speed);
     }
     playButton.addEventListener('click', function () {
       if (timer) { stopPlay(); return; }
-      if (view !== 'both') { view = 'both'; step = 0; paint(false); }
       if (step >= total()) { restart(); }
       playButton.textContent = 'Pause';
       run();

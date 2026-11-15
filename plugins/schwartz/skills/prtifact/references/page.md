@@ -34,7 +34,7 @@ Each entry is a `<section class="change">`. For one pull request, an entry is on
 |---|---|
 | `data-name` | The label in the list on the left, two to four words. |
 | `data-pen` | This entry's color: `blue`, `purple` or `brown`. Give neighbors different pens. Red and green are never a pen. |
-| `data-labels` | The names of the two views, as `Without it\|With it`. Leave it out to get `Before\|Now`. Use Before and Now when the old code handled this situation and got it wrong. Use "Without it" and "With it" when the old code never reached the situation, so the piece only matters because of the rest of the change. |
+| `data-labels` | The names of the two drawings, as `Without it\|With it`. Leave it out to get `Before\|Now`. Use Before and Now when the old code handled this situation and got it wrong. Use "Without it" and "With it" when the old code never reached the situation, so the piece only matters because of the rest of the change. |
 | `data-href` | A link to this entry's own pull request. Use it in a stack. It shows as an arrow at the end of the options row. |
 
 Use only the parts listed here: the two boards, the sentences after each, and the verdict. There is no code on the page; the reviewer reads the code on the pull request.
@@ -43,7 +43,7 @@ The `p.verdict` is the conclusion. It stays hidden until the last step of the dr
 
 ### The drawing, in SVG
 
-Each entry has two boards, `data-view="before"` and `data-view="now"`. In the Both view they stack, and the steps run through the first board and then the second. The board starts blank. Each board has a thread of messages on its right, starting level with the top of the board. Play shows a typing mark in the thread, then the step's message, then draws the step in, waits long enough to read, and goes on; it stops at the end of this entry and offers the next one. The two small arrows go one step back or forward. Each new step is drawn in.
+Each entry has two boards, `data-view="before"` and `data-view="now"`. They stack, and the steps run through the first board and then the second. The second board stays off the screen until its first message starts. The board starts blank. Each board has a thread of messages on its right, starting level with the top of the board. Play shows a typing mark in the thread, then the step's message, then draws the step in, waits long enough to read, and goes on; it stops at the end of this entry and offers the next one. The two small arrows go one step back or forward. Each new step is drawn in.
 
 - Wrap what appears together in `<g data-step="1">`, `<g data-step="2">` and so on. Anything outside a step group is on the board from the start.
 - In the "before" board put everything in steps, so it starts blank. In the "now" board write the base (a copy of the finished "before" picture, without its conclusion) outside any group, and put only the change in steps.
