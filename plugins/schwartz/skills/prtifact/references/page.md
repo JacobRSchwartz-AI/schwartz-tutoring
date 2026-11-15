@@ -129,6 +129,7 @@ This goes in `<section id="decisions" data-name="Decisions">`, last. The number 
 - Two to four options, each a real choice, in a few words. List them neutrally. A `data-other` button opens a comment box for an answer that is not on the list.
 - When the reviewer clicks an option on a page published as a Claude artifact, the page posts it as a comment to Claude. That is the signal to act on it (SKILL.md, step 10). Publish the page with the `comments` capability so this works. Anywhere else, the button tells the reviewer to pass the answer on in the chat.
 - When a decision is made, republish with `data-decided="the option's exact words"` on that decision. It then shows as decided, with its buttons off.
+- When the decision became its own follow-up pull request with its own PRtifact, also add `data-follow="the follow-up page's link"`. A "Follow-up page" link shows beside "Decided".
 - Under the decisions, the limits: a chart of each piece and whether a test covers it (`yes` with the number of tests, `no` with "no test"), and a short list of what the change was never run against and what is still to do by hand. If the author of the code made the page, say so here.
 
 ## 5. The technical rules the template already meets

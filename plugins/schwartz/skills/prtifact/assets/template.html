@@ -200,6 +200,7 @@ main > section.change { max-width: none; }
 .speed button { padding: 4px 10px; font-family: var(--mono); font-size: 12.5px; }
 .thread-title { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: -2px; }
 .msg .num { font-family: var(--mono); font-weight: 500; font-size: 13.5px; margin-right: 7px; color: var(--ink-soft); }
+.status .follow { margin-left: 10px; font-family: var(--typed); font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -506,6 +507,11 @@ main > section.change { max-width: none; }
     if (decided) {
       options.forEach(function (b) { b.disabled = true; b.setAttribute('aria-pressed', b.textContent.trim() === decided ? 'true' : 'false'); });
       status.appendChild(mark('yes')); status.appendChild(document.createTextNode('Decided: ' + decided)); status.className = 'status done';
+      // a decision that became its own follow-up change links to that change's page
+      if (box.getAttribute('data-follow')) {
+        var follow = el('a', 'follow', 'Follow-up page ↗'); follow.href = box.getAttribute('data-follow');
+        status.appendChild(document.createTextNode(' ')); status.appendChild(follow);
+      }
       return;
     }
     var sent = recall(id);
