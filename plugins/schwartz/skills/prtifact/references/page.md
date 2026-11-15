@@ -4,20 +4,20 @@ Start from a copy of [../assets/template.html](../assets/template.html). It is o
 
 1. A `<title>`, a font link and a `<style>` block. Leave them alone, except to change the title.
 2. The content, between `<!-- PRTIFACT CONTENT START -->` and `<!-- PRTIFACT CONTENT END -->`. Replace all of it.
-3. A `<script>` at the bottom. Leave it alone. It builds the tabs, the diff, the marks and the step buttons from what you wrote.
+3. A `<script>` at the bottom. Leave it alone. It builds the app from what you wrote: the top bar, the list of changes down the left, the level tabs, the diff, the marks, and the Play and step buttons.
+
+You write plain sections in order. The script turns them into one screen. The page opens on the first change at the Idea level.
 
 The example content in the template is a made-up change, kept small so every part is visible. Read it once before you write your own.
 
-## 1. Title and header
+## 1. Title and top bar
 
 - `<title>`: two to four words that name this page, such as "Shipping PRtifact". Not a sentence.
-- `.kicker`: where the change lives and its state ("Merge request !307, open, not merged").
-- `<h1>`: what the change does, as a short phrase.
-- `.lede`: one or two sentences. What was wrong, what happens now.
-- `.facts`: at most four label and value pairs. Target branch, size, tests, and what the change was never run against.
-- A link to the change.
+- `<header>`: an `<h1>` with what the change does, as a short phrase, and one link to the change. Nothing else goes in the top bar.
 
 ## 2. The case chart
+
+This goes in `<section id="cases" data-name="Cases">`. `data-name` is the label in the list on the left, under "The whole change".
 
 ```html
 <table class="chart">
@@ -54,12 +54,19 @@ The example content in the template is a made-up change, kept small so every par
 
 | Attribute | Meaning |
 |---|---|
-| `data-name` | The tab label, two to four words. |
+| `data-name` | The label in the list on the left, two to four words. |
 | `data-pen` | This change's color: `blue`, `purple` or `brown`. Give neighboring changes different pens. Red and green are never a pen. |
 | `data-key` | A regular expression. Lines of the new code that match it get a star. Use it for the one or two statements the change rests on. |
 | `data-labels` | The names of the two views, as `Without it\|With it`. Leave it out to get `Before\|Now`. Use Before and Now when the old code handled this situation and got it wrong. Use "Without it" and "With it" when the old code never reached the situation, so the piece only matters because of the rest of the change. |
 
-Everything inside is optional except the verdict and at least one code block. Use only the parts listed here. The script moves them into a fixed order (verdict, switch, screen, code, idea, tests, edges), and anything else you add is left stranded above the verdict.
+Everything inside is optional except the verdict and at least one code block. Use only the parts listed here. The script sorts them into the levels (Idea, Code, Screen, Replay), and anything else you add is left stranded above the verdict.
+
+| Level | Made from | Shown when |
+|---|---|---|
+| Idea | the `svg.board` drawings and their `ol.says` | there is a board |
+| Code | `script.before` and `script.after` | always |
+| Screen | `div.screens` | it is there |
+| Replay | `div.replay`, then `ul.tests` and `details.edges` | any of them is there. Without a replay the tab is named Tests. |
 
 ### The code
 
@@ -87,7 +94,7 @@ Crop both shots to the same region so the eye can compare them. Before on the le
 
 ### The idea: a drawing in SVG
 
-Each change can have two boards, `data-view="before"` and `data-view="now"`. In the Both view they stack, and the step buttons walk through the first board and then the second.
+Each change can have two boards, `data-view="before"` and `data-view="now"`. In the Both view they stack, and the steps run through the first board and then the second. Next adds one step. Play adds a step about every two seconds and carries on into the next change, so the reader can watch the whole explanation without clicking. Each new step is drawn in.
 
 - Wrap what appears together in `<g data-step="1">`, `<g data-step="2">` and so on. Anything outside a step group is on the board from the start.
 - In the "before" board put everything in steps. In the "now" board write the base (a copy of the finished "before" picture, without its verdict) outside any group, and put only the change in steps.
@@ -128,7 +135,27 @@ For a slanted or curved arrow, draw the two head strokes about 11 units long, ea
 
 **Keep it to words and lines.** Names joined by arrows, a ruled table, a time line with ticks, a bar cut in parts, two columns split by a rule. No rounded boxes around every word, no icons, no fills, no gradients.
 
-**Check the layout.** Estimate where each text ends from the character widths above, and keep 12 units clear between any two pieces. To see every step at once, open the page with `#change-2-all` at the end of the address (the 2 is the tab number). The boards sit below the chart and the code, so a screenshot needs a tall window, about 3,400 px.
+**Check the layout.** Estimate where each text ends from the character widths above, and keep 12 units clear between any two pieces. To see every step at once, open the page with `#change-2-all` at the end of the address (the 2 is the number of the change). `#change-2-code` and `#change-2-replay` open the other levels, and `#cases` opens the chart.
+
+### The replay
+
+Only when you ran the real request through the old code and the new code and saved the logs (SKILL.md, step 5). Put this inside the change:
+
+```html
+<div class="replay" data-note="Order 88213, replayed through both versions on a local copy. The payment provider was a stand-in. The full logs are saved in .prtifact/pull-214.">
+  <ol data-view="before" data-title="Code on main">
+    <li data-tag="start">cart $60.00, coupon $15.00</li>
+    <li data-tag="log">shipping: subtotal 60.00 >= 50.00, free</li>
+    <li data-tag="order" class="no">shipping $0.00, total $45.00</li>
+  </ol>
+  <ol data-view="now" data-title="This pull request"> ... </ol>
+</div>
+```
+
+- One `<li>` per line that matters, in the order it happened, five to eight a side. `data-tag` is a short word for where the line comes from: start, log, database, the name of an outside service, card, end.
+- Copy log lines as they were printed. Leave out a person's name by writing `[student]` or `[customer]` in its place.
+- Class `no` for the wrong outcome, `yes` for the right one, `pen` for the lines that exist only because of the change. Leave the rest black.
+- `data-note` says what was replayed, on what, what was a stand-in, and where the full logs are.
 
 ### Tests and edges
 
@@ -137,7 +164,7 @@ For a slanted or curved arrow, draw the two head strokes about 11 units long, ea
 
 ## 4. What is checked, and what is theirs to decide
 
-The last section is a second chart with the columns Piece and Tested, one row per change plus one row for each thing the tests never touched (the real payment provider, the rest of the test suite). Beside it, a `.decide` box with the one question the reviewer has to answer, in a sentence, and one short paragraph of what they need to know to answer it. If the author of the code made the page, say so under the box.
+This goes in `<section id="checked" data-name="Checked">`. It is a second chart with the columns Piece and Tested, one row per change plus one row for each thing the tests never touched (the real payment provider, the rest of the test suite). Beside it, a `.decide` box with the one question the reviewer has to answer, in a sentence, and one short paragraph of what they need to know to answer it. If the author of the code made the page, say so under the box.
 
 ## 5. The technical rules the template already meets
 
@@ -147,6 +174,7 @@ These are requirements for a page published as a Claude artifact. The template m
 - Fonts load from Google Fonts only. Nothing else loads from another site: no script, no image, no stylesheet. Embed images as data URIs.
 - Every color is a variable defined on `:root`, with a dark set under `prefers-color-scheme: dark` and `[data-theme="dark"]`. Do not write a literal color in the content.
 - The page keeps a 16 px gutter and never scrolls sideways. Code wraps. Tables sit inside `.scroll`.
-- Nothing is animated and nothing plays by itself.
+- Nothing moves until the reader presses Play or Next.
+- The page is one screen high. The list on the left and the panel each scroll by themselves if they need to; the page does not.
 
 Outside Claude, the file opens in any browser as it is.

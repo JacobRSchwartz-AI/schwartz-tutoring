@@ -3,7 +3,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Patrick+Hand&display=swap">
 <style>
 /* PRTIFACT STYLE START */
-/* Layout: one whiteboard page. Black rules close each part. Black is the base, one pen color per change. */
+/* Layout: one screen, like an app. Top bar with the link, the changes down the left, the levels across the top of the main panel.
+   Inside the panel it is a whiteboard: black is the base, one pen color per change. */
 :root {
   --paper: #fdfdfb; --paper-2: #f3f3ee; --ink: #17181a; --ink-soft: #5c6067; --hair: #d6d6cf;
   --pen-blue: #1c5fd6; --pen-purple: #8a3fc9; --pen-brown: #a8641a;
@@ -22,35 +23,50 @@
   --pen-blue: #74abff; --pen-purple: #c594f5; --pen-brown: #e3a55e;
   --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark }
 
+html, body { height: 100%; }
 body { background: var(--paper); color: var(--ink); font-family: var(--typed); font-size: 16px; line-height: 1.5; }
-.page { max-width: 1240px; margin: 0 auto; padding-block: 28px 64px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.page > section { border-top: 2px solid var(--ink); padding-block: 26px 30px; }
+.page { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); }
 h1, h2, .hand { font-family: var(--hand); font-weight: 400; letter-spacing: 0.01em; }
-h1 { font-size: clamp(34px, 5vw, 50px); line-height: 1.05; margin: 6px 0 10px; text-wrap: balance; }
-h2 { font-size: 30px; line-height: 1.1; margin: 0 0 14px; }
 p { margin: 0 0 10px; max-width: 70ch; }
 a { color: var(--pen-blue); }
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--pen-blue); outline-offset: 2px; }
-.kicker { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
-.lede { font-size: 18px; }
-.facts { display: flex; flex-wrap: wrap; gap: 8px 36px; margin: 16px 0 12px; padding: 0; }
-.facts div { min-width: 0; }
-.facts dt { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
-.facts dd { margin: 0; font-size: 15px; }
+.sub { color: var(--ink-soft); font-size: 15px; }
+
+/* top bar: the name of the change and the link to it, nothing else */
+header { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid var(--ink); padding-block: 8px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header h1 { font-size: 26px; line-height: 1.1; margin: 0; min-width: 0; flex: 1; overflow-wrap: anywhere; }
+header a { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
+header .fold { background: none; border: 1.5px solid var(--ink); border-radius: 2px; width: 34px; height: 30px; cursor: pointer; font-size: 16px; line-height: 1; flex: none; }
+
+/* shell: the changes down the left, one panel on the right */
+.shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 0; }
+.shell.folded { grid-template-columns: 58px minmax(0, 1fr); }
+nav.side { border-right: 2px solid var(--ink); overflow-y: auto; padding: 12px 10px; display: flex; flex-direction: column; gap: 4px; min-height: 0; }
+nav.side .group { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 10px 6px 4px; }
+nav.side .group:first-child { margin-top: 0; }
+nav.side button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 1.5px solid transparent; border-radius: 3px; padding: 7px 8px; cursor: pointer; font-size: 15px; line-height: 1.25; }
+nav.side button:hover { border-color: var(--hair); }
+nav.side button[aria-current="true"] { background: var(--ink); color: var(--paper); }
+nav.side .n { flex: none; width: 24px; height: 24px; border: 1.5px solid currentColor; border-radius: 50%; display: grid; place-items: center; font-family: var(--hand); font-size: 17px; line-height: 1; }
+nav.side .name { min-width: 0; }
+.shell.folded nav.side .name, .shell.folded nav.side .group { display: none; }
+.shell.folded nav.side button { justify-content: center; padding-inline: 0; }
+main { overflow: auto; min-height: 0; padding-block: 18px 28px; padding-left: 26px; padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+main > section { max-width: 1040px; }
+main h2 { font-size: 28px; line-height: 1.1; margin: 0 0 12px; }
 
 /* marks */
 .mk { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.12em; margin-right: 0.4em; }
 
 /* charts: his ruled tables */
 .scroll { overflow-x: auto; }
-table.chart { border-collapse: collapse; width: 100%; font-family: var(--hand); font-size: 21px; line-height: 1.2; }
-table.chart th { text-align: left; font-weight: 400; font-size: 24px; padding: 4px 14px 8px; border-bottom: 2px solid var(--ink); }
-table.chart td { padding: 9px 14px; border-bottom: 1.5px solid var(--ink); vertical-align: top; }
+table.chart { border-collapse: collapse; width: 100%; font-family: var(--hand); font-size: 20px; line-height: 1.2; }
+table.chart th { text-align: left; font-weight: 400; font-size: 23px; padding: 4px 14px 8px; border-bottom: 2px solid var(--ink); }
+table.chart td { padding: 7px 14px; border-bottom: 1.5px solid var(--ink); vertical-align: top; }
 table.chart td + td, table.chart th + th { border-left: 1.5px solid var(--ink); }
 table.chart td.yes, table.chart td.no, table.chart td.ask, table.chart td.none { white-space: nowrap; }
-table.chart td.wrap { white-space: normal; }
 table.chart tr.changed td.yes { color: var(--pen-green); }
 table.chart tr.changed td.no { color: var(--pen-red); }
 table.chart td.ask { color: var(--pen-brown); }
@@ -60,30 +76,27 @@ table.chart tr.same td:first-child, table.chart tr.changed td:first-child { colo
 table.chart button.case { all: unset; cursor: pointer; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; }
 table.chart button.case:focus-visible { outline: 2px solid var(--pen-blue); outline-offset: 2px; }
 table.chart tr.example td { font-family: var(--typed); font-size: 15px; line-height: 1.5; background: var(--paper-2); color: var(--ink); white-space: normal; }
-.boxed { display: inline-block; border: 2px solid var(--ink); padding: 8px 18px; margin-top: 18px; font-family: var(--hand); font-size: 24px; }
-.sub { color: var(--ink-soft); font-size: 15px; }
+.boxed { display: inline-block; border: 2px solid var(--ink); padding: 6px 16px; margin-top: 16px; font-family: var(--hand); font-size: 23px; }
 
-/* the changes */
-.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
-.tabs button { background: none; border: 1.5px solid var(--ink); padding: 5px 14px; cursor: pointer; font-family: var(--hand); font-size: 20px; border-radius: 2px; }
-.tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+/* one change */
 .change { --pen: var(--pen-blue); }
 .change[data-pen="purple"] { --pen: var(--pen-purple); }
 .change[data-pen="brown"] { --pen: var(--pen-brown); }
-.verdict { font-family: var(--hand); font-size: clamp(26px, 3.6vw, 36px); line-height: 1.15; margin: 0 0 6px; max-width: none; text-decoration: underline; text-decoration-color: var(--pen); text-decoration-thickness: 3px; text-underline-offset: 7px; }
-.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 22px 0 10px; }
-.bar .label { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+.verdict { font-family: var(--hand); font-size: clamp(24px, 3vw, 32px); line-height: 1.15; margin: 0 0 14px; max-width: none; text-decoration: underline; text-decoration-color: var(--pen); text-decoration-thickness: 3px; text-underline-offset: 7px; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 0 0 16px; }
+.levels { display: inline-flex; gap: 0; border-bottom: 2px solid var(--ink); }
+.levels button { background: none; border: 0; border-bottom: 4px solid transparent; margin-bottom: -2px; padding: 6px 16px; cursor: pointer; font-family: var(--hand); font-size: 22px; line-height: 1.1; color: var(--ink-soft); }
+.levels button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--pen); }
 .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 2px; }
 .seg button { background: none; border: 0; padding: 4px 13px; cursor: pointer; font-size: 14px; }
 .seg button + button { border-left: 1.5px solid var(--ink); }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-h3 { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink-soft); margin: 26px 0 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+h3 { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink-soft); margin: 22px 0 8px; letter-spacing: 0.04em; text-transform: uppercase; }
 
 /* code: one diff. Black is unchanged, red slash is removed, the pen color is added. */
 .code { font-family: var(--mono); font-size: 13.5px; line-height: 1.6; background: var(--paper-2); border-left: 3px solid var(--ink); padding: 12px 14px 12px 0; min-width: 0; }
 .code .ref { font-size: 12px; color: var(--ink-soft); padding: 2px 0 6px 58px; }
 .code .ref b { font-family: var(--hand); font-size: 19px; font-weight: 400; color: var(--ink); margin-right: 10px; }
-.code .ref + .ln { margin-top: 0; }
 .code .gap { height: 14px; }
 .ln { display: grid; grid-template-columns: 58px minmax(0, 1fr); }
 .ln .gut { text-align: right; padding-right: 12px; font-size: 11px; line-height: 21.6px; color: var(--ink-soft); user-select: none; }
@@ -104,9 +117,9 @@ h3 { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--i
 .screens img { display: block; max-width: 100%; height: auto; }
 
 /* boards */
-.boards { display: grid; gap: 14px; max-width: 700px; }
+.boards { display: grid; gap: 12px; max-width: 640px; }
 figure { margin: 0; }
-figure.b { border: 1.5px solid var(--ink); padding: 6px 10px 2px; transition: opacity 0.2s; }
+figure.b { border: 1.5px solid var(--ink); padding: 4px 10px 2px; transition: opacity 0.2s; }
 figure.b.waiting { opacity: 0.3; }
 figure.b figcaption { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
 svg.board { display: block; width: 100%; height: auto; }
@@ -118,29 +131,59 @@ svg.board text.pen, svg.board text.red, svg.board text.green, svg.board text.gra
 svg.board .k.pen, svg.board .k.red, svg.board .k.green, svg.board .k.gray { stroke: var(--c); }
 svg.board .dash { stroke-dasharray: 5 7; }
 svg.board .off { display: none; }
+/* a new step is drawn in, the way a pen would */
+@keyframes ink-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ink-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+svg.board .fresh text { animation: ink-in 0.4s ease-out both; }
+svg.board .fresh .k.dash { animation: ink-in 0.4s ease-out both; }
+svg.board .fresh .k:not(.dash) { stroke-dasharray: 1; animation: ink-draw 0.6s ease-out both; }
 ol.says { display: none; }
-.stepper { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; max-width: 700px; margin-top: 10px; }
-.stepper button { background: none; border: 1.5px solid var(--ink); padding: 5px 16px; cursor: pointer; font-size: 14px; border-radius: 2px; }
-.stepper button.go { background: var(--ink); color: var(--paper); }
+.stepper { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; max-width: 640px; margin-top: 10px; }
+.stepper button { background: none; border: 1.5px solid var(--ink); padding: 5px 15px; cursor: pointer; font-size: 14px; border-radius: 2px; }
+.stepper button.go { background: var(--ink); color: var(--paper); min-width: 82px; }
 .stepper button:disabled { opacity: 0.35; cursor: default; }
 .stepper .count { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
-.say { max-width: 700px; min-height: 3em; margin: 10px 0 0; font-size: 16px; }
+.say { max-width: 640px; min-height: 3em; margin: 10px 0 0; font-size: 16px; }
+
+/* replay: the same real request run through the old code and the new code */
+.replay { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 14px; }
+.replay .run { border: 1.5px solid var(--ink); padding: 6px 12px 10px; min-width: 0; }
+.replay .run > b { display: block; font-family: var(--hand); font-size: 21px; font-weight: 400; margin-bottom: 4px; }
+.replay ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-family: var(--mono); font-size: 12.5px; line-height: 1.5; }
+.replay li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; overflow-wrap: anywhere; }
+.replay li::before { content: attr(data-tag); color: var(--ink-soft); text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; padding-top: 1px; }
+.replay li.no { color: var(--pen-red); }
+.replay li.yes { color: var(--pen-green); }
+.replay li.pen { color: var(--pen); }
+.replay-note { font-size: 14px; color: var(--ink-soft); margin: 10px 0 0; max-width: 90ch; }
+.empty { color: var(--ink-soft); font-size: 15px; }
 
 ul.tests { list-style: none; margin: 0; padding: 0; font-size: 15px; display: grid; gap: 4px; }
 ul.tests li { display: flex; align-items: baseline; }
 ul.tests li.yes .mk { color: var(--pen-green); }
 ul.tests li.no { color: var(--pen-red); }
-details.edges { margin-top: 20px; font-size: 15px; }
+details.edges { margin-top: 18px; font-size: 15px; }
 details.edges summary { cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
 details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
-.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
-.pager button { background: none; border: 0; cursor: pointer; font-family: var(--hand); font-size: 21px; text-decoration: underline; text-underline-offset: 4px; padding: 4px 0; }
-.pager button:disabled { visibility: hidden; }
-.decide { border: 2px solid var(--ink); padding: 14px 18px; max-width: 760px; margin-top: 22px; }
-.decide .hand { font-size: 26px; line-height: 1.15; margin: 0 0 8px; }
-.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 10px 40px; align-items: start; }
-@media (max-width: 560px) { table.chart { font-size: 18px; } table.chart th { font-size: 20px; } table.chart td, table.chart th { padding-inline: 8px; } table.chart td.yes, table.chart td.no, table.chart td.ask, table.chart td.none { white-space: normal; } .ln { grid-template-columns: 34px minmax(0, 1fr); } .code .ref { padding-left: 34px; } }
-@media (prefers-reduced-motion: reduce) { figure.b { transition: none; } }
+.decide { border: 2px solid var(--ink); padding: 14px 18px; max-width: 760px; margin-top: 4px; }
+.decide .hand { font-size: 25px; line-height: 1.15; margin: 0 0 8px; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px 40px; align-items: start; }
+
+/* narrow screens: the list of changes becomes a strip across the top */
+@media (max-width: 760px) {
+  .shell, .shell.folded { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  nav.side { flex-direction: row; overflow-x: auto; overflow-y: hidden; border-right: 0; border-bottom: 2px solid var(--ink); padding: 8px max(16px, env(safe-area-inset-left, 0px)); gap: 6px; }
+  nav.side .group { display: none; }
+  nav.side button { width: auto; white-space: nowrap; flex: none; }
+  .shell.folded nav.side .name { display: none; }
+  main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  table.chart { font-size: 18px; } table.chart th { font-size: 20px; } table.chart td, table.chart th { padding-inline: 8px; }
+  table.chart td.yes, table.chart td.no, table.chart td.ask, table.chart td.none { white-space: normal; }
+  .ln { grid-template-columns: 34px minmax(0, 1fr); } .code .ref { padding-left: 34px; }
+  .levels button { padding-inline: 11px; font-size: 20px; }
+  .replay li { grid-template-columns: 76px minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { figure.b { transition: none; } svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) { animation: none; stroke-dasharray: none; } svg.board .fresh .k.dash { stroke-dasharray: 5 7; } }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -152,19 +195,11 @@ details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
   The authoring rules are in references/page.md. The example below is a made-up change, kept small so every part is visible.
 -->
 <header>
-  <div class="kicker">Pull request #214, open</div>
   <h1>Free shipping counts the coupon</h1>
-  <p class="lede">Free shipping was decided on the cart total before the coupon. Now it is decided on what the customer pays.</p>
-  <dl class="facts">
-    <div><dt>Goes into</dt><dd>main</dd></div>
-    <div><dt>Size</dt><dd>2 files, +31 / -4</dd></div>
-    <div><dt>Tests</dt><dd>5 new</dd></div>
-    <div><dt>Never run against</dt><dd>the live checkout</dd></div>
-  </dl>
-  <p><a href="https://example.com/pull/214">Open #214</a></p>
+  <a href="https://example.com/pull/214">Pull request #214</a>
 </header>
 
-<section id="cases">
+<section id="cases" data-name="Cases">
   <h2>What changes, case by case</h2>
   <p class="sub">Free shipping starts at $50. Underlined rows open a worked example.</p>
   <div class="scroll">
@@ -183,7 +218,6 @@ details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
 </section>
 
 <section id="changes">
-  <h2>The two changes that matter</h2>
 
   <section class="change" data-name="Compare what they pay" data-pen="blue" data-key="afterCoupon >=">
     <p class="verdict">Free shipping looks at the total after the coupon.</p>
@@ -217,6 +251,18 @@ function shippingFor(cart) {
       <g data-step="3"><path class="k green" d="M20 158 l6 9 l13 -19"/><text class="green" x="46" y="172">under the line, so shipping is $5.99</text></g>
     </svg>
     <ol class="says"><li>Now the coupon comes off first.</li><li>$45 is what gets compared with $50.</li><li>Under the line, so the order pays shipping.</li></ol>
+    <div class="replay" data-note="Order 88213, replayed through both versions on a local copy of the shop. The payment provider was a stand-in. The full logs are saved in .prtifact/pull-214.">
+      <ol data-view="before" data-title="Code on main">
+        <li data-tag="start">cart $60.00, coupon $15.00</li>
+        <li data-tag="log">shipping: subtotal 60.00 >= 50.00, free</li>
+        <li data-tag="order" class="no">shipping $0.00, total $45.00</li>
+      </ol>
+      <ol data-view="now" data-title="This pull request">
+        <li data-tag="start">cart $60.00, coupon $15.00</li>
+        <li data-tag="log" class="pen">shipping: after coupon 45.00 &lt; 50.00, flat rate</li>
+        <li data-tag="order" class="yes">shipping $5.99, total $50.99</li>
+      </ol>
+    </div>
     <ul class="tests">
       <li class="yes">charges shipping when the coupon takes the cart under the minimum</li>
       <li class="yes">keeps free shipping when the cart is still over the minimum after the coupon</li>
@@ -239,7 +285,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   </section>
 </section>
 
-<section id="checked">
+<section id="checked" data-name="Checked">
   <h2>What is checked</h2>
   <div class="cols">
     <div class="scroll">
@@ -364,7 +410,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     path.setAttribute('d', MARKS[kind]); svg.appendChild(path); return svg;
   }
   var SAID = { yes: 'right: ', no: 'wrong: ', ask: 'open: ', none: '' };
-  all('td.yes, td.no, td.ask, td.none, li.yes, li.no').forEach(function (node) {
+  all('td.yes, td.no, td.ask, td.none, ul.tests li.yes, ul.tests li.no').forEach(function (node) {
     var kind = ['yes', 'no', 'ask', 'none'].filter(function (k) { return node.classList.contains(k); })[0];
     var label = el('span', '', node.textContent); node.textContent = '';
     node.appendChild(mark(kind));
@@ -383,11 +429,22 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     });
   });
 
-  // ---- the changes ----
-  var changes = all('section.change'), view = 'both', current = 0;
-  if (!changes.length) { return; }
-  var tabs = el('div', 'tabs'); tabs.setAttribute('role', 'tablist');
-  changes[0].parentNode.insertBefore(tabs, changes[0]);
+  // ---- the app: the changes down the left, the levels across the top of the panel ----
+  var page = document.querySelector('.page'), header = page.querySelector('header');
+  var changeSections = all('section.change');
+  if (!changeSections.length) { return; }
+  var otherSections = all('section', page).filter(function (s) { return !s.classList.contains('change') && s.querySelector('h2') && !s.querySelector('section.change'); });
+  var shell = el('div', 'shell'), side = el('nav', 'side'), main = el('main');
+  side.setAttribute('aria-label', 'The parts of this change');
+  shell.appendChild(side); shell.appendChild(main); page.appendChild(shell);
+  changeSections.concat(otherSections).forEach(function (s) { main.appendChild(s); });
+  all('section', page).forEach(function (s) { if (s.parentNode === page) { s.remove(); } });
+  var fold = el('button', 'fold', '≡'); fold.type = 'button'; fold.setAttribute('aria-label', 'Show or hide the list of changes');
+  header.insertBefore(fold, header.firstChild);
+  fold.addEventListener('click', function () { shell.classList.toggle('folded'); });
+
+  var view = 'both', level = 'idea', current = 0, timer = null, built = [];
+  var LEVEL_NAMES = { idea: 'Idea', code: 'Code', screen: 'Screen', replay: 'Replay' };
 
   function codeLine(r, showGutter) {
     var line = el('div', 'ln ' + r.kind + (r.skip ? ' skip' : '') + (r.key ? ' key' : ''));
@@ -396,8 +453,18 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     r.parts.forEach(function (p) { src.appendChild(el('span', p[1], (r.skip ? '⋯ ' : '') + p[0])); });
     line.appendChild(src); return line;
   }
+  function navButton(label, badge) {
+    var b = el('button'); b.type = 'button';
+    b.appendChild(el('span', 'n', badge)); b.appendChild(el('span', 'name', label)); b.title = label;
+    side.appendChild(b); return b;
+  }
+  function stopPlay() {
+    if (timer) { clearTimeout(timer); timer = null; }
+    built.forEach(function (b) { if (b.playButton) { b.playButton.textContent = 'Play'; } });
+  }
 
-  var built = changes.map(function (section, index) {
+  side.appendChild(el('div', 'group', 'The changes'));
+  changeSections.forEach(function (section, index) {
     var labels = (section.getAttribute('data-labels') || 'Before|Now').split('|');
     var beforeSrc = section.querySelector('script.before'), afterSrc = section.querySelector('script.after');
     var model = diffRows(beforeSrc ? beforeSrc.textContent : '', afterSrc ? afterSrc.textContent : '');
@@ -413,54 +480,77 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       var steps = Math.max(says.length, Math.max.apply(null, [0].concat(all('[data-step]', svg).map(function (n) { return +n.getAttribute('data-step'); }))));
       var figure = el('figure', 'b'), caption = el('figcaption', '', svg.getAttribute('data-view') === 'before' ? labels[0] : labels[1]);
       svg.parentNode.insertBefore(figure, svg); figure.appendChild(caption); figure.appendChild(svg);
+      all('.k', svg).forEach(function (n) { if (!n.classList.contains('dash')) { n.setAttribute('pathLength', '1'); } });
       return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, says: says, steps: steps };
     });
-    var verdict = section.querySelector('.verdict'), tests = section.querySelector('ul.tests'), edges = section.querySelector('details.edges'), screens = section.querySelector('.screens');
+    var verdict = section.querySelector('.verdict'), tests = section.querySelector('ul.tests'), edges = section.querySelector('details.edges');
+    var screens = section.querySelector('.screens'), replay = section.querySelector('.replay');
 
-    var bar = el('div', 'bar'), seg = el('div', 'seg');
-    bar.appendChild(el('span', 'label', 'SHOW')); bar.appendChild(seg);
+    // the four levels, each only if this change has it
+    var panels = {}, order = [];
+    function panel(id) { panels[id] = el('div', 'level'); order.push(id); return panels[id]; }
+    var stepper = el('div', 'stepper'), playButton = el('button', 'go', 'Play'), back = el('button', '', 'Back'), next = el('button', '', 'Next'), showAll = el('button', '', 'Show all'), count = el('span', 'count');
+    var say = el('p', 'say'); say.setAttribute('aria-live', 'polite');
+    var code = el('div', 'code');
+    if (boards.length) {
+      var idea = panel('idea'), boardBox = el('div', 'boards');
+      boards.forEach(function (b) { boardBox.appendChild(b.figure); });
+      [playButton, back, next, showAll].forEach(function (b) { b.type = 'button'; stepper.appendChild(b); }); stepper.appendChild(count);
+      idea.appendChild(boardBox); idea.appendChild(stepper); idea.appendChild(say);
+    }
+    if (beforeSrc || afterSrc) { panel('code').appendChild(code); }
+    if (screens) { panel('screen').appendChild(screens); }
+    if (replay || tests || edges) {
+      var proof = panel('replay');
+      if (replay) {
+        all('ol[data-view]', replay).forEach(function (list) {
+          var run = el('div', 'run'); run.setAttribute('data-view', list.getAttribute('data-view'));
+          run.appendChild(el('b', '', list.getAttribute('data-title') || (list.getAttribute('data-view') === 'before' ? labels[0] : labels[1])));
+          replay.insertBefore(run, list); run.appendChild(list);
+        });
+        proof.appendChild(replay);
+        if (replay.getAttribute('data-note')) { proof.appendChild(el('p', 'replay-note', replay.getAttribute('data-note'))); }
+      }
+      if (tests) { proof.appendChild(el('h3', '', 'Tests')); proof.appendChild(tests); }
+      if (edges) { proof.appendChild(edges); }
+    }
+
+    var bar = el('div', 'bar'), levelTabs = el('div', 'levels'), seg = el('div', 'seg');
+    levelTabs.setAttribute('role', 'tablist');
+    var levelButtons = order.map(function (id) {
+      var b = el('button', '', id === 'replay' && !replay ? 'Tests' : LEVEL_NAMES[id]); b.type = 'button'; b.setAttribute('role', 'tab'); levelTabs.appendChild(b);
+      b.addEventListener('click', function () { stopPlay(); level = id; paint(false); });
+      return { id: id, node: b };
+    });
     var viewButtons = [['before', labels[0]], ['now', labels[1]], ['both', 'Both']].map(function (pair) {
       var b = el('button', '', pair[1]); b.type = 'button'; seg.appendChild(b);
-      b.addEventListener('click', function () { view = pair[0]; step = 1; paint(); });
+      b.addEventListener('click', function () { stopPlay(); view = pair[0]; step = 1; paint(false); });
       return { view: pair[0], node: b };
     });
-    var codeTitle = el('h3', '', 'The code'), code = el('div', 'code');
-    var drawTitle = el('h3', '', 'The idea'), boardBox = el('div', 'boards');
-    boards.forEach(function (b) { boardBox.appendChild(b.figure); });
-    var stepper = el('div', 'stepper'), back = el('button', '', 'Back'), next = el('button', 'go', 'Next'), showAll = el('button', '', 'Show all'), count = el('span', 'count');
-    [back, next, showAll].forEach(function (b) { b.type = 'button'; stepper.appendChild(b); }); stepper.appendChild(count);
-    var say = el('p', 'say'); say.setAttribute('aria-live', 'polite');
-    var testTitle = el('h3', '', 'Tests');
-    var pager = el('div', 'pager'), prev = el('button', '', index > 0 ? '← ' + changes[index - 1].getAttribute('data-name') : ''), fwd = el('button', '', index < changes.length - 1 ? changes[index + 1].getAttribute('data-name') + ' →' : '');
-    prev.type = fwd.type = 'button'; prev.disabled = index === 0; fwd.disabled = index === changes.length - 1; pager.appendChild(prev); pager.appendChild(fwd);
-    prev.addEventListener('click', function () { show(index - 1, true); }); fwd.addEventListener('click', function () { show(index + 1, true); });
-
+    bar.appendChild(levelTabs); bar.appendChild(seg);
     [verdict, bar].forEach(function (n) { if (n) { section.appendChild(n); } });
-    if (screens) { section.appendChild(el('h3', '', 'The screen')); section.appendChild(screens); }
-    if (beforeSrc || afterSrc) { section.appendChild(codeTitle); section.appendChild(code); }
-    if (boards.length) { [drawTitle, boardBox, stepper, say].forEach(function (n) { section.appendChild(n); }); }
-    if (tests) { section.appendChild(testTitle); section.appendChild(tests); }
-    if (edges) { section.appendChild(edges); }
-    section.appendChild(pager);
+    order.forEach(function (id) { section.appendChild(panels[id]); });
 
     var step = 1;
     function shown() { return boards.filter(function (b) { return view === 'both' || b.view === view; }); }
     function total() { return shown().reduce(function (sum, b) { return sum + b.steps; }, 0); }
-    function paint() {
+    function paint(animate) {
+      var here = order.indexOf(level) >= 0 ? level : order[0];
+      order.forEach(function (id) { panels[id].hidden = id !== here; });
+      levelButtons.forEach(function (b) { b.node.setAttribute('aria-selected', b.id === here ? 'true' : 'false'); });
       viewButtons.forEach(function (b) { b.node.setAttribute('aria-pressed', b.view === view ? 'true' : 'false'); });
-      bar.hidden = model.fresh && !boards.length && !screens;
+      seg.hidden = (here === 'replay' && !replay) || (here === 'code' && model.fresh);
       if (screens) { all('figure[data-view]', screens).forEach(function (f) { f.hidden = view !== 'both' && f.getAttribute('data-view') !== view; }); }
+      if (replay) { all('.run', replay).forEach(function (r) { r.hidden = view !== 'both' && r.getAttribute('data-view') !== view; }); }
       // code
       code.textContent = '';
       function head(name, ref) { var r = el('div', 'ref'); r.appendChild(el('b', '', name)); r.appendChild(document.createTextNode(ref || '')); code.appendChild(r); }
       if (model.blocks) {
-        var sides = view === 'both' ? ['before', 'now'] : [view];
-        if (model.fresh) { sides = sides.filter(function (side) { return side === 'now'; }); }
-        if (!sides.length) { head(labels[0], 'no code here before. This piece is new.'); }
-        sides.forEach(function (side, i) {
+        var sides = model.fresh ? ['now'] : (view === 'both' ? ['before', 'now'] : [view]);
+        sides.forEach(function (which, i) {
           if (i) { code.appendChild(el('div', 'gap')); }
-          head(side === 'before' ? labels[0] : labels[1], refs[side]);
-          model[side].forEach(function (r) { code.appendChild(codeLine(r, false)); });
+          head(which === 'before' ? labels[0] : labels[1], refs[which]);
+          model[which].forEach(function (r) { code.appendChild(codeLine(r, false)); });
         });
       } else {
         if (view !== 'now') { head(labels[0], refs.before); }
@@ -476,7 +566,11 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       boards.forEach(function (b) { b.figure.hidden = list.indexOf(b) < 0; });
       list.forEach(function (b) {
         var local = step - offset;
-        all('[data-step]', b.svg).forEach(function (n) { n.classList.toggle('off', +n.getAttribute('data-step') > local); });
+        all('[data-step]', b.svg).forEach(function (n) {
+          var wasOff = n.classList.contains('off'), off = +n.getAttribute('data-step') > local;
+          n.classList.toggle('off', off);
+          n.classList.toggle('fresh', Boolean(animate) && wasOff && !off);
+        });
         b.figure.classList.toggle('waiting', local < 1);
         if (local >= 1 && local <= b.steps) { text = b.says[local - 1] || ''; }
         offset += b.steps;
@@ -484,26 +578,59 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       say.textContent = text; count.textContent = 'Step ' + step + ' of ' + all_;
       back.disabled = step <= 1; next.disabled = step >= all_; showAll.disabled = step >= all_;
     }
-    back.addEventListener('click', function () { step--; paint(); });
-    next.addEventListener('click', function () { step++; paint(); });
-    showAll.addEventListener('click', function () { step = total(); paint(); });
+    back.addEventListener('click', function () { stopPlay(); step--; paint(false); });
+    next.addEventListener('click', function () { stopPlay(); step++; paint(true); });
+    showAll.addEventListener('click', function () { stopPlay(); step = total(); paint(true); });
+    playButton.addEventListener('click', function () {
+      if (timer) { stopPlay(); return; }
+      level = 'idea';
+      if (step >= total()) { step = 1; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); }
+      paint(true); playButton.textContent = 'Pause';
+      timer = setTimeout(tick, 1900);
+    });
 
-    var tab = el('button', '', (index + 1) + '. ' + section.getAttribute('data-name'));
-    tab.type = 'button'; tab.setAttribute('role', 'tab'); tabs.appendChild(tab);
-    tab.addEventListener('click', function () { show(index, false); });
-    return { section: section, tab: tab, paint: paint, all: function () { step = total(); paint(); } };
+    var nav = navButton(section.getAttribute('data-name'), String(index + 1));
+    nav.addEventListener('click', function () { stopPlay(); show(index); });
+    built.push({ section: section, nav: nav, paint: paint, playButton: boards.length ? playButton : null, hasBoards: boards.length > 0,
+      forward: function () { if (step >= total()) { return false; } step++; paint(true); return true; },
+      restart: function () { level = 'idea'; step = 1; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); paint(true); },
+      toEnd: function () { step = total(); paint(false); } });
   });
 
-  function show(index, scroll) {
-    current = Math.max(0, Math.min(built.length - 1, index));
-    built.forEach(function (b, i) { b.section.hidden = i !== current; b.tab.setAttribute('aria-selected', i === current ? 'true' : 'false'); });
-    built[current].paint();
-    if (scroll) { tabs.scrollIntoView({ block: 'start' }); }
-    try { history.replaceState(null, '', '#change-' + (current + 1)); } catch (error) { /* hash is a convenience only */ }
+  // Play walks every step of this change, then carries on into the next change that has a drawing.
+  function tick() {
+    timer = null;
+    var b = built[current];
+    if (b.forward && b.forward()) { timer = setTimeout(tick, 1900); return; }
+    var nextIndex = -1;
+    for (var i = current + 1; i < changeSections.length; i++) { if (built[i].hasBoards) { nextIndex = i; break; } }
+    if (nextIndex < 0) { stopPlay(); return; }
+    show(nextIndex); built[nextIndex].restart(); built[nextIndex].playButton.textContent = 'Pause';
+    timer = setTimeout(tick, 1900);
   }
-  var asked = /^#change-(\d+)(-all)?$/.exec(location.hash || '');
-  show(asked ? +asked[1] - 1 : 0, false);
-  if (asked && asked[2]) { built[current].all(); }
+
+  if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }
+  otherSections.forEach(function (section) {
+    var name = section.getAttribute('data-name') || section.querySelector('h2').textContent;
+    var nav = navButton(name, name.slice(0, 2)), index = built.length;
+    nav.addEventListener('click', function () { stopPlay(); show(index); });
+    built.push({ section: section, nav: nav, paint: function () {}, playButton: null, hasBoards: false });
+  });
+
+  function show(index) {
+    current = Math.max(0, Math.min(built.length - 1, index));
+    built.forEach(function (b, i) { b.section.hidden = i !== current; b.nav.setAttribute('aria-current', i === current ? 'true' : 'false'); });
+    built[current].paint(false);
+    main.scrollTop = 0;
+    var name = current < changeSections.length ? 'change-' + (current + 1) : (built[current].section.id || 'part-' + (current + 1));
+    try { history.replaceState(null, '', '#' + name); } catch (error) { /* the hash is a convenience only */ }
+  }
+  // #change-3, #change-3-code, #change-3-all (every step drawn), or the id of a whole-change section
+  var asked = /^#change-(\d+)(?:-(idea|code|screen|replay|all))?$/.exec(location.hash || ''), start = 0;
+  if (asked) { start = +asked[1] - 1; if (asked[2] && asked[2] !== 'all') { level = asked[2]; } }
+  else if (location.hash.length > 1) { built.forEach(function (b, i) { if (b.section.id === location.hash.slice(1)) { start = i; } }); }
+  show(start);
+  if (asked && asked[2] === 'all' && built[current].toEnd) { built[current].toEnd(); }
 })();
 /* PRTIFACT ENGINE END */
 </script>
