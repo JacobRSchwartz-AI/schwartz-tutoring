@@ -8,7 +8,7 @@
 :root {
   --paper: #fdfdfb; --paper-2: #f3f3ee; --ink: #17181a; --ink-soft: #5c6067; --hair: #d6d6cf;
   --pen-blue: #1c5fd6; --pen-purple: #8a3fc9; --pen-brown: #a8641a;
-  --added: #106440; --pen-green: #1c8f38; --pen-red: #d43a22; --pen-yellow: #d9a800; --pen-gray: #9a9ea6;
+  --pen-green: #1c8f38; --pen-red: #d43a22; --pen-yellow: #d9a800; --pen-gray: #9a9ea6;
   --hand: "Patrick Hand", "Comic Sans MS", "Segoe Print", cursive;
   --typed: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
@@ -17,11 +17,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --paper: #15181d; --paper-2: #1d2128; --ink: #ece8df; --ink-soft: #a8a59d; --hair: #383d46;
   --pen-blue: #74abff; --pen-purple: #c594f5; --pen-brown: #e3a55e;
-  --added: #5ec99b; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark } }
+  --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark } }
 :root[data-theme="dark"] {
   --paper: #15181d; --paper-2: #1d2128; --ink: #ece8df; --ink-soft: #a8a59d; --hair: #383d46;
   --pen-blue: #74abff; --pen-purple: #c594f5; --pen-brown: #e3a55e;
-  --added: #5ec99b; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark }
+  --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark }
 
 html, body { height: 100%; }
 body { background: var(--paper); color: var(--ink); font-family: var(--typed); font-size: 16px; line-height: 1.5; }
@@ -84,9 +84,6 @@ table.chart tr.example td { font-family: var(--typed); font-size: 15px; line-hei
 .change[data-pen="brown"] { --pen: var(--pen-brown); }
 .verdict { font-family: var(--hand); font-size: clamp(24px, 3vw, 32px); line-height: 1.15; margin: 0 0 14px; max-width: none; text-decoration: underline; text-decoration-color: var(--pen); text-decoration-thickness: 3px; text-underline-offset: 7px; }
 .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 0 0 16px; }
-.levels { display: inline-flex; gap: 0; border-bottom: 2px solid var(--ink); }
-.levels button { background: none; border: 0; border-bottom: 4px solid transparent; margin-bottom: -2px; padding: 6px 16px; cursor: pointer; font-family: var(--hand); font-size: 22px; line-height: 1.1; color: var(--ink-soft); }
-.levels button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--pen); }
 .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 2px; }
 .seg button { background: none; border: 0; padding: 4px 13px; cursor: pointer; font-size: 14px; }
 .seg button + button { border-left: 1.5px solid var(--ink); }
@@ -94,27 +91,8 @@ table.chart tr.example td { font-family: var(--typed); font-size: 15px; line-hei
 h3 { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink-soft); margin: 22px 0 8px; letter-spacing: 0.04em; text-transform: uppercase; }
 
 /* code: one diff. Black is unchanged, red slash is removed, the pen color is added. */
-.code { font-family: var(--mono); font-size: 13.5px; line-height: 1.6; background: var(--paper-2); border-left: 3px solid var(--ink); padding: 12px 14px 12px 0; min-width: 0; }
-.code .ref { font-size: 12px; color: var(--ink-soft); padding: 2px 0 6px 58px; }
-.code .ref b { font-family: var(--hand); font-size: 19px; font-weight: 400; color: var(--ink); margin-right: 10px; }
-.code .gap { height: 14px; }
-.ln { display: grid; grid-template-columns: 58px minmax(0, 1fr); }
-.ln .gut { text-align: right; padding-right: 12px; font-size: 11px; line-height: 21.6px; color: var(--ink-soft); user-select: none; }
-.ln.old .gut { color: var(--pen-red); }
-.ln.new .gut { color: var(--pen); }
-.ln .src { white-space: pre-wrap; overflow-wrap: anywhere; text-indent: -2ch; }
-.ln .del { text-decoration: line-through; text-decoration-color: var(--pen-red); text-decoration-thickness: 2px; color: var(--ink-soft); }
-.ln .add { color: var(--pen); font-weight: 500; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
-.ln .add.whole { text-decoration: none; }
-.ln.skip .src { color: var(--ink-soft); font-style: italic; }
-.ln.key .gut { color: var(--pen-yellow); font-size: 15px; }
-.ln.key .src span { border-bottom: 2px solid var(--pen-yellow); padding-bottom: 1px; }
 
 /* screens: the interface before and after, left and right */
-.screens { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
-.screens figure { border: 1.5px solid var(--ink); padding: 6px 10px 10px; min-width: 0; }
-.screens figcaption { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; }
-.screens img { display: block; max-width: 100%; height: auto; }
 
 /* boards */
 .boards { display: grid; gap: 12px; max-width: 640px; }
@@ -146,25 +124,7 @@ ol.says { display: none; }
 .say { max-width: 640px; min-height: 3em; margin: 10px 0 0; font-size: 16px; }
 
 /* replay: the same real request run through the old code and the new code */
-.replay { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 14px; }
-.replay .run { border: 1.5px solid var(--ink); padding: 6px 12px 10px; min-width: 0; }
-.replay .run > b { display: block; font-family: var(--hand); font-size: 21px; font-weight: 400; margin-bottom: 4px; }
-.replay ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-family: var(--mono); font-size: 12.5px; line-height: 1.5; }
-.replay li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; overflow-wrap: anywhere; }
-.replay li::before { content: attr(data-tag); color: var(--ink-soft); text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; padding-top: 1px; }
-.replay li.no { color: var(--pen-red); }
-.replay li.yes { color: var(--pen-green); }
-.replay li.pen { color: var(--pen); }
-.replay-note { font-size: 14px; color: var(--ink-soft); margin: 10px 0 0; max-width: 90ch; }
 .empty { color: var(--ink-soft); font-size: 15px; }
-
-ul.tests { list-style: none; margin: 0; padding: 0; font-size: 15px; display: grid; gap: 4px; }
-ul.tests li { display: flex; align-items: baseline; }
-ul.tests li.yes .mk { color: var(--pen-green); }
-ul.tests li.no { color: var(--pen-red); }
-details.edges { margin-top: 18px; font-size: 15px; }
-details.edges summary { cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
-details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
 .decide { border: 2px solid var(--ink); padding: 14px 18px; max-width: 760px; margin-top: 4px; }
 .decide .hand { font-size: 25px; line-height: 1.15; margin: 0 0 8px; }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px 40px; align-items: start; }
@@ -179,9 +139,6 @@ details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
   main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   table.chart { font-size: 18px; } table.chart th { font-size: 20px; } table.chart td, table.chart th { padding-inline: 8px; }
   table.chart td.yes, table.chart td.no, table.chart td.ask, table.chart td.none { white-space: normal; }
-  .ln { grid-template-columns: 44px minmax(0, 1fr); } .code .ref { padding-left: 44px; } .ln .gut, .ln.old .gut, .ln.new .gut { padding-right: 9px; }
-  .levels button { padding-inline: 11px; font-size: 20px; }
-  .replay li { grid-template-columns: 76px minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) { figure.b { transition: none; } svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) { animation: none; stroke-dasharray: none; } svg.board .fresh .k.dash { stroke-dasharray: 5 7; } }
 /* version 6: the link sits beside the name, the controls ride in the options row, the sentence and the verdict come after the drawing */
@@ -193,7 +150,6 @@ a.out { display: inline-grid; place-items: center; width: 32px; height: 30px; bo
 .verdict { margin: 12px 0 0; visibility: hidden; }
 .verdict.shown { visibility: visible; }
 .verdict.fresh { animation: ink-in 0.7s ease-out both; }
-.ln.focus { background: color-mix(in srgb, var(--pen) 12%, transparent); box-shadow: inset 3px 0 0 var(--pen); }
 nav.side .n.open { background: var(--pen-brown); border-color: var(--pen-brown); color: var(--paper); }
 .stepper button.one { padding: 3px 12px; font-size: 20px; line-height: 1.1; }
 button.onward { display: block; margin-top: 16px; background: none; border: 0; padding: 4px 0; cursor: pointer; font-family: var(--hand); font-size: 22px; text-decoration: underline; text-underline-offset: 5px; }
@@ -216,21 +172,7 @@ main h2 + .decision, main .decision + h2 { margin-top: 0; }
 main h2:not(:first-child) { margin-top: 26px; }
 @media (prefers-reduced-motion: reduce) { .verdict.fresh { animation: none; } }
 /* version 7: the Code level is an editor. Added code is Schwartz orange and typed in. Removed code is gray and crossed off. */
-.code { background: var(--paper-2); border: 1.5px solid var(--ink); padding: 0; }
-.code .tab { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; border-bottom: 1.5px solid var(--ink); padding: 6px 14px; font-size: 12.5px; background: var(--paper); }
-.code .tab b { font-weight: 500; }
-.code .tab span { color: var(--ink-soft); font-size: 12px; }
-.code .tab .which { margin-left: auto; font-family: var(--hand); font-size: 18px; color: var(--ink); }
-.code .body { padding: 10px 14px 12px 0; }
-.ln { grid-template-columns: 46px minmax(0, 1fr); }
-.ln .gut, .ln.old .gut, .ln.new .gut { color: var(--ink-soft); font-size: 12px; padding-right: 14px; }
-.ln .add, .ln .add.whole { color: var(--added); font-weight: 500; text-decoration: none; }
-.ln .del { color: var(--pen-gray); text-decoration: line-through; text-decoration-color: var(--pen-gray); text-decoration-thickness: 1.5px; }
-.ln.focus { background: color-mix(in srgb, var(--added) 10%, transparent); box-shadow: inset 3px 0 0 var(--added); }
-.ln.old.focus { background: none; box-shadow: inset 3px 0 0 var(--pen-gray); }
-.ln.old.focus .src { color: var(--pen-gray); }
-.ln.untyped { display: none; }
-.ln.key .src span { border-bottom: 0; padding-bottom: 0; }
+[hidden] { display: none !important; }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -267,24 +209,6 @@ main h2:not(:first-child) { margin-top: 26px; }
 
   <section class="change" data-name="Compare what they pay" data-pen="blue">
     <p class="verdict">Free shipping looks at the total after the coupon.</p>
-    <script type="text/plain" class="before" data-ref="src/cart/shipping.js on main">
-function shippingFor(cart) {
-  if (cart.subtotal >= FREE_SHIPPING_MIN) {
-    return 0;
-  }
-  return FLAT_RATE;
-}
-    </script>
-    <script type="text/plain" class="after" data-ref="src/cart/shipping.js">
-function shippingFor(cart) {
-  const afterCoupon = cart.subtotal - cart.couponAmount;
-  if (afterCoupon >= FREE_SHIPPING_MIN) {
-    return 0;
-  }
-  return FLAT_RATE;
-}
-    </script>
-    <ol class="edits"><li>I work out what the customer pays after the coupon, and compare that with the minimum instead of the cart total.</li></ol>
     <svg class="board" data-view="before" viewBox="0 0 640 190" role="img" aria-label="Before: the $60 cart is past the $50 line, so shipping is free even though the customer pays $45.">
       <g data-step="1"><path class="k" d="M40 96 H600 M330 84 V108"/><text class="s" x="316" y="130">$50</text><text class="s" x="40" y="130">pays shipping</text><text class="s" x="500" y="130">free shipping</text></g>
       <g data-step="2"><path class="k" d="M450 88 V104"/><text x="424" y="72">cart $60</text></g>
@@ -298,26 +222,23 @@ function shippingFor(cart) {
       <g data-step="3"><path class="k green" d="M20 158 l6 9 l13 -19"/><text class="green" x="46" y="172">under the line, so shipping is $5.99</text></g>
     </svg>
     <ol class="says"><li>Now the coupon comes off first.</li><li>$45 is what gets compared with $50.</li><li>Under the line, so the order pays shipping.</li></ol>
-    <div class="replay" data-note="Order 88213, replayed through both versions on a local copy of the shop. The payment provider was a stand-in. The full logs are saved in .prtifact/pull-214.">
-      <ol data-view="before" data-title="Code on main">
-        <li data-tag="start">cart $60.00, coupon $15.00</li>
-        <li data-tag="log">shipping: subtotal 60.00 >= 50.00, free</li>
-        <li data-tag="order" class="no">shipping $0.00, total $45.00</li>
-      </ol>
-      <ol data-view="now" data-title="This pull request">
-        <li data-tag="start">cart $60.00, coupon $15.00</li>
-        <li data-tag="log" class="pen">shipping: after coupon 45.00 &lt; 50.00, flat rate</li>
-        <li data-tag="order" class="yes">shipping $5.99, total $50.99</li>
-      </ol>
-    </div>
   </section>
 
   <section class="change" data-name="No total below zero" data-pen="purple">
     <p class="verdict">A coupon can take off the whole cart and no more.</p>
-    <script type="text/plain" class="after" data-ref="src/cart/coupon.js, new code">
-const couponAmount = Math.min(coupon.value, cart.subtotal);
-    </script>
-    <ol class="edits"><li>I cap the coupon at the cart total, so the order can reach zero and no lower.</li></ol>
+    <svg class="board" data-view="before" viewBox="0 0 640 200" role="img" aria-label="Before: a $20 cart with a $25 coupon comes to minus $5.">
+      <g data-step="1"><text x="80" y="52">cart</text><text x="260" y="52">$20.00</text><text x="80" y="86">coupon</text><text x="244" y="86">− $25.00</text></g>
+      <g data-step="2"><path class="k" d="M80 100 H320"/><text x="80" y="134">total</text><text x="260" y="134">−$5.00</text></g>
+      <g data-step="3"><path class="k red" d="M20 166 l14 14 m0 -14 l-14 14"/><text class="red" x="46" y="180">an order total below zero</text></g>
+    </svg>
+    <ol class="says"><li>A $20 cart has a $25 coupon. What does the customer pay?</li><li>The old code takes off the whole coupon, so the total is minus $5.</li><li>An order can't cost less than nothing.</li></ol>
+    <svg class="board" data-view="now" viewBox="0 0 640 200" role="img" aria-label="Now: the coupon is capped at the $20 cart, so the total is $0.">
+      <text x="80" y="52">cart</text><text x="260" y="52">$20.00</text><text x="80" y="86">coupon</text><text x="244" y="86">− $25.00</text><path class="k" d="M80 100 H320"/><text x="80" y="134">total</text><text x="260" y="134">−$5.00</text>
+      <g data-step="1"><path class="k red" d="M254 92 L312 74"/><text class="pen" x="336" y="86">$20.00</text><text class="s pen" x="396" y="86">capped at the cart</text></g>
+      <g data-step="2"><path class="k red" d="M254 140 L312 122"/><text class="pen" x="336" y="134">$0.00</text></g>
+      <g data-step="3"><path class="k green" d="M20 166 l6 9 l13 -19"/><text class="green" x="46" y="180">the order comes to $0.00, never less</text></g>
+    </svg>
+    <ol class="says"><li>Now the coupon is capped at what is in the cart: $20 of the $25.</li><li>So the total comes to $0.</li><li>The rest of the coupon is simply not used.</li></ol>
   </section>
 </section>
 
@@ -361,96 +282,6 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   function all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) { e.className = cls; } if (text != null) { e.textContent = text; } return e; }
 
-  // ---- diff (pure) ----
-  function tokens(s) { return s.match(/\s+|[A-Za-z_$][\w$]*|\d+(?:\.\d+)?|[^\sA-Za-z0-9_$]/g) || []; }
-  function lcs(a, b, same) {
-    var n = a.length, m = b.length, t = [], i, j, ops = [];
-    for (i = 0; i <= n; i++) { t[i] = []; for (j = 0; j <= m; j++) { t[i][j] = 0; } }
-    for (i = n - 1; i >= 0; i--) { for (j = m - 1; j >= 0; j--) { t[i][j] = same(a[i], b[j]) ? t[i + 1][j + 1] + 1 : Math.max(t[i + 1][j], t[i][j + 1]); } }
-    i = 0; j = 0;
-    while (i < n && j < m) {
-      if (same(a[i], b[j])) { ops.push(['=', a[i], b[j]]); i++; j++; }
-      else if (t[i + 1][j] >= t[i][j + 1]) { ops.push(['-', a[i]]); i++; }
-      else { ops.push(['+', b[j]]); j++; }
-    }
-    while (i < n) { ops.push(['-', a[i++]]); }
-    while (j < m) { ops.push(['+', b[j++]]); }
-    return ops;
-  }
-  function solid(list) { return list.filter(function (x) { return x.trim() !== ''; }); }
-  function share(ta, tb) {
-    if (!ta.length || !tb.length) { return 0; }
-    var common = lcs(ta, tb, function (x, y) { return x === y; }).filter(function (o) { return o[0] === '='; }).length;
-    return 2 * common / (ta.length + tb.length);
-  }
-  var COMMON = /^(const|let|var|await|async|return|if|else|for|of|in|new|function|this|null|true|false|try|catch|throw|import|from|export|def|self|None|True|False)$/;
-  function names(line) { return (line.match(/[A-Za-z_$][\w$]*/g) || []).filter(function (w) { return !COMMON.test(w); }); }
-  // Two lines are the same line edited only when their own names overlap, not just their punctuation and keywords.
-  function likeness(a, b) {
-    return share(names(a), names(b)) >= 0.3 ? share(solid(tokens(a)), solid(tokens(b))) : 0;
-  }
-  // Comment-only lines are dropped. A comment that starts with "..." stays, as a note for lines left out.
-  function cleanLines(text, spec) {
-    var nos = [], k = 0;
-    (spec || '').trim().split(/\s+/).forEach(function (part) { var m = part.match(/^(\d+)(?:-(\d+))?$/); if (m) { for (var x = +m[1]; x <= +(m[2] || m[1]); x++) { nos.push(x); } } });
-    return (text || '').replace(/\t/g, '  ').split('\n').filter(function (line) {
-      return line.trim() !== '' && (!/^\s*(\/\/|\/\*|\*|#)/.test(line) || /^\s*(\/\/|#)\s*\.\.\./.test(line));
-    }).map(function (line) {
-      // a String object, so the line can carry its number through the diff
-      var s = new String(line); s.no = /^\s*(\/\/|#)\s*\.\.\./.test(line) ? 0 : (nos[k++] || 0); return s;
-    });
-  }
-  function merge(parts) {
-    var out = [], i;
-    for (i = 0; i < parts.length; i++) {
-      var p = parts[i];
-      if (p[1] === '' && p[0].trim() === '' && out.length && i + 1 < parts.length && out[out.length - 1][1] !== '' && parts[i + 1][1] === out[out.length - 1][1]) { p = [p[0], parts[i + 1][1]]; }
-      if (out.length && out[out.length - 1][1] === p[1]) { out[out.length - 1][0] += p[0]; } else { out.push([p[0], p[1]]); }
-    }
-    return out;
-  }
-  function row(line, kind, parts) {
-    var body = line.trim(), skip = /^(\/\/|#)\s*\.\.\./.test(body);
-    if (skip) { body = body.replace(/^(\/\/|#)\s*\.\.\.\s*/, '') || 'lines left out'; }
-    return { kind: kind, no: line.no || 0, indent: line.length - line.replace(/^\s+/, '').length, skip: skip, text: body,
-      parts: skip ? [[body, '']] : (parts || [[body, kind === 'old' ? 'del' : kind === 'new' ? 'add whole' : '']]) };
-  }
-  function pairRows(oldLine, newLine) {
-    var ops = lcs(tokens(oldLine.trim()), tokens(newLine.trim()), function (x, y) { return x === y; }), o = [], n = [];
-    ops.forEach(function (op) {
-      if (op[0] === '=') { o.push([op[1], '']); n.push([op[1], '']); }
-      else if (op[0] === '-') { o.push([op[1], 'del']); }
-      else { n.push([op[1], 'add']); }
-    });
-    return [row(oldLine, 'old', merge(o)), row(newLine, 'new', merge(n))];
-  }
-  function diffRows(beforeText, afterText, beforeLines, afterLines) {
-    var a = cleanLines(beforeText, beforeLines), b = cleanLines(afterText, afterLines);
-    function plain(list, kind) { return list.map(function (line) { var r = row(line, kind); if (!r.skip) { r.parts = [[r.text, kind === 'new' ? 'add whole' : '']]; } return r; }); }
-    if (!a.length) { return { blocks: true, fresh: true, before: [], now: plain(b, 'new') }; }
-    var ops = lcs(a, b, function (x, y) { return x.trim() === y.trim(); });
-    function note(line) { return /^\s*(\/\/|#)\s*\.\.\./.test(line); }
-    function wordy(line) { return !note(line) && (line.match(/[A-Za-z_$][\w$]*/g) || []).length >= 2; }
-    var sameCount = ops.filter(function (o) { return o[0] === '=' && wordy(o[1]); }).length, rows = [], paired = 0, i = 0;
-    while (i < ops.length) {
-      if (ops[i][0] === '=') { var kept = row(ops[i][2], 'same'); kept.was = ops[i][1].no || 0; rows.push(kept); i++; continue; }
-      var dels = [], adds = [];
-      while (i < ops.length && ops[i][0] !== '=') { (ops[i][0] === '-' ? dels : adds).push(ops[i][1]); i++; }
-      var used = 0;
-      adds.forEach(function (add) {
-        var best = -1, bestScore = 0.45, k;
-        for (k = used; k < dels.length && !note(add); k++) { var score = note(dels[k]) ? 0 : likeness(dels[k], add); if (score > bestScore) { best = k; bestScore = score; } }
-        if (best < 0) { rows.push(row(add, 'new')); return; }
-        for (k = used; k < best; k++) { rows.push(row(dels[k], 'old')); }
-        rows.push.apply(rows, pairRows(dels[best], add)); paired++; used = best + 1;
-      });
-      for (var k = used; k < dels.length; k++) { rows.push(row(dels[k], 'old')); }
-    }
-    if ((paired + sameCount) / Math.max(1, Math.max(a.filter(wordy).length, b.filter(wordy).length)) < 0.25) { return { blocks: true, before: plain(a, 'old'), now: plain(b, 'new') }; }
-    return { blocks: false, rows: rows };
-  }
-  window.prtifactDiff = diffRows;
-
   // ---- marks ----
   var MARKS = { yes: 'M3 11l5 6L17 3', no: 'M4 4l12 12M16 4L4 16', none: 'M5 10h10', ask: 'M6 7a4 4 0 1 1 6 3.4c-1.4.9-2 1.6-2 3.1M10 17.4v.2' };
   function mark(kind) {
@@ -459,7 +290,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     path.setAttribute('d', MARKS[kind]); svg.appendChild(path); return svg;
   }
   var SAID = { yes: 'right: ', no: 'wrong: ', ask: 'open: ', none: '' };
-  all('td.yes, td.no, td.ask, td.none, ul.tests li.yes, ul.tests li.no').forEach(function (node) {
+  all('td.yes, td.no, td.ask, td.none').forEach(function (node) {
     var kind = ['yes', 'no', 'ask', 'none'].filter(function (k) { return node.classList.contains(k); })[0];
     var label = el('span', '', node.textContent); node.textContent = '';
     node.appendChild(mark(kind));
@@ -467,7 +298,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     node.appendChild(label);
   });
 
-  // ---- the app: the changes down the left, the levels across the top of the panel ----
+  // ---- the app: the changes down the left, one drawing at a time in the panel ----
   var page = document.querySelector('.page'), header = page.querySelector('header');
   var changeSections = all('section.change');
   if (!changeSections.length) { return; }
@@ -482,43 +313,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   fold.addEventListener('click', function () { shell.classList.toggle('folded'); });
   all('a', header).forEach(function (a) { a.title = a.textContent; a.setAttribute('aria-label', a.textContent); a.textContent = '↗'; a.className = 'out'; });
 
-  var view = 'both', level = 'idea', current = 0, timer = null, built = [];
-  var LEVEL_NAMES = { idea: 'Idea', code: 'Code', screen: 'Screen', replay: 'Replay' };
-
-  function codeLine(r, mode, number) {
-    var plain = mode === 'plain';
-    var line = el('div', 'ln ' + (plain ? 'same' : r.kind) + (r.skip ? ' skip' : '') + (mode === 'focus' ? ' focus' : ''));
-    line.appendChild(el('span', 'gut', number ? String(number) : ''));
-    var src = el('span', 'src'); src.style.paddingLeft = (r.indent + 2) + 'ch';
-    if (plain) { src.appendChild(el('span', '', (r.skip ? '⋯ ' : '') + r.text)); }
-    else { r.parts.forEach(function (p) { src.appendChild(el('span', p[1], (r.skip ? '⋯ ' : '') + p[0])); }); }
-    line.appendChild(src); return line;
-  }
-  // new lines are typed in, the way they were written
-  var typing = null, typingMs = 0;
-  function stopTyping() { if (typing) { cancelAnimationFrame(typing.frame); clearTimeout(typing.guard); typing.finish(); typing = null; } }
-  function typeIn(lines) {
-    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var spans = [], total = 0;
-    lines.forEach(function (line) { all('.src span', line).forEach(function (node) { spans.push({ node: node, line: line, full: node.textContent }); total += node.textContent.length; }); });
-    if (still || !total) { return 0; }
-    var duration = Math.min(3400, Math.max(600, total * 17)), began = null;
-    function draw(shown) {
-      var left = shown, seen = [];
-      spans.forEach(function (s) { var take = Math.min(s.full.length, left); s.node.textContent = s.full.slice(0, take); left -= take; if (take > 0 && seen.indexOf(s.line) < 0) { seen.push(s.line); } });
-      lines.forEach(function (line) { line.classList.toggle('untyped', seen.indexOf(line) < 0); });
-    }
-    function frame(now) {
-      if (began === null) { began = now; }
-      var part = Math.min(1, (now - began) / duration);
-      draw(Math.floor(total * part));
-      if (!typing) { return; }
-      if (part < 1) { typing.frame = requestAnimationFrame(frame); } else { clearTimeout(typing.guard); typing = null; }
-    }
-    draw(0);
-    typing = { frame: requestAnimationFrame(frame), finish: function () { draw(total); }, guard: setTimeout(stopTyping, duration + 120) };
-    return duration;
-  }
+  var view = 'both', current = 0, timer = null, built = [];
   function navButton(label, badge) {
     var b = el('button'); b.type = 'button';
     b.appendChild(el('span', 'n', badge)); b.appendChild(el('span', 'name', label)); b.title = label;
@@ -534,55 +329,6 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   side.appendChild(el('div', 'group', header.getAttribute('data-list') || 'The changes'));
   changeSections.forEach(function (section, index) {
     var labels = (section.getAttribute('data-labels') || 'Before|Now').split('|');
-    var beforeSrc = section.querySelector('script.before'), afterSrc = section.querySelector('script.after');
-    var model = diffRows(beforeSrc ? beforeSrc.textContent : '', afterSrc ? afterSrc.textContent : '',
-      beforeSrc ? beforeSrc.getAttribute('data-lines') : '', afterSrc ? afterSrc.getAttribute('data-lines') : '');
-    var numbered = (model.blocks ? model.before.concat(model.now) : model.rows).some(function (r) { return r.no > 0; });
-    var key = section.getAttribute('data-key');
-    if (key) {
-      var test = null;
-      try { test = new RegExp(key); } catch (error) { test = null; }
-      (model.blocks ? model.now : model.rows).forEach(function (r) { if (test && r.kind !== 'old' && !r.skip && test.test(r.text)) { r.key = true; } });
-    }
-    // one edit = one run of changed lines; the code is walked one edit at a time
-    var edits = 0;
-    if (model.blocks) { edits = 1; }
-    else { var inside = false; model.rows.forEach(function (r) { if (r.kind === 'same') { inside = false; r.edit = 0; } else { if (!inside) { edits++; inside = true; } r.edit = edits; } }); }
-    // Live line numbers for the walk. Each edit moves the lines below it by what it adds minus what it
-    // removes, measured between the unchanged lines around it, so lines left out of the excerpt count too.
-    var delta = {};
-    if (!model.blocks && numbered) {
-      var rs = model.rows, groups = {}, seen = 0;
-      rs.forEach(function (r) { if (r.kind === 'same') { r.above = seen; } else { seen = r.edit; } });
-      var anchor = function (r) { return r.kind === 'same' && r.no > 0 && r.was > 0; };
-      for (var e = 1; e <= edits; e++) {
-        var first = -1, last = -1, counted = 0, p, q;
-        rs.forEach(function (r, i) { if (r.edit === e) { if (first < 0) { first = i; } last = i; if (!r.skip) { counted += r.kind === 'new' ? 1 : -1; } } });
-        for (p = first - 1; p >= 0 && !anchor(rs[p]); p--) { }
-        for (q = last + 1; q < rs.length && !anchor(rs[q]); q++) { }
-        delta[e] = counted;
-        rs.slice(first, last + 1).forEach(function (r) { r.prevSame = p >= 0 ? rs[p] : null; r.nextSame = q < rs.length ? rs[q] : null; });
-        (groups[p + ':' + q] = groups[p + ':' + q] || { p: p, q: q, list: [] }).list.push(e);
-      }
-      Object.keys(groups).forEach(function (g) {
-        var x = groups[g];
-        if (x.p < 0 || x.q >= rs.length) { return; }
-        var rest = (rs[x.q].no - rs[x.p].no) - (rs[x.q].was - rs[x.p].was);
-        x.list.slice(0, -1).forEach(function (e) { rest -= delta[e]; });
-        delta[x.list[x.list.length - 1]] = rest;
-      });
-    }
-    // the number a line has while edits 1 to k are in and the rest are not
-    function liveNo(r, k) {
-      if (r.skip) { return 0; }
-      if (r.kind === 'new') { return r.no; }
-      if (r.kind === 'same') { var n = r.no; for (var e = k + 1; e <= r.above; e++) { n -= delta[e] || 0; } return n; }
-      if (r.prevSame) { return liveNo(r.prevSame, k) + (r.no - r.prevSame.was); }
-      if (r.nextSame) { return liveNo(r.nextSame, k) - (r.nextSame.was - r.no); }
-      return 0;
-    }
-    var editSays = all('ol.edits li', section).map(function (li) { return li.textContent; });
-    var refs = { before: beforeSrc ? beforeSrc.getAttribute('data-ref') : '', now: afterSrc ? afterSrc.getAttribute('data-ref') : '' };
     var boards = all('svg.board', section).map(function (svg) {
       var says = svg.nextElementSibling && svg.nextElementSibling.matches('ol.says') ? all('li', svg.nextElementSibling).map(function (li) { return li.textContent; }) : [];
       var steps = Math.max(says.length, Math.max.apply(null, [0].concat(all('[data-step]', svg).map(function (n) { return +n.getAttribute('data-step'); }))));
@@ -592,36 +338,14 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, says: says, steps: steps };
     });
     var verdict = section.querySelector('.verdict');
-    var screens = section.querySelector('.screens'), replay = section.querySelector('.replay');
-    all('ul.tests, details.edges, ol.edits', section).forEach(function (n) { n.hidden = true; });
+    var stage = el('div', 'level'), boardBox = el('div', 'boards');
+    boards.forEach(function (b) { boardBox.appendChild(b.figure); }); stage.appendChild(boardBox);
 
-    var panels = {}, order = [];
-    function panel(id) { panels[id] = el('div', 'level'); order.push(id); return panels[id]; }
-    var code = el('div', 'code');
-    if (boards.length) { var boardBox = el('div', 'boards'); boards.forEach(function (b) { boardBox.appendChild(b.figure); }); panel('idea').appendChild(boardBox); }
-    if (beforeSrc || afterSrc) { panel('code').appendChild(code); }
-    if (screens) { panel('screen').appendChild(screens); }
-    if (replay) {
-      all('ol[data-view]', replay).forEach(function (list) {
-        var run = el('div', 'run'); run.setAttribute('data-view', list.getAttribute('data-view'));
-        run.appendChild(el('b', '', list.getAttribute('data-title') || (list.getAttribute('data-view') === 'before' ? labels[0] : labels[1])));
-        replay.insertBefore(run, list); run.appendChild(list);
-      });
-      var proof = panel('replay'); proof.appendChild(replay);
-      if (replay.getAttribute('data-note')) { proof.appendChild(el('p', 'replay-note', replay.getAttribute('data-note'))); }
-    }
-
-    // the options sit on top: the level, the view, and the controls that move through the steps
-    var bar = el('div', 'bar'), levelTabs = el('div', 'levels'), seg = el('div', 'seg'), stepper = el('div', 'stepper');
-    levelTabs.setAttribute('role', 'tablist');
-    var levelButtons = order.map(function (id) {
-      var b = el('button', '', LEVEL_NAMES[id]); b.type = 'button'; b.setAttribute('role', 'tab'); levelTabs.appendChild(b);
-      b.addEventListener('click', function () { stopPlay(); level = id; paint(false); });
-      return { id: id, node: b };
-    });
+    // the options sit on top: the view, and the controls that move through the steps
+    var bar = el('div', 'bar'), seg = el('div', 'seg'), stepper = el('div', 'stepper');
     var viewButtons = [['before', labels[0]], ['now', labels[1]], ['both', 'Both']].map(function (pair) {
       var b = el('button', '', pair[1]); b.type = 'button'; seg.appendChild(b);
-      b.addEventListener('click', function () { stopPlay(); view = pair[0]; step = 0; codeStep = 0; paint(false); });
+      b.addEventListener('click', function () { stopPlay(); view = pair[0]; step = 0; paint(false); });
       return { view: pair[0], node: b };
     });
     var playButton = el('button', 'go', 'Play'), back = el('button', 'one', '‹'), next = el('button', 'one', '›'), count = el('span', 'count');
@@ -629,68 +353,18 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     var onward = el('button', 'onward', index + 1 < changeSections.length ? 'Next: ' + changeSections[index + 1].getAttribute('data-name') + ' →' : '');
     onward.type = 'button'; onward.addEventListener('click', function () { stopPlay(); show(index + 1); built[index + 1].restart(); });
     [playButton, back, next].forEach(function (b) { b.type = 'button'; stepper.appendChild(b); }); stepper.appendChild(count);
-    bar.appendChild(levelTabs); bar.appendChild(seg); bar.appendChild(stepper);
+    bar.appendChild(seg); bar.appendChild(stepper);
     if (section.getAttribute('data-href')) {
       var out = el('a', 'out', '↗'); out.href = section.getAttribute('data-href'); out.title = 'Open this change'; out.setAttribute('aria-label', 'Open this change'); bar.appendChild(out);
     }
     var say = el('p', 'say'); say.setAttribute('aria-live', 'polite');
-    section.appendChild(bar);
-    order.forEach(function (id) { section.appendChild(panels[id]); });
-    section.appendChild(say);
+    section.appendChild(bar); section.appendChild(stage); section.appendChild(say);
     if (verdict) { section.appendChild(verdict); }
     section.appendChild(onward);
 
-    var step = 0, codeStep = 0;
+    var step = 0;
     function shown() { return boards.filter(function (b) { return view === 'both' || b.view === view; }); }
     function total() { return shown().reduce(function (sum, b) { return sum + b.steps; }, 0); }
-    function codeTotal() { return view === 'both' ? edits : 0; }
-    function here() { return order.indexOf(level) >= 0 ? level : order[0]; }
-
-    function paintCode(animate) {
-      stopTyping(); typingMs = 0;
-      code.textContent = '';
-      var tab = el('div', 'tab'), body = el('div', 'body'), number = 0, text = '', focus = null, fresh = [];
-      var file = model.blocks ? (view === 'before' ? 'before' : view === 'now' ? 'now' : (codeStep >= 1 ? 'now' : 'before')) : (view === 'both' ? (codeStep === 0 ? 'before' : 'now') : view);
-      code.appendChild(tab); code.appendChild(body);
-      function head(name, ref) {
-        var path = (ref || '').split(/[ ,]/)[0], file = path.split('/').pop().replace(/:\d+$/, '');
-        tab.appendChild(el('b', '', file || name)); tab.appendChild(el('span', '', ref || '')); tab.appendChild(el('span', 'which', name));
-      }
-      function add(r, mode) {
-        var removed = mode === 'focus' && r.kind === 'old', n;
-        if (!numbered) { n = r.skip || removed ? 0 : ++number; }
-        else if (file === 'before') { n = r.kind === 'same' ? r.was : r.kind === 'old' ? r.no : 0; }
-        else if (view === 'both' && !model.blocks) { n = r.kind === 'old' && r.edit === codeStep ? 0 : liveNo(r, codeStep); }
-        else { n = r.kind === 'old' ? 0 : r.no; }
-        var line = codeLine(r, mode, n);
-        body.appendChild(line);
-        if (mode === 'focus') { if (!focus) { focus = line; } if (r.kind === 'new') { fresh.push(line); } }
-      }
-      if (model.blocks) {
-        var which = view === 'before' ? 'before' : view === 'now' ? 'now' : (codeStep >= 1 ? 'now' : 'before');
-        if (model.fresh && which === 'before') { head(labels[0], 'nothing here yet'); text = 'There was no code here before.'; }
-        else {
-          head(which === 'before' ? labels[0] : labels[1], refs[which]);
-          model[which].forEach(function (r) { add(r, which === 'now' && view === 'both' ? 'focus' : 'plain'); });
-          text = which === 'before' ? 'This is the code before the change.' : (view === 'both' ? (editSays[0] || '') : '');
-        }
-      } else if (view !== 'both') {
-        head(view === 'before' ? labels[0] : labels[1], view === 'before' ? refs.before : refs.now);
-        model.rows.forEach(function (r) { if (r.kind !== (view === 'before' ? 'new' : 'old')) { add(r, 'plain'); } });
-      } else {
-        head(codeStep === 0 ? labels[0] : labels[1], codeStep === 0 ? refs.before : refs.now);
-        model.rows.forEach(function (r) {
-          if (!r.edit) { add(r, 'plain'); }
-          else if (r.edit < codeStep) { if (r.kind === 'new') { add(r, 'plain'); } }
-          else if (r.edit === codeStep) { add(r, 'focus'); }
-          else if (r.kind === 'old') { add(r, 'plain'); }
-        });
-        text = codeStep === 0 ? 'This is the code before the change.' : (editSays[codeStep - 1] || '');
-      }
-      if (animate && fresh.length) { typingMs = typeIn(fresh); }
-      if (focus && animate && focus.scrollIntoView) { focus.scrollIntoView({ block: 'nearest' }); }
-      return text;
-    }
     function paintBoards(animate) {
       var list = shown(), offset = 0, text = '';
       if (step > total()) { step = total(); }
@@ -709,57 +383,43 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       return text;
     }
     function paint(animate) {
-      var now = here();
-      order.forEach(function (id) { panels[id].hidden = id !== now; });
-      levelButtons.forEach(function (b) { b.node.setAttribute('aria-selected', b.id === now ? 'true' : 'false'); });
       viewButtons.forEach(function (b) { b.node.setAttribute('aria-pressed', b.view === view ? 'true' : 'false'); });
-      if (screens) { all('figure[data-view]', screens).forEach(function (f) { f.hidden = view !== 'both' && f.getAttribute('data-view') !== view; }); }
-      if (replay) { all('.run', replay).forEach(function (r) { r.hidden = view !== 'both' && r.getAttribute('data-view') !== view; }); }
-      var boardText = paintBoards(animate && now === 'idea'), codeText = paintCode(animate && now === 'code');
-      var at = now === 'idea' ? step : now === 'code' ? codeStep : 0, of = now === 'idea' ? total() : now === 'code' ? codeTotal() : 0;
-      var text = now === 'idea' ? boardText : now === 'code' ? codeText : '';
-      if (!text && of && at === 0) { text = 'Press Play to watch it, or Next to go one step at a time.'; }
-      say.textContent = text; say.hidden = now !== 'idea' && now !== 'code';
-      var stepping = now === 'idea' || now === 'code';
-      back.hidden = next.hidden = count.hidden = !stepping; count.textContent = of ? at + ' / ' + of : '';
-      back.disabled = at <= 0; next.disabled = at >= of;
-      var done = of > 0 && at >= of;
+      var text = paintBoards(animate), of = total();
+      if (!text && of && step === 0) { text = 'Press Play to watch it, or the arrow to go one step at a time.'; }
+      say.textContent = text;
+      count.textContent = of ? step + ' / ' + of : '';
+      back.disabled = step <= 0; next.disabled = step >= of;
+      var done = of > 0 && step >= of;
       if (verdict) { verdict.classList.toggle('shown', done); verdict.classList.toggle('fresh', done && Boolean(animate)); }
-      onward.hidden = !(done || !stepping) || index + 1 >= changeSections.length;
+      onward.hidden = !done || index + 1 >= changeSections.length;
       return text;
     }
-    function forward() {
-      var now = here();
-      if (now === 'idea' && step < total()) { step++; return paint(true); }
-      if (now === 'code' && codeStep < codeTotal()) { codeStep++; return paint(true); }
-      return null;
-    }
-    function restart() { level = boards.length ? 'idea' : 'code'; step = 0; codeStep = 0; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); return paint(false); }
-    back.addEventListener('click', function () { stopPlay(); if (here() === 'idea') { step--; } else { codeStep--; } paint(false); });
-    next.addEventListener('click', function () { stopPlay(); if (here() === 'idea') { step++; } else { codeStep++; } paint(true); });
+    function forward() { if (step < total()) { step++; return paint(true); } return null; }
+    function restart() { step = 0; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); return paint(false); }
+    back.addEventListener('click', function () { stopPlay(); step--; paint(false); });
+    next.addEventListener('click', function () { stopPlay(); step++; paint(true); });
     playButton.addEventListener('click', function () {
       if (timer) { stopPlay(); return; }
-      if (here() !== 'idea' && here() !== 'code') { level = boards.length ? 'idea' : 'code'; }
-      if (view !== 'both') { view = 'both'; step = 0; codeStep = 0; }
+      if (view !== 'both') { view = 'both'; step = 0; }
       var text = forward();
       if (text === null) { restart(); text = forward(); }
       if (text === null) { stopPlay(); return; }
       playButton.textContent = 'Pause';
-      timer = setTimeout(tick, pause(text) + typingMs);
+      timer = setTimeout(tick, pause(text));
     });
 
     var nav = navButton(section.getAttribute('data-name'), String(index + 1));
     nav.addEventListener('click', function () { stopPlay(); show(index); });
     built.push({ section: section, nav: nav, paint: paint, playButton: playButton, forward: forward, restart: restart,
-      toEnd: function () { step = total(); codeStep = codeTotal(); paint(false); } });
+      toEnd: function () { step = total(); paint(false); } });
   });
 
-  // Play walks the steps of the one thing on screen, then stops. One idea at a time.
+  // Play walks the steps of the one drawing on screen, then stops. One idea at a time.
   function tick() {
     timer = null;
     var text = built[current].forward ? built[current].forward() : null;
     if (text === null) { stopPlay(); return; }
-    timer = setTimeout(tick, pause(text) + typingMs);
+    timer = setTimeout(tick, pause(text));
   }
 
   if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }
@@ -826,12 +486,12 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     var name = current < changeSections.length ? 'change-' + (current + 1) : (built[current].section.id || 'part-' + (current + 1));
     try { history.replaceState(null, '', '#' + name); } catch (error) { /* the hash is a convenience only */ }
   }
-  // #change-3, #change-3-code, #change-3-all (every step shown), or the id of a whole-change section
-  var asked = /^#change-(\d+)(?:-(idea|code|screen|replay|all|codeall))?$/.exec(location.hash || ''), start = 0;
-  if (asked) { start = +asked[1] - 1; if (asked[2] === 'codeall') { level = 'code'; } else if (asked[2] && asked[2] !== 'all') { level = asked[2]; } }
+  // #change-3, #change-3-all (every step shown), or the id of a whole-change section
+  var asked = /^#change-(\d+)(?:-([a-z]+))?$/.exec(location.hash || ''), start = 0;
+  if (asked) { start = +asked[1] - 1; }
   else if (location.hash.length > 1) { built.forEach(function (b, i) { if (b.section.id === location.hash.slice(1)) { start = i; } }); }
   show(start);
-  if (asked && (asked[2] === 'all' || asked[2] === 'codeall') && built[current].toEnd) { built[current].toEnd(); }
+  if (asked && asked[2] === 'all' && built[current].toEnd) { built[current].toEnd(); }
 })();
 /* PRTIFACT ENGINE END */
 </script>

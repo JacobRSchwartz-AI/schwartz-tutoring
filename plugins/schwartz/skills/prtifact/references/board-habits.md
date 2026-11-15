@@ -38,7 +38,7 @@ Two limits. Real program code is on only 17 of the pages, and none of the record
 Two of his boards are the direct models for a PRtifact:
 
 - **The comparison chart.** A ruled table with the columns Metric, M1, M2, Winner. Before each metric, a green up arrow or a red down arrow says which direction is better. Under the table, one boxed line: "M2 is better." The case chart on the page is this table.
-- **The diff.** Two boxed equations stacked, "OG:" in black and "New" in red, identical except for one added factor. Under them, the new curve drawn over the black one. The code view on the page is this pair.
+- **The diff.** Two boxed equations stacked, "OG:" in black and "New" in red, identical except for one added factor. Under them, the new curve drawn over the black one. The Before and Now drawings are this pair: the same picture twice, with only the change in color.
 
 ## 3. Order, flow and branch
 
@@ -78,10 +78,10 @@ Pick by what the change is about. If none fits, the change probably needs no dra
 | Timing: schedules, overlap, races, timeouts | A time line with ticks and times. A bar for each run. A red bracket over the overlap. The skipped run gets a red slash. | Number line |
 | Two systems that must agree (a database and an outside service) | Two columns split by a vertical rule, one per system. What each holds is written in its column. What is undone gets a red slash. | His two-column ledgers |
 | A quantity that is split, capped or compared with a limit | A bar cut into labelled parts, or a number line with the limit marked and the value on one side of it. | Split bar, number line |
-| A requirement and the code that meets it | The phrase in the ticket and the condition in the code underlined in the same color. | One color follows one thing |
+| A requirement from the ticket | The ticket's phrase written on the board, and the case that now meets it, underlined in the same color. | One color follows one thing |
 | The shape of data (a column, a field, a payload) | A small table of real rows. The new column beside the old ones in the pen color. | Only the added piece in color |
 | A guard that only exists because of the rest of this change (the old code never reached that situation) | Label the two views "Without it" and "With it". "Without it" draws what the new code would do if the guard were missing. | Two near-identical cases, opposite verdicts |
-| A rename, a config value, a moved file | No drawing. | |
+| A rename, a config value, a moved file | Not an entry. Nothing to draw. | |
 
 ## 6. What he did on real code
 

@@ -13,7 +13,7 @@
 | `plugins/schwartz/skills/prtifact/SKILL.md` | PRtifact: what goes on a review page, the steps and the drawing rules |
 | `prtifact/references/board-habits.md` | His board habits ranked by count, from 4,726 drawings, and which drawing fits which code change |
 | `prtifact/references/page.md` | How to fill the template and write a drawing |
-| `prtifact/assets/template.html` | The page: its design, the diff, the marks and the step buttons |
+| `prtifact/assets/template.html` | The page: its design, the marks and the step buttons |
 
 ## Adding a skill
 
