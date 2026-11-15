@@ -34,7 +34,7 @@ Each entry is a `<section class="change">`. For one pull request, an entry is on
 |---|---|
 | `data-name` | The label in the list on the left, two to four words. |
 | `data-pen` | This entry's color: `blue`, `purple` or `brown`. Give neighbors different pens. Red and green are never a pen. |
-| `data-labels` | The names of the two drawings, as `Without it\|With it`. Leave it out to get `Before\|Now`. Use Before and Now when the old code handled this situation and got it wrong. Use "Without it" and "With it" when the old code never reached the situation, so the piece only matters because of the rest of the change. |
+| `data-labels` | The names of the two drawings, as `Without it\|With it`. Leave it out to get `Before\|Now`. Use Before and Now when the old code handled this situation and got it wrong. Use "Without it" and "With it" when the old code never reached the situation, for whatever reason (it stopped earlier, or the path did not exist), so the piece only matters because of the rest of the change. |
 | `data-href` | A link to this entry's own pull request. Use it in a stack. It shows as an arrow at the end of the options row. |
 
 Use only the parts listed here: the two boards, the sentences after each, and the verdict. There is no code on the page; the reviewer reads the code on the pull request.
@@ -46,8 +46,8 @@ The `p.verdict` is the conclusion. It stays hidden until the last step of the dr
 Each entry has two boards, `data-view="before"` and `data-view="now"`. They stack, and the steps run through the first board and then the second. The second board stays off the screen until its first message starts. The board starts blank. Each board has a thread of messages on its right, starting level with the top of the board. Play shows a typing mark in the thread, then the step's message, then draws the step in, waits long enough to read, and goes on; it stops at the end of this entry and offers the next one. The two small arrows go one step back or forward. Each new step is drawn in.
 
 - Wrap what appears together in `<g data-step="1">`, `<g data-step="2">` and so on. Anything outside a step group is on the board from the start.
-- In the "before" board put everything in steps, so it starts blank. In the "now" board write the base (a copy of the finished "before" picture, without its conclusion) outside any group, and put only the change in steps.
-- After each board, an `<ol class="says">` with one `<li>` per step: the message that lands in the thread beside the drawing at that step. The "before" board is the steps to recreate: its first message is a question that ends with a question mark ("What would have to happen for a family to pay twice?"), and each later message is one thing that has to happen, in order. The page numbers every "before" message that does not end with a question mark, and titles that thread Steps to recreate. A message for a step that names the real case says so: "Here: Sep 27, 1 hour, $56.00."
+- In the "before" board put everything in steps, so it starts blank. In the "now" board write the base outside any group: the black ink of the finished "before" picture, without its red marks of what went wrong and without its conclusion. Put only the change in steps.
+- After each board, an `<ol class="says">` with one `<li>` per step: the message that lands in the thread beside the drawing at that step. The "before" board is the steps to recreate: its first message is the question ("What would have to happen for a family to pay twice?"), and each later message is one thing that has to happen, in order. The page never numbers the first "before" message and numbers every one after it, under the title Steps to recreate. Step 1 of the "before" board draws the named parts and goes with the question. A message for a step that names the real case says so: "Here: Sep 27, 1 hour, $56.00."
 - Draw the things the code acts on (sessions, hours, invoices, a timer), not the code. Name every thing before it acts. If the drawing has "A" and "B", the step that brings them in says who they are. If it uses a word from the code ("split", "held back"), an early step shows what that is.
 - Give each board a `role="img"` and an `aria-label` that says what the finished drawing shows.
 
@@ -57,8 +57,8 @@ Each entry has two boards, `data-view="before"` and `data-view="now"`. They stac
 
 | Class | On | Result |
 |---|---|---|
-| (none) | `<text>` | Handwriting, 20 px, black. About 7.6 units per character. |
-| `s` | `<text>` | Smaller handwriting, 16.5 px. About 6.3 units per character. |
+| (none) | `<text>` | Handwriting, 20 px, black. About 7.1 units per character. |
+| `s` | `<text>` | Smaller handwriting, 16.5 px. About 6.0 units per character. |
 | `k` | `<path>`, `<rect>`, `<line>` | A black pen stroke, no fill. |
 | `pen` | text or stroke | This entry's color. Use it for everything the change adds. |
 | `red`, `green` | text or stroke | Wrong or removed, and right. |
@@ -89,7 +89,7 @@ For a slanted or curved arrow, draw the two head strokes about 11 units long, ea
 
 ## 3. The case chart
 
-This goes in `<section id="cases" data-name="Cases">`, after the entries.
+This goes in `<section id="cases" data-name="Cases">`. In the template the order is: the header, the cases, then `<section id="changes">` holding the entries, then the decisions. The list on the left always shows the entries first and the cases and decisions under them, whatever the order in the file.
 
 ```html
 <table class="chart">
@@ -130,7 +130,7 @@ This goes in `<section id="decisions" data-name="Decisions">`, last. The number 
 - When the reviewer clicks an option on a page published as a Claude artifact, the page posts it as a comment to Claude. That is the signal to act on it (SKILL.md, step 10). Publish the page with the `comments` capability so this works. Anywhere else, the button tells the reviewer to pass the answer on in the chat.
 - When a decision is made, republish with `data-decided="the option's exact words"` on that decision. It then shows as decided, with its buttons off.
 - When the decision became its own follow-up pull request with its own PRtifact, also add `data-follow="the follow-up page's link"`. A "Follow-up page" link shows beside "Decided".
-- Under the decisions, the limits: a chart of each piece and whether a test covers it (`yes` with the number of tests, `no` with "no test"), and a short list of what the change was never run against and what is still to do by hand. If the author of the code made the page, say so here.
+- Under the decisions, the limits: a chart of each piece and how it was checked: `yes` with the number of tests, or with "run by hand" or "seen in real data" when that is what happened; `no` with "not checked". and a short list of what the change was never run against and what is still to do by hand. If the author of the code made the page, say so here.
 
 ## 5. The technical rules the template already meets
 

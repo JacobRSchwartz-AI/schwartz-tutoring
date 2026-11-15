@@ -42,7 +42,7 @@ Under the list, two entries for the whole change:
 7. **List the cases.** Every situation where the code behaves differently after the change, and the nearby ones a reviewer will worry about that must stay the same. One row each. Write the case so it is understood without clicking anything, and say what happened before and what happens now in four words or fewer each.
 8. **Write the pending decisions.** Each one is a question the reviewer has to answer, two or three sentences of what they need to know, and two to four real options, listed neutrally. Then the limits: what is tested, what is not, what was never run against the real thing.
 9. **Fill the template** following [references/page.md](references/page.md), check it against section 6, look at it once if you can render it, and hand it over the way the person asked. If they did not say, publish it when your environment can publish a page and give the link; otherwise save the .html file and give its path.
-10. **When a decision comes back** (the reviewer clicked an option, or told you), record it on the pull request, make the change it calls for, and republish the page with that decision marked decided. If the decision becomes its own follow-up pull request, do not grow this page into a stack: make the follow-up its own PRtifact (often a single entry) and link it from the decided decision.
+10. **When a decision comes back** (the reviewer clicked an option, or told you), record it on the pull request as a comment (on a merged one too: its decisions are follow-ups), make the change it calls for, and republish the page with that decision marked decided. If the decision becomes its own follow-up pull request, do not grow this page into a stack: make the follow-up its own PRtifact (often a single entry) and link it from the decided decision.
 
 ## 3. The drawing rules
 
@@ -60,15 +60,15 @@ These hold on nearly every board. Follow them on every page.
 
 How a drawing is built, from the recorded sessions:
 
-- The starting state goes on first, in full, in black.
-- Then a question. In more than half of the recorded drawings he asked first and the answer became the next mark. So the first sentence of the first drawing is a question the reviewer can answer before they go on.
+- The starting state goes on first, in black: the parts, each named.
+- Then a question. In more than half of the recorded drawings he asked first and the answer became the next mark. So the first step of the Before drawing puts the named parts on the board, and its message is the question.
 - Then the change, in its color.
 - Then the conclusion, with a check or an X.
-- "Now" starts as a copy of "Before", without its conclusion. He copied an earlier drawing forward and edited the copy; he did not start over. A step can only add ink, so what no longer applies is slashed, not removed.
+- "Now" starts as a copy of the black ink of "Before": the situation, without the red marks of what went wrong and without the conclusion. He copied an earlier drawing forward and edited the copy; he did not start over. A step can only add ink, so what no longer applies is slashed, not removed.
 
 ## 4. Words
 
-- **Few.** A Before or After cell is four words or fewer. A conclusion is one sentence. A step's message is one or two short sentences. A drawing's messages should not run taller than the drawing. If a paragraph is needed, the drawing is wrong.
+- **Few.** A Before or After cell is four words or fewer. A conclusion is one sentence. A step's message is one or two short sentences. Aim for a drawing's messages to fit beside it; the thread scrolls when they don't, but then the reader loses the earlier steps. If a paragraph is needed, the drawing is wrong.
 - **Plain.** Write what a person on the team would say out loud. Name things by what they do, not by what the code calls them.
 - **Never** the phrase "load-bearing". No em dashes. No "robust", "seamless", "leverage", "comprehensive".
 - **Say what is not tested as plainly as what is.**

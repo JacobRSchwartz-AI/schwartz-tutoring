@@ -92,7 +92,6 @@ h3 { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--i
 
 /* code: one diff. Black is unchanged, red slash is removed, the pen color is added. */
 
-/* screens: the interface before and after, left and right */
 
 /* boards */
 .boards { display: grid; gap: 12px; max-width: 640px; }
@@ -121,12 +120,8 @@ ol.says { display: none; }
 .stepper button.go { background: var(--ink); color: var(--paper); min-width: 82px; }
 .stepper button:disabled { opacity: 0.35; cursor: default; }
 .stepper .count { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
-.say { max-width: 640px; min-height: 3em; margin: 10px 0 0; font-size: 16px; }
 
-/* replay: the same real request run through the old code and the new code */
 .empty { color: var(--ink-soft); font-size: 15px; }
-.decide { border: 2px solid var(--ink); padding: 14px 18px; max-width: 760px; margin-top: 4px; }
-.decide .hand { font-size: 25px; line-height: 1.15; margin: 0 0 8px; }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px 40px; align-items: start; }
 
 /* narrow screens: the list of changes becomes a strip across the top */
@@ -146,7 +141,6 @@ header h1 { flex: 0 1 auto; }
 a.out { display: inline-grid; place-items: center; width: 32px; height: 30px; border: 1.5px solid var(--ink); border-radius: 2px; font-family: var(--typed); font-size: 17px; line-height: 1; text-decoration: none; color: var(--ink); flex: none; }
 .bar .stepper { margin: 0; max-width: none; }
 .stepper .count { min-width: 44px; }
-.say { min-height: 1.6em; margin: 12px 0 0; font-size: 17px; max-width: 640px; }
 .verdict { margin: 12px 0 0; visibility: hidden; }
 .verdict.shown { visibility: visible; }
 .verdict.fresh { animation: ink-in 0.7s ease-out both; }
@@ -171,7 +165,6 @@ ul.limits { margin: 0; padding-left: 20px; font-size: 15px; max-width: 80ch; dis
 main h2 + .decision, main .decision + h2 { margin-top: 0; }
 main h2:not(:first-child) { margin-top: 26px; }
 @media (prefers-reduced-motion: reduce) { .verdict.fresh { animation: none; } }
-/* version 7: the Code level is an editor. Added code is Schwartz orange and typed in. Removed code is gray and crossed off. */
 [hidden] { display: none !important; }
 /* the drawing on the left, its messages on the right, starting level with it */
 .boards { max-width: 1000px; }
@@ -201,6 +194,11 @@ main > section.change { max-width: none; }
 .thread-title { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: -2px; }
 .msg .num { font-family: var(--mono); font-weight: 500; font-size: 13.5px; margin-right: 7px; color: var(--ink-soft); }
 .status .follow { margin-left: 10px; font-family: var(--typed); font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+/* on a wide screen a thread is as tall as its drawing and scrolls, like a chat, so it never pushes the next drawing down */
+@media (min-width: 901px) {
+  .row { align-items: stretch; }
+  .thread { height: 0; min-height: 100%; overflow-y: auto; scrollbar-width: thin; padding-right: 4px; }
+}
 /* PRTIFACT STYLE END */
 </style>
 
@@ -369,7 +367,7 @@ main > section.change { max-width: none; }
       all('.k', svg).forEach(function (n) { if (!n.classList.contains('dash')) { n.setAttribute('pathLength', '1'); } });
       var row = el('div', 'row'), thread = el('div', 'thread'), n = 0;
       // Before is the steps to recreate: a question first, then each thing that has to happen, numbered
-      var nums = says.map(function (s) { return svg.getAttribute('data-view') === 'before' && !/\?\s*$/.test(s) ? ++n : 0; });
+      var nums = says.map(function (s, i) { return svg.getAttribute('data-view') === 'before' && i > 0 ? ++n : 0; });
       if (n) { thread.appendChild(el('div', 'thread-title', 'Steps to recreate')); }
       thread.setAttribute('aria-live', 'polite'); row.appendChild(figure); row.appendChild(thread);
       return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, row: row, thread: thread, says: says, nums: nums, steps: steps };
@@ -414,10 +412,10 @@ main > section.change { max-width: none; }
           var msg = el('div', 'msg' + (animate ? ' fresh' : '') + (b.nums[k] ? ' step' : ''));
           if (b.nums[k]) { msg.appendChild(el('span', 'num', b.nums[k] + '.')); }
           msg.appendChild(document.createTextNode(b.says[k] || '')); b.thread.appendChild(msg);
-          if (animate && msg.scrollIntoView) { msg.scrollIntoView({ block: 'nearest' }); }
         }
         all('.thread-title', b.thread).forEach(function (n) { n.hidden = want < 1; });
         all('.msg', b.thread).forEach(function (m, i, ms) { m.classList.toggle('last', i === ms.length - 1 && local >= 1 && local <= b.steps); });
+        b.thread.scrollTop = b.thread.scrollHeight;
         all('[data-step]', b.svg).forEach(function (n) {
           var wasOff = n.classList.contains('off'), off = +n.getAttribute('data-step') > local;
           n.classList.toggle('off', off);
@@ -457,7 +455,7 @@ main > section.change { max-width: none; }
       var dots = el('div', 'msg typing'); dots.setAttribute('aria-label', 'Writing');
       dots.appendChild(el('span')); dots.appendChild(el('span')); dots.appendChild(el('span'));
       thread.appendChild(dots);
-      if (dots.scrollIntoView) { dots.scrollIntoView({ block: 'nearest' }); }
+      thread.scrollTop = thread.scrollHeight;
       timer = setTimeout(function () {
         var text = forward();
         if (text === null) { stopPlay(); return; }
@@ -482,7 +480,7 @@ main > section.change { max-width: none; }
   otherSections.forEach(function (section) {
     var name = section.getAttribute('data-name') || section.querySelector('h2').textContent;
     var open = all('.decision:not([data-decided])', section).length;
-    var nav = navButton(name, open ? String(open) : name.slice(0, 2)), index = built.length;
+    var nav = navButton(name, open ? String(open) : '≡'), index = built.length;
     if (open) { nav.querySelector('.n').classList.add('open'); }
     nav.addEventListener('click', function () { stopPlay(); show(index); });
     built.push({ section: section, nav: nav, paint: function () {}, playButton: null });
