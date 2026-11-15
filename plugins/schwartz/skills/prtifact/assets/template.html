@@ -184,6 +184,37 @@ details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
   .replay li { grid-template-columns: 76px minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) { figure.b { transition: none; } svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) { animation: none; stroke-dasharray: none; } svg.board .fresh .k.dash { stroke-dasharray: 5 7; } }
+/* version 6: the link sits beside the name, the controls ride in the options row, the sentence and the verdict come after the drawing */
+header h1 { flex: 0 1 auto; }
+a.out { display: inline-grid; place-items: center; width: 32px; height: 30px; border: 1.5px solid var(--ink); border-radius: 2px; font-family: var(--typed); font-size: 17px; line-height: 1; text-decoration: none; color: var(--ink); flex: none; }
+.bar .stepper { margin: 0; max-width: none; }
+.stepper .count { min-width: 44px; }
+.say { min-height: 1.6em; margin: 12px 0 0; font-size: 17px; max-width: 640px; }
+.verdict { margin: 12px 0 0; visibility: hidden; }
+.verdict.shown { visibility: visible; }
+.verdict.fresh { animation: ink-in 0.7s ease-out both; }
+.ln.focus { background: color-mix(in srgb, var(--pen) 12%, transparent); box-shadow: inset 3px 0 0 var(--pen); }
+nav.side .n.open { background: var(--pen-brown); border-color: var(--pen-brown); color: var(--paper); }
+.stepper button.one { padding: 3px 12px; font-size: 20px; line-height: 1.1; }
+button.onward { display: block; margin-top: 16px; background: none; border: 0; padding: 4px 0; cursor: pointer; font-family: var(--hand); font-size: 22px; text-decoration: underline; text-underline-offset: 5px; }
+/* decisions */
+.decision { border: 2px solid var(--ink); padding: 12px 16px 14px; max-width: 820px; margin: 0 0 14px; }
+.decision .hand { font-size: 24px; line-height: 1.15; margin: 0 0 6px; }
+.decision p { font-size: 15px; }
+.options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.options button { background: none; border: 1.5px solid var(--ink); border-radius: 2px; padding: 6px 14px; cursor: pointer; font-family: var(--hand); font-size: 19px; line-height: 1.2; text-align: left; }
+.options button:hover:not(:disabled) { background: var(--paper-2); }
+.options button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.options button:disabled { cursor: default; opacity: 0.55; }
+.options button[aria-pressed="true"]:disabled { opacity: 1; }
+.status { font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
+.status.sent { color: var(--pen-brown); }
+.status.failed { color: var(--pen-red); }
+.status.done { color: var(--pen-green); font-family: var(--hand); font-size: 20px; }
+ul.limits { margin: 0; padding-left: 20px; font-size: 15px; max-width: 80ch; display: grid; gap: 4px; }
+main h2 + .decision, main .decision + h2 { margin-top: 0; }
+main h2:not(:first-child) { margin-top: 26px; }
+@media (prefers-reduced-motion: reduce) { .verdict.fresh { animation: none; } }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -196,25 +227,24 @@ details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
 -->
 <header>
   <h1>Free shipping counts the coupon</h1>
-  <a href="https://example.com/pull/214">Pull request #214</a>
+  <a href="https://example.com/pull/214">Open pull request #214</a>
 </header>
 
 <section id="cases" data-name="Cases">
   <h2>What changes, case by case</h2>
-  <p class="sub">Free shipping starts at $50. Underlined rows open a worked example.</p>
+  <p class="sub">Free shipping starts at $50.</p>
   <div class="scroll">
     <table class="chart">
       <thead><tr><th>Case</th><th>Before</th><th>After</th></tr></thead>
       <tbody>
-        <tr class="changed" data-example="Order 88213. Cart $60.00, coupon $15.00, so the customer pays $45.00. Before: shipping was free. After: shipping is $5.99."><td>$60 cart, $15 coupon</td><td class="no">free shipping</td><td class="yes">pays $5.99</td></tr>
-        <tr class="changed"><td>Coupon bigger than the cart</td><td class="no">total below $0</td><td class="yes">total $0</td></tr>
+        <tr class="changed"><td>$60 cart with a $15 coupon (order 88213)</td><td class="no">free shipping</td><td class="yes">pays $5.99</td></tr>
+        <tr class="changed"><td>A coupon worth more than the cart</td><td class="no">total below $0</td><td class="yes">total $0</td></tr>
         <tr class="same"><td>$60 cart, no coupon</td><td class="yes">free shipping</td><td class="yes">free shipping</td></tr>
         <tr class="same"><td>$45 cart, no coupon</td><td class="yes">pays $5.99</td><td class="yes">pays $5.99</td></tr>
-        <tr class="changed"><td>$50 after the coupon, exactly</td><td class="none">not decided</td><td class="ask">free. Is that right?</td></tr>
+        <tr class="changed"><td>Exactly $50 left after the coupon</td><td class="none">not decided</td><td class="ask">free shipping</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="boxed">2 fixed, 2 the same, 1 for you to decide</div>
 </section>
 
 <section id="changes">
@@ -238,6 +268,7 @@ function shippingFor(cart) {
   return FLAT_RATE;
 }
     </script>
+    <ol class="edits"><li>Work out what the customer pays after the coupon, and compare that with the minimum instead of the cart total (the star).</li></ol>
     <svg class="board" data-view="before" viewBox="0 0 640 190" role="img" aria-label="Before: the $60 cart is past the $50 line, so shipping is free even though the customer pays $45.">
       <g data-step="1"><path class="k" d="M40 96 H600 M330 84 V108"/><text class="s" x="316" y="130">$50</text><text class="s" x="40" y="130">pays shipping</text><text class="s" x="500" y="130">free shipping</text></g>
       <g data-step="2"><path class="k" d="M450 88 V104"/><text x="424" y="72">cart $60</text></g>
@@ -263,14 +294,6 @@ function shippingFor(cart) {
         <li data-tag="order" class="yes">shipping $5.99, total $50.99</li>
       </ol>
     </div>
-    <ul class="tests">
-      <li class="yes">charges shipping when the coupon takes the cart under the minimum</li>
-      <li class="yes">keeps free shipping when the cart is still over the minimum after the coupon</li>
-      <li class="no">no test at exactly $50 after the coupon</li>
-    </ul>
-    <details class="edges"><summary>Edges</summary><ul>
-      <li>Gift cards are a payment, not a coupon, so they do not lower the total that is compared.</li>
-    </ul></details>
   </section>
 
   <section class="change" data-name="No total below zero" data-pen="purple" data-key="Math.min">
@@ -278,15 +301,23 @@ function shippingFor(cart) {
     <script type="text/plain" class="after" data-ref="src/cart/coupon.js:40, new code">
 const couponAmount = Math.min(coupon.value, cart.subtotal);
     </script>
-    <ul class="tests">
-      <li class="yes">caps the coupon at the cart total</li>
-      <li class="yes">leaves a smaller coupon alone</li>
-    </ul>
+    <ol class="edits"><li>The coupon is capped at the cart total, so the order can reach zero and no lower.</li></ol>
   </section>
 </section>
 
-<section id="checked" data-name="Checked">
-  <h2>What is checked</h2>
+<section id="decisions" data-name="Decisions">
+  <h2>Pending decisions</h2>
+  <div class="decision" data-id="exactly-fifty">
+    <p class="hand">At exactly $50 after the coupon, is shipping free?</p>
+    <p>The code says yes. The help page says "orders over $50". One of them should change.</p>
+    <div class="options">
+      <button>Free at exactly $50</button>
+      <button>Free only above $50</button>
+      <button data-other>Something else</button>
+    </div>
+  </div>
+
+  <h2>Limits</h2>
   <div class="cols">
     <div class="scroll">
       <table class="chart">
@@ -295,16 +326,13 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
           <tr class="changed"><td>Compare what they pay</td><td class="yes">2 tests</td></tr>
           <tr class="changed"><td>Exactly $50 after the coupon</td><td class="no">no test</td></tr>
           <tr class="changed"><td>No total below zero</td><td class="yes">2 tests</td></tr>
-          <tr class="changed"><td>The live checkout</td><td class="no">never run</td></tr>
         </tbody>
       </table>
     </div>
-    <div>
-      <div class="decide">
-        <p class="hand">Yours to decide: at exactly $50 after the coupon, is shipping free?</p>
-        <p>The code says yes. The help page says "orders over $50". One of them should change.</p>
-      </div>
-    </div>
+    <ul class="limits">
+      <li>Never run against the live checkout. The replay used a stand-in for the payment provider.</li>
+      <li>Gift cards are a payment, not a coupon, so they do not lower the total that is compared.</li>
+    </ul>
   </div>
 </section>
 <!-- PRTIFACT CONTENT END -->
@@ -418,17 +446,6 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     node.appendChild(label);
   });
 
-  // ---- case rows that open a worked example ----
-  all('table.chart tr[data-example]').forEach(function (tr) {
-    var cell = tr.cells[0], button = el('button', 'case', cell.textContent), open = null;
-    button.type = 'button'; button.setAttribute('aria-expanded', 'false'); cell.textContent = ''; cell.appendChild(button);
-    button.addEventListener('click', function () {
-      if (open) { open.remove(); open = null; button.setAttribute('aria-expanded', 'false'); return; }
-      open = el('tr', 'example'); var td = el('td', '', tr.getAttribute('data-example')); td.colSpan = tr.cells.length; open.appendChild(td);
-      tr.parentNode.insertBefore(open, tr.nextSibling); button.setAttribute('aria-expanded', 'true');
-    });
-  });
-
   // ---- the app: the changes down the left, the levels across the top of the panel ----
   var page = document.querySelector('.page'), header = page.querySelector('header');
   var changeSections = all('section.change');
@@ -442,15 +459,18 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   var fold = el('button', 'fold', '≡'); fold.type = 'button'; fold.setAttribute('aria-label', 'Show or hide the list of changes');
   header.insertBefore(fold, header.firstChild);
   fold.addEventListener('click', function () { shell.classList.toggle('folded'); });
+  all('a', header).forEach(function (a) { a.title = a.textContent; a.setAttribute('aria-label', a.textContent); a.textContent = '↗'; a.className = 'out'; });
 
   var view = 'both', level = 'idea', current = 0, timer = null, built = [];
   var LEVEL_NAMES = { idea: 'Idea', code: 'Code', screen: 'Screen', replay: 'Replay' };
 
-  function codeLine(r, showGutter) {
-    var line = el('div', 'ln ' + r.kind + (r.skip ? ' skip' : '') + (r.key ? ' key' : ''));
-    line.appendChild(el('span', 'gut', r.key ? '★' : (r.skip || !showGutter ? '' : r.kind === 'old' ? 'was' : r.kind === 'new' ? 'now' : '')));
+  function codeLine(r, mode) {
+    var plain = mode === 'plain';
+    var line = el('div', 'ln ' + (plain ? 'same' : r.kind) + (r.skip ? ' skip' : '') + (r.key && r.kind !== 'old' ? ' key' : '') + (mode === 'focus' ? ' focus' : ''));
+    line.appendChild(el('span', 'gut', r.key && r.kind !== 'old' ? '★' : (r.skip || mode !== 'focus' ? '' : r.kind === 'old' ? 'was' : r.kind === 'new' ? 'now' : '')));
     var src = el('span', 'src'); src.style.paddingLeft = (r.indent + 2) + 'ch';
-    r.parts.forEach(function (p) { src.appendChild(el('span', p[1], (r.skip ? '⋯ ' : '') + p[0])); });
+    if (plain) { src.appendChild(el('span', '', (r.skip ? '⋯ ' : '') + r.text)); }
+    else { r.parts.forEach(function (p) { src.appendChild(el('span', p[1], (r.skip ? '⋯ ' : '') + p[0])); }); }
     line.appendChild(src); return line;
   }
   function navButton(label, badge) {
@@ -462,8 +482,10 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     if (timer) { clearTimeout(timer); timer = null; }
     built.forEach(function (b) { if (b.playButton) { b.playButton.textContent = 'Play'; } });
   }
+  // long enough to read the sentence that just appeared
+  function pause(text) { return Math.max(2600, Math.min(7500, 1900 + 55 * (text || '').length)); }
 
-  side.appendChild(el('div', 'group', 'The changes'));
+  side.appendChild(el('div', 'group', header.getAttribute('data-list') || 'The changes'));
   changeSections.forEach(function (section, index) {
     var labels = (section.getAttribute('data-labels') || 'Before|Now').split('|');
     var beforeSrc = section.querySelector('script.before'), afterSrc = section.querySelector('script.after');
@@ -474,6 +496,11 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       try { test = new RegExp(key); } catch (error) { test = null; }
       (model.blocks ? model.now : model.rows).forEach(function (r) { if (test && r.kind !== 'old' && !r.skip && test.test(r.text)) { r.key = true; } });
     }
+    // one edit = one run of changed lines; the code is walked one edit at a time
+    var edits = 0;
+    if (model.blocks) { edits = 1; }
+    else { var inside = false; model.rows.forEach(function (r) { if (r.kind === 'same') { inside = false; r.edit = 0; } else { if (!inside) { edits++; inside = true; } r.edit = edits; } }); }
+    var editSays = all('ol.edits li', section).map(function (li) { return li.textContent; });
     var refs = { before: beforeSrc ? beforeSrc.getAttribute('data-ref') : '', now: afterSrc ? afterSrc.getAttribute('data-ref') : '' };
     var boards = all('svg.board', section).map(function (svg) {
       var says = svg.nextElementSibling && svg.nextElementSibling.matches('ol.says') ? all('li', svg.nextElementSibling).map(function (li) { return li.textContent; }) : [];
@@ -483,86 +510,94 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       all('.k', svg).forEach(function (n) { if (!n.classList.contains('dash')) { n.setAttribute('pathLength', '1'); } });
       return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, says: says, steps: steps };
     });
-    var verdict = section.querySelector('.verdict'), tests = section.querySelector('ul.tests'), edges = section.querySelector('details.edges');
+    var verdict = section.querySelector('.verdict');
     var screens = section.querySelector('.screens'), replay = section.querySelector('.replay');
+    all('ul.tests, details.edges, ol.edits', section).forEach(function (n) { n.hidden = true; });
 
-    // the four levels, each only if this change has it
     var panels = {}, order = [];
     function panel(id) { panels[id] = el('div', 'level'); order.push(id); return panels[id]; }
-    var stepper = el('div', 'stepper'), playButton = el('button', 'go', 'Play'), back = el('button', '', 'Back'), next = el('button', '', 'Next'), showAll = el('button', '', 'Show all'), count = el('span', 'count');
-    var say = el('p', 'say'); say.setAttribute('aria-live', 'polite');
     var code = el('div', 'code');
-    if (boards.length) {
-      var idea = panel('idea'), boardBox = el('div', 'boards');
-      boards.forEach(function (b) { boardBox.appendChild(b.figure); });
-      [playButton, back, next, showAll].forEach(function (b) { b.type = 'button'; stepper.appendChild(b); }); stepper.appendChild(count);
-      idea.appendChild(boardBox); idea.appendChild(stepper); idea.appendChild(say);
-    }
+    if (boards.length) { var boardBox = el('div', 'boards'); boards.forEach(function (b) { boardBox.appendChild(b.figure); }); panel('idea').appendChild(boardBox); }
     if (beforeSrc || afterSrc) { panel('code').appendChild(code); }
     if (screens) { panel('screen').appendChild(screens); }
-    if (replay || tests || edges) {
-      var proof = panel('replay');
-      if (replay) {
-        all('ol[data-view]', replay).forEach(function (list) {
-          var run = el('div', 'run'); run.setAttribute('data-view', list.getAttribute('data-view'));
-          run.appendChild(el('b', '', list.getAttribute('data-title') || (list.getAttribute('data-view') === 'before' ? labels[0] : labels[1])));
-          replay.insertBefore(run, list); run.appendChild(list);
-        });
-        proof.appendChild(replay);
-        if (replay.getAttribute('data-note')) { proof.appendChild(el('p', 'replay-note', replay.getAttribute('data-note'))); }
-      }
-      if (tests) { proof.appendChild(el('h3', '', 'Tests')); proof.appendChild(tests); }
-      if (edges) { proof.appendChild(edges); }
+    if (replay) {
+      all('ol[data-view]', replay).forEach(function (list) {
+        var run = el('div', 'run'); run.setAttribute('data-view', list.getAttribute('data-view'));
+        run.appendChild(el('b', '', list.getAttribute('data-title') || (list.getAttribute('data-view') === 'before' ? labels[0] : labels[1])));
+        replay.insertBefore(run, list); run.appendChild(list);
+      });
+      var proof = panel('replay'); proof.appendChild(replay);
+      if (replay.getAttribute('data-note')) { proof.appendChild(el('p', 'replay-note', replay.getAttribute('data-note'))); }
     }
 
-    var bar = el('div', 'bar'), levelTabs = el('div', 'levels'), seg = el('div', 'seg');
+    // the options sit on top: the level, the view, and the controls that move through the steps
+    var bar = el('div', 'bar'), levelTabs = el('div', 'levels'), seg = el('div', 'seg'), stepper = el('div', 'stepper');
     levelTabs.setAttribute('role', 'tablist');
     var levelButtons = order.map(function (id) {
-      var b = el('button', '', id === 'replay' && !replay ? 'Tests' : LEVEL_NAMES[id]); b.type = 'button'; b.setAttribute('role', 'tab'); levelTabs.appendChild(b);
+      var b = el('button', '', LEVEL_NAMES[id]); b.type = 'button'; b.setAttribute('role', 'tab'); levelTabs.appendChild(b);
       b.addEventListener('click', function () { stopPlay(); level = id; paint(false); });
       return { id: id, node: b };
     });
     var viewButtons = [['before', labels[0]], ['now', labels[1]], ['both', 'Both']].map(function (pair) {
       var b = el('button', '', pair[1]); b.type = 'button'; seg.appendChild(b);
-      b.addEventListener('click', function () { stopPlay(); view = pair[0]; step = 1; paint(false); });
+      b.addEventListener('click', function () { stopPlay(); view = pair[0]; step = 0; codeStep = 0; paint(false); });
       return { view: pair[0], node: b };
     });
-    bar.appendChild(levelTabs); bar.appendChild(seg);
-    [verdict, bar].forEach(function (n) { if (n) { section.appendChild(n); } });
+    var playButton = el('button', 'go', 'Play'), back = el('button', 'one', '‹'), next = el('button', 'one', '›'), count = el('span', 'count');
+    back.title = 'One step back'; back.setAttribute('aria-label', 'One step back'); next.title = 'One step forward'; next.setAttribute('aria-label', 'One step forward');
+    var onward = el('button', 'onward', index + 1 < changeSections.length ? 'Next: ' + changeSections[index + 1].getAttribute('data-name') + ' →' : '');
+    onward.type = 'button'; onward.addEventListener('click', function () { stopPlay(); show(index + 1); built[index + 1].restart(); });
+    [playButton, back, next].forEach(function (b) { b.type = 'button'; stepper.appendChild(b); }); stepper.appendChild(count);
+    bar.appendChild(levelTabs); bar.appendChild(seg); bar.appendChild(stepper);
+    if (section.getAttribute('data-href')) {
+      var out = el('a', 'out', '↗'); out.href = section.getAttribute('data-href'); out.title = 'Open this change'; out.setAttribute('aria-label', 'Open this change'); bar.appendChild(out);
+    }
+    var say = el('p', 'say'); say.setAttribute('aria-live', 'polite');
+    section.appendChild(bar);
     order.forEach(function (id) { section.appendChild(panels[id]); });
+    section.appendChild(say);
+    if (verdict) { section.appendChild(verdict); }
+    section.appendChild(onward);
 
-    var step = 1;
+    var step = 0, codeStep = 0;
     function shown() { return boards.filter(function (b) { return view === 'both' || b.view === view; }); }
     function total() { return shown().reduce(function (sum, b) { return sum + b.steps; }, 0); }
-    function paint(animate) {
-      var here = order.indexOf(level) >= 0 ? level : order[0];
-      order.forEach(function (id) { panels[id].hidden = id !== here; });
-      levelButtons.forEach(function (b) { b.node.setAttribute('aria-selected', b.id === here ? 'true' : 'false'); });
-      viewButtons.forEach(function (b) { b.node.setAttribute('aria-pressed', b.view === view ? 'true' : 'false'); });
-      seg.hidden = (here === 'replay' && !replay) || (here === 'code' && model.fresh);
-      if (screens) { all('figure[data-view]', screens).forEach(function (f) { f.hidden = view !== 'both' && f.getAttribute('data-view') !== view; }); }
-      if (replay) { all('.run', replay).forEach(function (r) { r.hidden = view !== 'both' && r.getAttribute('data-view') !== view; }); }
-      // code
+    function codeTotal() { return view === 'both' ? edits : 0; }
+    function here() { return order.indexOf(level) >= 0 ? level : order[0]; }
+
+    function paintCode(animate) {
       code.textContent = '';
       function head(name, ref) { var r = el('div', 'ref'); r.appendChild(el('b', '', name)); r.appendChild(document.createTextNode(ref || '')); code.appendChild(r); }
+      var text = '', focus = null;
       if (model.blocks) {
-        var sides = model.fresh ? ['now'] : (view === 'both' ? ['before', 'now'] : [view]);
-        sides.forEach(function (which, i) {
-          if (i) { code.appendChild(el('div', 'gap')); }
+        var which = view === 'before' ? 'before' : view === 'now' ? 'now' : (codeStep >= 1 ? 'now' : 'before');
+        if (model.fresh && which === 'before') { head(labels[0], 'there was no code here'); text = 'This piece is new. There was no code here before.'; }
+        else {
           head(which === 'before' ? labels[0] : labels[1], refs[which]);
-          model[which].forEach(function (r) { code.appendChild(codeLine(r, false)); });
-        });
+          model[which].forEach(function (r) { code.appendChild(codeLine(r, 'plain')); });
+          text = which === 'before' ? 'This is the code before the change.' : (editSays[0] || '');
+        }
+      } else if (view !== 'both') {
+        head(view === 'before' ? labels[0] : labels[1], view === 'before' ? refs.before : refs.now);
+        model.rows.forEach(function (r) { if (r.kind !== (view === 'before' ? 'new' : 'old')) { code.appendChild(codeLine(r, 'plain')); } });
       } else {
-        if (view !== 'now') { head(labels[0], refs.before); }
-        if (view !== 'before') { head(labels[1], refs.now); }
+        head(codeStep === 0 ? labels[0] : labels[1], codeStep === 0 ? refs.before : refs.now);
         model.rows.forEach(function (r) {
-          if ((view === 'before' && r.kind === 'new') || (view === 'now' && r.kind === 'old')) { return; }
-          code.appendChild(codeLine(r, view === 'both'));
+          var line = null;
+          if (!r.edit) { line = codeLine(r, 'plain'); }
+          else if (r.edit < codeStep) { if (r.kind === 'new') { line = codeLine(r, 'plain'); } }
+          else if (r.edit === codeStep) { line = codeLine(r, 'focus'); if (!focus) { focus = line; } }
+          else if (r.kind === 'old') { line = codeLine(r, 'plain'); }
+          if (line) { code.appendChild(line); }
         });
+        text = codeStep === 0 ? 'This is the code before the change.' : (editSays[codeStep - 1] || '');
+        if (focus && animate && focus.scrollIntoView) { focus.scrollIntoView({ block: 'nearest' }); }
       }
-      // boards
-      var list = shown(), all_ = total(), offset = 0, text = '';
-      if (step > all_) { step = all_; }
+      return text;
+    }
+    function paintBoards(animate) {
+      var list = shown(), offset = 0, text = '';
+      if (step > total()) { step = total(); }
       boards.forEach(function (b) { b.figure.hidden = list.indexOf(b) < 0; });
       list.forEach(function (b) {
         var local = step - offset;
@@ -571,50 +606,120 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
           n.classList.toggle('off', off);
           n.classList.toggle('fresh', Boolean(animate) && wasOff && !off);
         });
-        b.figure.classList.toggle('waiting', local < 1);
+        b.figure.classList.toggle('waiting', local < 1 && list.length > 1 && list.indexOf(b) > 0);
         if (local >= 1 && local <= b.steps) { text = b.says[local - 1] || ''; }
         offset += b.steps;
       });
-      say.textContent = text; count.textContent = 'Step ' + step + ' of ' + all_;
-      back.disabled = step <= 1; next.disabled = step >= all_; showAll.disabled = step >= all_;
+      return text;
     }
-    back.addEventListener('click', function () { stopPlay(); step--; paint(false); });
-    next.addEventListener('click', function () { stopPlay(); step++; paint(true); });
-    showAll.addEventListener('click', function () { stopPlay(); step = total(); paint(true); });
+    function paint(animate) {
+      var now = here();
+      order.forEach(function (id) { panels[id].hidden = id !== now; });
+      levelButtons.forEach(function (b) { b.node.setAttribute('aria-selected', b.id === now ? 'true' : 'false'); });
+      viewButtons.forEach(function (b) { b.node.setAttribute('aria-pressed', b.view === view ? 'true' : 'false'); });
+      if (screens) { all('figure[data-view]', screens).forEach(function (f) { f.hidden = view !== 'both' && f.getAttribute('data-view') !== view; }); }
+      if (replay) { all('.run', replay).forEach(function (r) { r.hidden = view !== 'both' && r.getAttribute('data-view') !== view; }); }
+      var boardText = paintBoards(animate && now === 'idea'), codeText = paintCode(animate && now === 'code');
+      var at = now === 'idea' ? step : now === 'code' ? codeStep : 0, of = now === 'idea' ? total() : now === 'code' ? codeTotal() : 0;
+      var text = now === 'idea' ? boardText : now === 'code' ? codeText : '';
+      if (!text && of && at === 0) { text = 'Press Play to watch it, or Next to go one step at a time.'; }
+      say.textContent = text; say.hidden = now !== 'idea' && now !== 'code';
+      var stepping = now === 'idea' || now === 'code';
+      back.hidden = next.hidden = count.hidden = !stepping; count.textContent = of ? at + ' / ' + of : '';
+      back.disabled = at <= 0; next.disabled = at >= of;
+      var done = of > 0 && at >= of;
+      if (verdict) { verdict.classList.toggle('shown', done); verdict.classList.toggle('fresh', done && Boolean(animate)); }
+      onward.hidden = !(done || !stepping) || index + 1 >= changeSections.length;
+      return text;
+    }
+    function forward() {
+      var now = here();
+      if (now === 'idea' && step < total()) { step++; return paint(true); }
+      if (now === 'code' && codeStep < codeTotal()) { codeStep++; return paint(true); }
+      return null;
+    }
+    function restart() { level = boards.length ? 'idea' : 'code'; step = 0; codeStep = 0; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); return paint(false); }
+    back.addEventListener('click', function () { stopPlay(); if (here() === 'idea') { step--; } else { codeStep--; } paint(false); });
+    next.addEventListener('click', function () { stopPlay(); if (here() === 'idea') { step++; } else { codeStep++; } paint(true); });
     playButton.addEventListener('click', function () {
       if (timer) { stopPlay(); return; }
-      level = 'idea';
-      if (step >= total()) { step = 1; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); }
-      paint(true); playButton.textContent = 'Pause';
-      timer = setTimeout(tick, 1900);
+      if (here() !== 'idea' && here() !== 'code') { level = boards.length ? 'idea' : 'code'; }
+      if (view !== 'both') { view = 'both'; step = 0; codeStep = 0; }
+      var text = forward();
+      if (text === null) { restart(); text = forward(); }
+      if (text === null) { stopPlay(); return; }
+      playButton.textContent = 'Pause';
+      timer = setTimeout(tick, pause(text));
     });
 
     var nav = navButton(section.getAttribute('data-name'), String(index + 1));
     nav.addEventListener('click', function () { stopPlay(); show(index); });
-    built.push({ section: section, nav: nav, paint: paint, playButton: boards.length ? playButton : null, hasBoards: boards.length > 0,
-      forward: function () { if (step >= total()) { return false; } step++; paint(true); return true; },
-      restart: function () { level = 'idea'; step = 1; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); paint(true); },
-      toEnd: function () { step = total(); paint(false); } });
+    built.push({ section: section, nav: nav, paint: paint, playButton: playButton, forward: forward, restart: restart,
+      toEnd: function () { step = total(); codeStep = codeTotal(); paint(false); } });
   });
 
-  // Play walks every step of this change, then carries on into the next change that has a drawing.
+  // Play walks the steps of the one thing on screen, then stops. One idea at a time.
   function tick() {
     timer = null;
-    var b = built[current];
-    if (b.forward && b.forward()) { timer = setTimeout(tick, 1900); return; }
-    var nextIndex = -1;
-    for (var i = current + 1; i < changeSections.length; i++) { if (built[i].hasBoards) { nextIndex = i; break; } }
-    if (nextIndex < 0) { stopPlay(); return; }
-    show(nextIndex); built[nextIndex].restart(); built[nextIndex].playButton.textContent = 'Pause';
-    timer = setTimeout(tick, 1900);
+    var text = built[current].forward ? built[current].forward() : null;
+    if (text === null) { stopPlay(); return; }
+    timer = setTimeout(tick, pause(text));
   }
 
   if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }
   otherSections.forEach(function (section) {
     var name = section.getAttribute('data-name') || section.querySelector('h2').textContent;
-    var nav = navButton(name, name.slice(0, 2)), index = built.length;
+    var open = all('.decision:not([data-decided])', section).length;
+    var nav = navButton(name, open ? String(open) : name.slice(0, 2)), index = built.length;
+    if (open) { nav.querySelector('.n').classList.add('open'); }
     nav.addEventListener('click', function () { stopPlay(); show(index); });
-    built.push({ section: section, nav: nav, paint: function () {}, playButton: null, hasBoards: false });
+    built.push({ section: section, nav: nav, paint: function () {}, playButton: null });
+  });
+
+  // ---- decisions: pick an option and it goes to Claude as a comment on this page ----
+  var commentsApi = null, canSend = 'off';
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('comments').then(function (api) {
+      commentsApi = api;
+      if (api && api.canSendToClaude) { api.canSendToClaude().then(function (value) { canSend = value; }, function () { canSend = 'off'; }); }
+    }, function () { commentsApi = null; });
+  }
+  function remember(id, value) { try { localStorage.setItem('prtifact-decision-' + id, value); } catch (error) { /* a convenience only */ } }
+  function recall(id) { try { return localStorage.getItem('prtifact-decision-' + id); } catch (error) { return null; } }
+  all('.decision').forEach(function (box) {
+    var id = box.getAttribute('data-id') || '', question = (box.querySelector('.hand') || box).textContent.trim();
+    var options = all('.options button', box), status = el('p', 'status'); status.setAttribute('aria-live', 'polite');
+    box.appendChild(status);
+    function settle(text, kind) { status.textContent = text; status.className = 'status ' + (kind || ''); }
+    var decided = box.getAttribute('data-decided');
+    if (decided) {
+      options.forEach(function (b) { b.disabled = true; b.setAttribute('aria-pressed', b.textContent.trim() === decided ? 'true' : 'false'); });
+      status.appendChild(mark('yes')); status.appendChild(document.createTextNode('Decided: ' + decided)); status.className = 'status done';
+      return;
+    }
+    var sent = recall(id);
+    if (sent) { options.forEach(function (b) { b.setAttribute('aria-pressed', b.textContent.trim() === sent ? 'true' : 'false'); }); settle('You chose: ' + sent + '. Sent to Claude; the merge request and this page update when it is done.', 'sent'); }
+    options.forEach(function (button) {
+      button.type = 'button';
+      button.addEventListener('click', function () {
+        var choice = button.textContent.trim();
+        if (button.hasAttribute('data-other')) {
+          if (commentsApi) { commentsApi.openComposer({ element: box }).catch(function () { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }); }
+          else { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }
+          return;
+        }
+        var text = 'Decision: ' + question + ' Answer: ' + choice + ' Record it on the merge request, make the change it calls for, and update this page.';
+        function failed(why) { settle('This could not be sent to Claude from here (' + why + '). Your choice was: ' + choice + '. Tell Claude in the chat.', 'failed'); }
+        if (!commentsApi || !commentsApi.sendToClaude) { failed('comments are not available in this view'); return; }
+        if (canSend !== 'available') { failed(canSend === 'no_session' ? 'no Claude session is watching this page' : 'sending to Claude is off here'); return; }
+        options.forEach(function (b) { b.setAttribute('aria-pressed', b === button ? 'true' : 'false'); });
+        settle('Sending to Claude…', 'sent');
+        commentsApi.anchorFor(box).then(function (anchor) { return commentsApi.sendToClaude({ anchor: anchor, text: text }); }).then(function () {
+          remember(id, choice);
+          settle('You chose: ' + choice + '. Sent to Claude; the merge request and this page update when it is done.', 'sent');
+        }, function (error) { options.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); }); failed(error && error.code ? error.code : 'unknown error'); });
+      });
+    });
   });
 
   function show(index) {
@@ -625,12 +730,12 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     var name = current < changeSections.length ? 'change-' + (current + 1) : (built[current].section.id || 'part-' + (current + 1));
     try { history.replaceState(null, '', '#' + name); } catch (error) { /* the hash is a convenience only */ }
   }
-  // #change-3, #change-3-code, #change-3-all (every step drawn), or the id of a whole-change section
-  var asked = /^#change-(\d+)(?:-(idea|code|screen|replay|all))?$/.exec(location.hash || ''), start = 0;
-  if (asked) { start = +asked[1] - 1; if (asked[2] && asked[2] !== 'all') { level = asked[2]; } }
+  // #change-3, #change-3-code, #change-3-all (every step shown), or the id of a whole-change section
+  var asked = /^#change-(\d+)(?:-(idea|code|screen|replay|all|codeall))?$/.exec(location.hash || ''), start = 0;
+  if (asked) { start = +asked[1] - 1; if (asked[2] === 'codeall') { level = 'code'; } else if (asked[2] && asked[2] !== 'all') { level = asked[2]; } }
   else if (location.hash.length > 1) { built.forEach(function (b, i) { if (b.section.id === location.hash.slice(1)) { start = i; } }); }
   show(start);
-  if (asked && asked[2] === 'all' && built[current].toEnd) { built[current].toEnd(); }
+  if (asked && (asked[2] === 'all' || asked[2] === 'codeall') && built[current].toEnd) { built[current].toEnd(); }
 })();
 /* PRTIFACT ENGINE END */
 </script>
