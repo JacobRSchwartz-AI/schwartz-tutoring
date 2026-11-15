@@ -47,7 +47,7 @@ Each entry has two boards, `data-view="before"` and `data-view="now"`. They stac
 
 - Wrap what appears together in `<g data-step="1">`, `<g data-step="2">` and so on. Anything outside a step group is on the board from the start.
 - In the "before" board put everything in steps, so it starts blank. In the "now" board write the base (a copy of the finished "before" picture, without its conclusion) outside any group, and put only the change in steps.
-- After each board, an `<ol class="says">` with one `<li>` per step: the message that lands in the thread beside the drawing at that step. The first sentence of the first board is a question.
+- After each board, an `<ol class="says">` with one `<li>` per step: the message that lands in the thread beside the drawing at that step. The "before" board is the steps to recreate: its first message is a question that ends with a question mark ("What would have to happen for a family to pay twice?"), and each later message is one thing that has to happen, in order. The page numbers every "before" message that does not end with a question mark, and titles that thread Steps to recreate. A message for a step that names the real case says so: "Here: Sep 27, 1 hour, $56.00."
 - Draw the things the code acts on (sessions, hours, invoices, a timer), not the code. Name every thing before it acts. If the drawing has "A" and "B", the step that brings them in says who they are. If it uses a word from the code ("split", "held back"), an early step shows what that is.
 - Give each board a `role="img"` and an `aria-label` that says what the finished drawing shows.
 

@@ -198,6 +198,8 @@ main > section.change { max-width: none; }
 .msg { max-width: 640px; font-size: 16px; }
 .speed { margin-left: auto; }
 .speed button { padding: 4px 10px; font-family: var(--mono); font-size: 12.5px; }
+.thread-title { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: -2px; }
+.msg .num { font-family: var(--mono); font-weight: 500; font-size: 13.5px; margin-right: 7px; color: var(--ink-soft); }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -364,9 +366,12 @@ main > section.change { max-width: none; }
       var figure = el('figure', 'b'), caption = el('figcaption', '', svg.getAttribute('data-view') === 'before' ? labels[0] : labels[1]);
       svg.parentNode.insertBefore(figure, svg); figure.appendChild(caption); figure.appendChild(svg);
       all('.k', svg).forEach(function (n) { if (!n.classList.contains('dash')) { n.setAttribute('pathLength', '1'); } });
-      var row = el('div', 'row'), thread = el('div', 'thread');
+      var row = el('div', 'row'), thread = el('div', 'thread'), n = 0;
+      // Before is the steps to recreate: a question first, then each thing that has to happen, numbered
+      var nums = says.map(function (s) { return svg.getAttribute('data-view') === 'before' && !/\?\s*$/.test(s) ? ++n : 0; });
+      if (n) { thread.appendChild(el('div', 'thread-title', 'Steps to recreate')); }
       thread.setAttribute('aria-live', 'polite'); row.appendChild(figure); row.appendChild(thread);
-      return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, row: row, thread: thread, says: says, steps: steps };
+      return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, row: row, thread: thread, says: says, nums: nums, steps: steps };
     });
     var verdict = section.querySelector('.verdict');
     var stage = el('div', 'level'), boardBox = el('div', 'boards');
@@ -405,9 +410,12 @@ main > section.change { max-width: none; }
         var local = step - offset, have = all('.msg', b.thread), want = Math.max(0, Math.min(b.steps, local)), k;
         for (k = have.length; k > want; k--) { have[k - 1].remove(); }
         for (k = have.length; k < want; k++) {
-          var msg = el('div', 'msg' + (animate ? ' fresh' : ''), b.says[k] || ''); b.thread.appendChild(msg);
+          var msg = el('div', 'msg' + (animate ? ' fresh' : '') + (b.nums[k] ? ' step' : ''));
+          if (b.nums[k]) { msg.appendChild(el('span', 'num', b.nums[k] + '.')); }
+          msg.appendChild(document.createTextNode(b.says[k] || '')); b.thread.appendChild(msg);
           if (animate && msg.scrollIntoView) { msg.scrollIntoView({ block: 'nearest' }); }
         }
+        all('.thread-title', b.thread).forEach(function (n) { n.hidden = want < 1; });
         all('.msg', b.thread).forEach(function (m, i, ms) { m.classList.toggle('last', i === ms.length - 1 && local >= 1 && local <= b.steps); });
         all('[data-step]', b.svg).forEach(function (n) {
           var wasOff = n.classList.contains('off'), off = +n.getAttribute('data-step') > local;
