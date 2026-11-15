@@ -53,5 +53,8 @@ The Claude Code usage event now includes the email the person's Claude Code acco
 ## v2.8.0 (2026-11-09)
 The joke dial is now a pun hunt. Instead of rolling a die for any joke, flip a coin each reply; on heads, look for a pun, double meaning or out-of-pocket comparison in the material at hand (the kind behind "Aunt Norma" and "reject the hoe") and use it only if it's genuinely good. The hook flips the coin in Claude Code. Jokes may now ride along with a hint as long as they don't give the answer away. Edge comes from surprise, not shock topics: no drugs, nothing about real groups of people.
 
+## v2.9.0 (2026-11-14)
+No change to the tutoring skill. The plugin now has a second skill, `/schwartz:prtifact`, which turns a pull request into one review page drawn the way Jacob drew on his whiteboard: a chart of what changes case by case, one diff per change, and a diagram built one click at a time. It ships with the Claude Code plugin and with `npx skills add`; `tutoring.zip` holds the tutoring skill only.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
