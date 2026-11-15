@@ -199,6 +199,15 @@ main > section.change { max-width: none; }
   .row { align-items: stretch; }
   .thread { height: 0; min-height: 100%; overflow-y: auto; scrollbar-width: thin; padding-right: 4px; }
 }
+/* phone: one drawing at a time, its newest messages in a short strip under it */
+@media (max-width: 900px) {
+  .row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .row.past { display: none; }
+  .thread { padding-top: 0; max-height: 12.5em; overflow-y: auto; }
+  .msg { font-size: 15px; }
+  .bar { gap: 8px 12px; }
+  .speed { margin-left: 0; }
+}
 /* PRTIFACT STYLE END */
 </style>
 
@@ -404,6 +413,9 @@ main > section.change { max-width: none; }
       var list = shown(), offset = 0, text = '';
       if (step > total()) { step = total(); }
       boards.forEach(function (b) { b.row.hidden = list.indexOf(b) < 0; });
+      var active = 0, end = 0;
+      list.forEach(function (b, i) { if (step > end) { active = i; } end += b.steps; });
+      list.forEach(function (b, i) { b.row.classList.toggle('past', i < active); });
       all('.msg.typing, .hint', section).forEach(function (n) { n.remove(); });
       list.forEach(function (b) {
         var local = step - offset, have = all('.msg', b.thread), want = Math.max(0, Math.min(b.steps, local)), k;
@@ -452,6 +464,8 @@ main > section.change { max-width: none; }
       if (!thread) { stopPlay(); return; }
       all('.hint', section).forEach(function (n) { n.remove(); });
       thread.parentNode.classList.remove('waiting');
+      var at = boards.map(function (b) { return b.thread; }).indexOf(thread);
+      boards.forEach(function (b, i) { b.row.classList.toggle('past', i < at); });
       var dots = el('div', 'msg typing'); dots.setAttribute('aria-label', 'Writing');
       dots.appendChild(el('span')); dots.appendChild(el('span')); dots.appendChild(el('span'));
       thread.appendChild(dots);

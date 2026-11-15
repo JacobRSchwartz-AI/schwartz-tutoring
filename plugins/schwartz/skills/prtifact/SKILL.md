@@ -24,6 +24,7 @@ One screen that works like an app. Nothing to scroll through from top to bottom;
 
 - **Top bar:** the name of the change and one arrow button that opens it. Nothing else.
 - **Down the left:** the ideas to understand, numbered, six at most. For one pull request, that is one entry per change that matters. For a stack of pull requests, it is one entry per pull request, each with its own arrow to open it. The list folds away.
+- **On a phone:** one drawing at a time, with its newest messages in a short strip under it. When the Now drawing starts, the Before drawing steps aside.
 - **In the panel:** the entry you picked, as a whiteboard drawing. The controls sit on top: Play, one step back or forward, and the speed. The Before drawing starts blank and builds one step at a time; the Now drawing appears under it only when its first message starts, so the reader takes in one thing at a time. Beside each drawing is a thread of messages, one per step, like a chat: each message lands, then its step draws in. The one-line conclusion appears last, then a button to the next entry.
 
 Under the list, two entries for the whole change:

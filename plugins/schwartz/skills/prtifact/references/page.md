@@ -51,7 +51,7 @@ Each entry has two boards, `data-view="before"` and `data-view="now"`. They stac
 - Draw the things the code acts on (sessions, hours, invoices, a timer), not the code. Name every thing before it acts. If the drawing has "A" and "B", the step that brings them in says who they are. If it uses a word from the code ("split", "held back"), an early step shows what that is.
 - Give each board a `role="img"` and an `aria-label` that says what the finished drawing shows.
 
-**The canvas.** Use `viewBox="0 0 640 H"` with H between 180 and 260. The board is at most 640 px wide on the page.
+**The canvas.** Use `viewBox="0 0 640 H"` with H between 180 and 260. The board is at most 640 px wide on the page. On a phone it is about 360 px wide, so everything is drawn at a little over half size: the 20 px handwriting comes out near 11 px. Keep a drawing readable at that size: few, large words, no tables of more than three columns, and nothing in the small class that the reader has to read to follow the step.
 
 **Classes.**
 
