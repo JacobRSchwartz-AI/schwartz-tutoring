@@ -21,7 +21,7 @@ The example content in the template is a made-up change, kept small so every par
 Each entry is a `<section class="change">`. For one pull request, an entry is one change that matters. For a stack, an entry is one pull request.
 
 ```html
-<section class="change" data-name="Compare what they pay" data-pen="blue" data-key="afterCoupon >=">
+<section class="change" data-name="Compare what they pay" data-pen="blue">
   <p class="verdict">Free shipping looks at the total after the coupon.</p>
   <script type="text/plain" class="before" data-ref="src/cart/shipping.js:12 on main"> ...old code... </script>
   <script type="text/plain" class="after" data-ref="src/cart/shipping.js:12"> ...new code... </script>
@@ -37,7 +37,6 @@ Each entry is a `<section class="change">`. For one pull request, an entry is on
 |---|---|
 | `data-name` | The label in the list on the left, two to four words. |
 | `data-pen` | This entry's color: `blue`, `purple` or `brown`. Give neighbors different pens. Red and green are never a pen. |
-| `data-key` | A regular expression. Lines of the new code that match it get a star. Use it for the one or two statements the change rests on. |
 | `data-labels` | The names of the two views, as `Without it\|With it`. Leave it out to get `Before\|Now`. Use Before and Now when the old code handled this situation and got it wrong. Use "Without it" and "With it" when the old code never reached the situation, so the piece only matters because of the rest of the change. |
 | `data-href` | A link to this entry's own pull request. Use it in a stack. It shows as an arrow at the end of the options row. |
 
@@ -102,11 +101,11 @@ For a slanted or curved arrow, draw the two head strokes about 11 units long, ea
 
 Put the old excerpt in `script.before` and the new one in `script.after`, as plain text. `data-ref` is the file and line.
 
-- Give both excerpts the same region of the file, with the same lines around the change. The script works out the edits. An edit is one run of changed lines. In the Both view the code starts as it was; each step applies one edit, with the removed pieces struck in red, the added pieces in the pen color, and the edit highlighted. Edits already applied turn plain. The Before and Now views show each version whole.
-- Write one `<li>` in `ol.edits` for each edit, top to bottom: what this edit is for, in a sentence. To see how the script groups your excerpts into edits, step through the Code level once and count; a line that is the same on both sides between two changes splits them into two edits.
+- Give both excerpts the same region of the file, with the same lines around the change. The script works out the edits. An edit is one run of changed lines. In the Both view the code starts as it was; each step applies one edit: the removed pieces turn gray and are crossed off, and the added pieces are typed in, in the Schwartz Tutoring orange. Edits already applied turn plain. It is drawn as an editor, with the file name on a tab and line numbers counted within the excerpt. The Before and Now views show each version whole.
+- Write one `<li>` in `ol.edits` for each edit, top to bottom: what you are doing and why, in the first person, as if thinking aloud while making the change ("I look up the invoices first, so a missing one fails with nothing to undo."). To see how the script groups your excerpts into edits, step through the Code level once and count; a line that is the same on both sides between two changes splits them into two edits.
 - Two lines count as one line edited only when the names in them overlap. Lines that merely look alike (`const a = await b(` and `const c = await d(`) count as one removed and one added.
-- When the two excerpts share almost nothing (the code was rewritten or moved), the walk has one step: the old code, then the new code. Write one `<li>` that tells the reader how to read the new code, pointing at the stars.
-- When there is no old code, leave `script.before` out. The walk starts by saying there was no code here, then shows the new code.
+- When the two excerpts share almost nothing (the code was rewritten or moved), the walk has one step: the old code, then the new code. Write one `<li>` that says, in order, what the new code does.
+- When there is no old code, leave `script.before` out. The walk starts by saying there was no code here, then types the new code in.
 - Comment-only lines are dropped. To mark lines you left out, write a comment that starts with three dots: `// ... joins, select`. It prints as a gray note.
 - Keep an excerpt under about 25 lines. Cut with `// ...` notes.
 

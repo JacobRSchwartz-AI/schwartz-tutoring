@@ -8,7 +8,7 @@
 :root {
   --paper: #fdfdfb; --paper-2: #f3f3ee; --ink: #17181a; --ink-soft: #5c6067; --hair: #d6d6cf;
   --pen-blue: #1c5fd6; --pen-purple: #8a3fc9; --pen-brown: #a8641a;
-  --pen-green: #1c8f38; --pen-red: #d43a22; --pen-yellow: #d9a800; --pen-gray: #9a9ea6;
+  --brand: #dd4623; --pen-green: #1c8f38; --pen-red: #d43a22; --pen-yellow: #d9a800; --pen-gray: #9a9ea6;
   --hand: "Patrick Hand", "Comic Sans MS", "Segoe Print", cursive;
   --typed: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
@@ -17,11 +17,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --paper: #15181d; --paper-2: #1d2128; --ink: #ece8df; --ink-soft: #a8a59d; --hair: #383d46;
   --pen-blue: #74abff; --pen-purple: #c594f5; --pen-brown: #e3a55e;
-  --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark } }
+  --brand: #ff8660; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark } }
 :root[data-theme="dark"] {
   --paper: #15181d; --paper-2: #1d2128; --ink: #ece8df; --ink-soft: #a8a59d; --hair: #383d46;
   --pen-blue: #74abff; --pen-purple: #c594f5; --pen-brown: #e3a55e;
-  --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark }
+  --brand: #ff8660; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark }
 
 html, body { height: 100%; }
 body { background: var(--paper); color: var(--ink); font-family: var(--typed); font-size: 16px; line-height: 1.5; }
@@ -215,6 +215,22 @@ ul.limits { margin: 0; padding-left: 20px; font-size: 15px; max-width: 80ch; dis
 main h2 + .decision, main .decision + h2 { margin-top: 0; }
 main h2:not(:first-child) { margin-top: 26px; }
 @media (prefers-reduced-motion: reduce) { .verdict.fresh { animation: none; } }
+/* version 7: the Code level is an editor. Added code is Schwartz orange and typed in. Removed code is gray and crossed off. */
+.code { background: var(--paper-2); border: 1.5px solid var(--ink); padding: 0; }
+.code .tab { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; border-bottom: 1.5px solid var(--ink); padding: 6px 14px; font-size: 12.5px; background: var(--paper); }
+.code .tab b { font-weight: 500; }
+.code .tab span { color: var(--ink-soft); font-size: 12px; }
+.code .tab .which { margin-left: auto; font-family: var(--hand); font-size: 18px; color: var(--ink); }
+.code .body { padding: 10px 14px 12px 0; }
+.ln { grid-template-columns: 46px minmax(0, 1fr); }
+.ln .gut, .ln.old .gut, .ln.new .gut { color: var(--ink-soft); font-size: 12px; padding-right: 14px; }
+.ln .add, .ln .add.whole { color: var(--brand); font-weight: 500; text-decoration: none; }
+.ln .del { color: var(--pen-gray); text-decoration: line-through; text-decoration-color: var(--pen-gray); text-decoration-thickness: 1.5px; }
+.ln.focus { background: color-mix(in srgb, var(--brand) 11%, transparent); box-shadow: inset 3px 0 0 var(--brand); }
+.ln.old.focus { background: none; box-shadow: inset 3px 0 0 var(--pen-gray); }
+.ln.old.focus .src { color: var(--pen-gray); }
+.ln.untyped { display: none; }
+.ln.key .src span { border-bottom: 0; padding-bottom: 0; }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -249,7 +265,7 @@ main h2:not(:first-child) { margin-top: 26px; }
 
 <section id="changes">
 
-  <section class="change" data-name="Compare what they pay" data-pen="blue" data-key="afterCoupon >=">
+  <section class="change" data-name="Compare what they pay" data-pen="blue">
     <p class="verdict">Free shipping looks at the total after the coupon.</p>
     <script type="text/plain" class="before" data-ref="src/cart/shipping.js:12 on main">
 function shippingFor(cart) {
@@ -268,7 +284,7 @@ function shippingFor(cart) {
   return FLAT_RATE;
 }
     </script>
-    <ol class="edits"><li>Work out what the customer pays after the coupon, and compare that with the minimum instead of the cart total (the star).</li></ol>
+    <ol class="edits"><li>I work out what the customer pays after the coupon, and compare that with the minimum instead of the cart total.</li></ol>
     <svg class="board" data-view="before" viewBox="0 0 640 190" role="img" aria-label="Before: the $60 cart is past the $50 line, so shipping is free even though the customer pays $45.">
       <g data-step="1"><path class="k" d="M40 96 H600 M330 84 V108"/><text class="s" x="316" y="130">$50</text><text class="s" x="40" y="130">pays shipping</text><text class="s" x="500" y="130">free shipping</text></g>
       <g data-step="2"><path class="k" d="M450 88 V104"/><text x="424" y="72">cart $60</text></g>
@@ -296,12 +312,12 @@ function shippingFor(cart) {
     </div>
   </section>
 
-  <section class="change" data-name="No total below zero" data-pen="purple" data-key="Math.min">
+  <section class="change" data-name="No total below zero" data-pen="purple">
     <p class="verdict">A coupon can take off the whole cart and no more.</p>
     <script type="text/plain" class="after" data-ref="src/cart/coupon.js:40, new code">
 const couponAmount = Math.min(coupon.value, cart.subtotal);
     </script>
-    <ol class="edits"><li>The coupon is capped at the cart total, so the order can reach zero and no lower.</li></ol>
+    <ol class="edits"><li>I cap the coupon at the cart total, so the order can reach zero and no lower.</li></ol>
   </section>
 </section>
 
@@ -405,7 +421,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   }
   function diffRows(beforeText, afterText) {
     var a = cleanLines(beforeText), b = cleanLines(afterText);
-    function plain(list, kind) { return list.map(function (line) { var r = row(line, kind); if (!r.skip) { r.parts = [[r.text, '']]; } return r; }); }
+    function plain(list, kind) { return list.map(function (line) { var r = row(line, kind); if (!r.skip) { r.parts = [[r.text, kind === 'new' ? 'add whole' : '']]; } return r; }); }
     if (!a.length) { return { blocks: true, fresh: true, before: [], now: plain(b, 'new') }; }
     var ops = lcs(a, b, function (x, y) { return x.trim() === y.trim(); });
     function note(line) { return /^\s*(\/\/|#)\s*\.\.\./.test(line); }
@@ -464,14 +480,39 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   var view = 'both', level = 'idea', current = 0, timer = null, built = [];
   var LEVEL_NAMES = { idea: 'Idea', code: 'Code', screen: 'Screen', replay: 'Replay' };
 
-  function codeLine(r, mode) {
+  function codeLine(r, mode, number) {
     var plain = mode === 'plain';
-    var line = el('div', 'ln ' + (plain ? 'same' : r.kind) + (r.skip ? ' skip' : '') + (r.key && r.kind !== 'old' ? ' key' : '') + (mode === 'focus' ? ' focus' : ''));
-    line.appendChild(el('span', 'gut', r.key && r.kind !== 'old' ? '★' : (r.skip || mode !== 'focus' ? '' : r.kind === 'old' ? 'was' : r.kind === 'new' ? 'now' : '')));
+    var line = el('div', 'ln ' + (plain ? 'same' : r.kind) + (r.skip ? ' skip' : '') + (mode === 'focus' ? ' focus' : ''));
+    line.appendChild(el('span', 'gut', number ? String(number) : ''));
     var src = el('span', 'src'); src.style.paddingLeft = (r.indent + 2) + 'ch';
     if (plain) { src.appendChild(el('span', '', (r.skip ? '⋯ ' : '') + r.text)); }
     else { r.parts.forEach(function (p) { src.appendChild(el('span', p[1], (r.skip ? '⋯ ' : '') + p[0])); }); }
     line.appendChild(src); return line;
+  }
+  // new lines are typed in, the way they were written
+  var typing = null, typingMs = 0;
+  function stopTyping() { if (typing) { cancelAnimationFrame(typing.frame); clearTimeout(typing.guard); typing.finish(); typing = null; } }
+  function typeIn(lines) {
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var spans = [], total = 0;
+    lines.forEach(function (line) { all('.src span', line).forEach(function (node) { spans.push({ node: node, line: line, full: node.textContent }); total += node.textContent.length; }); });
+    if (still || !total) { return 0; }
+    var duration = Math.min(3400, Math.max(600, total * 17)), began = null;
+    function draw(shown) {
+      var left = shown, seen = [];
+      spans.forEach(function (s) { var take = Math.min(s.full.length, left); s.node.textContent = s.full.slice(0, take); left -= take; if (take > 0 && seen.indexOf(s.line) < 0) { seen.push(s.line); } });
+      lines.forEach(function (line) { line.classList.toggle('untyped', seen.indexOf(line) < 0); });
+    }
+    function frame(now) {
+      if (began === null) { began = now; }
+      var part = Math.min(1, (now - began) / duration);
+      draw(Math.floor(total * part));
+      if (!typing) { return; }
+      if (part < 1) { typing.frame = requestAnimationFrame(frame); } else { clearTimeout(typing.guard); typing = null; }
+    }
+    draw(0);
+    typing = { frame: requestAnimationFrame(frame), finish: function () { draw(total); }, guard: setTimeout(stopTyping, duration + 120) };
+    return duration;
   }
   function navButton(label, badge) {
     var b = el('button'); b.type = 'button';
@@ -566,33 +607,43 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     function here() { return order.indexOf(level) >= 0 ? level : order[0]; }
 
     function paintCode(animate) {
+      stopTyping(); typingMs = 0;
       code.textContent = '';
-      function head(name, ref) { var r = el('div', 'ref'); r.appendChild(el('b', '', name)); r.appendChild(document.createTextNode(ref || '')); code.appendChild(r); }
-      var text = '', focus = null;
+      var tab = el('div', 'tab'), body = el('div', 'body'), number = 0, text = '', focus = null, fresh = [];
+      code.appendChild(tab); code.appendChild(body);
+      function head(name, ref) {
+        var path = (ref || '').split(/[ ,]/)[0], file = path.split('/').pop().replace(/:\d+$/, '');
+        tab.appendChild(el('b', '', file || name)); tab.appendChild(el('span', '', ref || '')); tab.appendChild(el('span', 'which', name));
+      }
+      function add(r, mode) {
+        var removed = mode === 'focus' && r.kind === 'old';
+        var line = codeLine(r, mode, r.skip || removed ? 0 : ++number);
+        body.appendChild(line);
+        if (mode === 'focus') { if (!focus) { focus = line; } if (r.kind === 'new') { fresh.push(line); } }
+      }
       if (model.blocks) {
         var which = view === 'before' ? 'before' : view === 'now' ? 'now' : (codeStep >= 1 ? 'now' : 'before');
-        if (model.fresh && which === 'before') { head(labels[0], 'there was no code here'); text = 'This piece is new. There was no code here before.'; }
+        if (model.fresh && which === 'before') { head(labels[0], 'nothing here yet'); text = 'There was no code here before.'; }
         else {
           head(which === 'before' ? labels[0] : labels[1], refs[which]);
-          model[which].forEach(function (r) { code.appendChild(codeLine(r, 'plain')); });
-          text = which === 'before' ? 'This is the code before the change.' : (editSays[0] || '');
+          model[which].forEach(function (r) { add(r, which === 'now' && view === 'both' ? 'focus' : 'plain'); });
+          text = which === 'before' ? 'This is the code before the change.' : (view === 'both' ? (editSays[0] || '') : '');
         }
       } else if (view !== 'both') {
         head(view === 'before' ? labels[0] : labels[1], view === 'before' ? refs.before : refs.now);
-        model.rows.forEach(function (r) { if (r.kind !== (view === 'before' ? 'new' : 'old')) { code.appendChild(codeLine(r, 'plain')); } });
+        model.rows.forEach(function (r) { if (r.kind !== (view === 'before' ? 'new' : 'old')) { add(r, 'plain'); } });
       } else {
         head(codeStep === 0 ? labels[0] : labels[1], codeStep === 0 ? refs.before : refs.now);
         model.rows.forEach(function (r) {
-          var line = null;
-          if (!r.edit) { line = codeLine(r, 'plain'); }
-          else if (r.edit < codeStep) { if (r.kind === 'new') { line = codeLine(r, 'plain'); } }
-          else if (r.edit === codeStep) { line = codeLine(r, 'focus'); if (!focus) { focus = line; } }
-          else if (r.kind === 'old') { line = codeLine(r, 'plain'); }
-          if (line) { code.appendChild(line); }
+          if (!r.edit) { add(r, 'plain'); }
+          else if (r.edit < codeStep) { if (r.kind === 'new') { add(r, 'plain'); } }
+          else if (r.edit === codeStep) { add(r, 'focus'); }
+          else if (r.kind === 'old') { add(r, 'plain'); }
         });
         text = codeStep === 0 ? 'This is the code before the change.' : (editSays[codeStep - 1] || '');
-        if (focus && animate && focus.scrollIntoView) { focus.scrollIntoView({ block: 'nearest' }); }
       }
+      if (animate && fresh.length) { typingMs = typeIn(fresh); }
+      if (focus && animate && focus.scrollIntoView) { focus.scrollIntoView({ block: 'nearest' }); }
       return text;
     }
     function paintBoards(animate) {
@@ -649,7 +700,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       if (text === null) { restart(); text = forward(); }
       if (text === null) { stopPlay(); return; }
       playButton.textContent = 'Pause';
-      timer = setTimeout(tick, pause(text));
+      timer = setTimeout(tick, pause(text) + typingMs);
     });
 
     var nav = navButton(section.getAttribute('data-name'), String(index + 1));
@@ -663,7 +714,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     timer = null;
     var text = built[current].forward ? built[current].forward() : null;
     if (text === null) { stopPlay(); return; }
-    timer = setTimeout(tick, pause(text));
+    timer = setTimeout(tick, pause(text) + typingMs);
   }
 
   if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }

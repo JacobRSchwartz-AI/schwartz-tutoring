@@ -29,7 +29,7 @@ One screen that works like an app. Nothing to scroll through from top to bottom;
 | Level | What it shows | When |
 |---|---|---|
 | Idea | A whiteboard drawing of what happens, built one step at a time | When there is something to draw |
-| Code | The code, starting from how it was and applying one edit at a time, with a sentence on each | Always |
+| Code | The code in an editor view, starting from how it was. Each step types in one edit, with a sentence that says what you are doing and why, as if thinking aloud | Always |
 | Screen | The interface before on the left and after on the right | When the change has an interface |
 | Replay | The real request run through the old code and the new code, with the log lines that matter | When you captured one |
 
@@ -42,8 +42,8 @@ Under the list, two entries for the whole change:
 
 1. **Read the whole change first.** The diff against its target branch, the tests, the description, the ticket or bug report behind it. Run the tests if that is safe and read-only. Do not merge, push or change the branch.
 2. **Find the real case.** The customer, the order, the number from the bug report. The page uses real numbers, never placeholders. If the page will leave the team, ask before putting a real person's name on it.
-3. **Pick the entries, six at most.** For a stack, one per pull request. For one pull request, the changes that matter: for each candidate ask what goes back to wrong if this statement were wrong or missing. If the answer is nothing, leave it out. Name the one or two statements each one rests on. They get a star in the code.
-4. **Write each entry** in this order: a name of two to four words, the drawing with one sentence per step, the code before and after with one sentence per edit, and a conclusion of one short sentence. The real case will not reach every change (a race, a retry, an outage). For those, use the numbers from the test that covers the change, or a small concrete setup, and say so in the step. Never invent a number and present it as real.
+3. **Pick the entries, six at most.** For a stack, one per pull request. For one pull request, the changes that matter: for each candidate ask what goes back to wrong if this statement were wrong or missing. If the answer is nothing, leave it out.
+4. **Write each entry** in this order: a name of two to four words, the drawing with one sentence per step, the code before and after with one sentence per edit, written in the first person as if you were making the change and thinking aloud, and a conclusion of one short sentence. The real case will not reach every change (a race, a retry, an outage). For those, use the numbers from the test that covers the change, or a small concrete setup, and say so in the step. Never invent a number and present it as real.
 5. **Make every drawing stand alone.** A reviewer who has never seen this code has to follow it. Say what each thing in the drawing is before it does anything (what a "split" is, who "A" and "B" are, where a number comes from). If nobody has seen the failure happen and no test shows it, the last step says so.
 6. **Replay the real case if you safely can.** Run the old code and the new code on the same real request, on a local copy, with stand-ins for anything that charges money, sends a message or writes to an outside service. Save both full logs in a `.prtifact/<change>/` folder beside the code and say on the page where they are. Put only the lines that matter on the Replay level. If you cannot capture a replay, leave the level out. Never write a log line you did not capture.
 7. **List the cases.** Every situation where the code behaves differently after the change, and the nearby ones a reviewer will worry about that must stay the same. One row each. Write the case so it is understood without clicking anything, and say what happened before and what happens now in four words or fewer each.
@@ -57,7 +57,7 @@ These hold on nearly every board. Follow them on every page.
 
 1. **Black is the base and the working. Color means a link or a change, nothing else.** No color for decoration.
 2. **The old state is not grayed out.** It stays black. In 4,726 drawings he made the old state quieter 13 times. A route or a value that no longer applies stays black and gets a red slash. Gray is only for helper lines, such as a guide or a "now" marker.
-3. **One new thing, one color.** Each entry gets one pen color. Everything that change adds is that color everywhere: the added code, the new arrow in the drawing, the label, the underline on the conclusion.
+3. **One new thing, one color.** Each entry gets one pen color. Everything that change adds to the drawing is that color: the new arrow, the label, the underline on the conclusion. In the code, what is added is always the Schwartz Tutoring orange, and what is removed is gray and crossed off.
 4. **One color follows one thing** from where it first appears to everywhere it lands. This is his most common habit (42% of drawings).
 5. **Green is right, red is wrong or removed.** Those two never mean anything else. A removed piece gets a red slash and stays readable. Nothing is erased.
 6. **Ink goes on the given material.** Mark up the real code. Do not retype it into boxes.
@@ -73,7 +73,7 @@ How a drawing is built, from the recorded sessions:
 - Then the conclusion, with a check or an X.
 - "Now" starts as a copy of "Before", without its conclusion. He copied an earlier drawing forward and edited the copy; he did not start over. A step can only add ink, so what no longer applies is slashed, not removed.
 
-The code is walked the same way: it starts as it was, and each step applies one edit and says what that edit is for.
+The code is walked the same way, as if the reviewer were watching it get written: it starts as it was, each step types in one edit, and the sentence under it is what you would say aloud while making it.
 
 ## 4. Words
 
