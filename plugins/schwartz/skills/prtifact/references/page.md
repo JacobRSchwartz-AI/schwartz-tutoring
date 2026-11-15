@@ -23,8 +23,8 @@ Each entry is a `<section class="change">`. For one pull request, an entry is on
 ```html
 <section class="change" data-name="Compare what they pay" data-pen="blue">
   <p class="verdict">Free shipping looks at the total after the coupon.</p>
-  <script type="text/plain" class="before" data-ref="src/cart/shipping.js:12 on main"> ...old code... </script>
-  <script type="text/plain" class="after" data-ref="src/cart/shipping.js:12"> ...new code... </script>
+  <script type="text/plain" class="before" data-ref="src/cart/shipping.js on main"> ...old code... </script>
+  <script type="text/plain" class="after" data-ref="src/cart/shipping.js"> ...new code... </script>
   <ol class="edits"><li>...one sentence per edit...</li></ol>
   <svg class="board" data-view="before" viewBox="0 0 640 190" role="img" aria-label="..."> ... </svg>
   <ol class="says"><li>...one sentence per step...</li></ol>
@@ -99,9 +99,17 @@ For a slanted or curved arrow, draw the two head strokes about 11 units long, ea
 
 ### The code
 
-Put the old excerpt in `script.before` and the new one in `script.after`, as plain text. `data-ref` is the file and line.
+Put the old excerpt in `script.before` and the new one in `script.after`, as plain text. `data-ref` starts with the file's path from the root of the repository; anything after a space or a comma is a note (`src/cart/shipping.js on main`, `src/cart/coupon.js, new code`).
 
-- Give both excerpts the same region of the file, with the same lines around the change. The script works out the edits. An edit is one run of changed lines. In the Both view the code starts as it was; each step applies one edit: the removed pieces turn gray and are crossed off, and the added pieces are typed in, in the Schwartz Tutoring orange. Edits already applied turn plain. It is drawn as an editor, with the file name on a tab and line numbers counted within the excerpt. The Before and Now views show each version whole.
+Then run the line number script on the page. It reads each file from git, the before excerpt at the target branch and the after excerpt at the change, and writes `data-lines` on each script:
+
+```
+python scripts/line-numbers.py page.html --repo path/to/repo --before main --after my-branch --write
+```
+
+Copy excerpt lines from the file exactly, apart from leaving lines out with a `// ...` note, or the script cannot find them. It writes nothing until it finds every line. Run it again after you change an excerpt.
+
+- Give both excerpts the same region of the file, with the same lines around the change. The script works out the edits. An edit is one run of changed lines. In the Both view the code starts as it was; each step applies one edit: the removed pieces turn gray and are crossed off, and the added pieces are typed in, in the Schwartz Tutoring green. Edits already applied turn plain. It is drawn as an editor, with the file name on a tab and the file's real line numbers. The numbers move as each edit goes in, the way an editor's do: the first step shows the old file's numbers and the last step the finished file's. Without `data-lines` the numbers are counted within the excerpt. The Before and Now views show each version whole.
 - Write one `<li>` in `ol.edits` for each edit, top to bottom: what you are doing and why, in the first person, as if thinking aloud while making the change ("I look up the invoices first, so a missing one fails with nothing to undo."). To see how the script groups your excerpts into edits, step through the Code level once and count; a line that is the same on both sides between two changes splits them into two edits.
 - Two lines count as one line edited only when the names in them overlap. Lines that merely look alike (`const a = await b(` and `const c = await d(`) count as one removed and one added.
 - When the two excerpts share almost nothing (the code was rewritten or moved), the walk has one step: the old code, then the new code. Write one `<li>` that says, in order, what the new code does.

@@ -8,7 +8,7 @@
 :root {
   --paper: #fdfdfb; --paper-2: #f3f3ee; --ink: #17181a; --ink-soft: #5c6067; --hair: #d6d6cf;
   --pen-blue: #1c5fd6; --pen-purple: #8a3fc9; --pen-brown: #a8641a;
-  --brand: #dd4623; --pen-green: #1c8f38; --pen-red: #d43a22; --pen-yellow: #d9a800; --pen-gray: #9a9ea6;
+  --added: #106440; --pen-green: #1c8f38; --pen-red: #d43a22; --pen-yellow: #d9a800; --pen-gray: #9a9ea6;
   --hand: "Patrick Hand", "Comic Sans MS", "Segoe Print", cursive;
   --typed: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
@@ -17,11 +17,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --paper: #15181d; --paper-2: #1d2128; --ink: #ece8df; --ink-soft: #a8a59d; --hair: #383d46;
   --pen-blue: #74abff; --pen-purple: #c594f5; --pen-brown: #e3a55e;
-  --brand: #ff8660; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark } }
+  --added: #5ec99b; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark } }
 :root[data-theme="dark"] {
   --paper: #15181d; --paper-2: #1d2128; --ink: #ece8df; --ink-soft: #a8a59d; --hair: #383d46;
   --pen-blue: #74abff; --pen-purple: #c594f5; --pen-brown: #e3a55e;
-  --brand: #ff8660; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark }
+  --added: #5ec99b; --pen-green: #62cf72; --pen-red: #ff7d69; --pen-yellow: #f2cf4a; --pen-gray: #7f848e; color-scheme: dark }
 
 html, body { height: 100%; }
 body { background: var(--paper); color: var(--ink); font-family: var(--typed); font-size: 16px; line-height: 1.5; }
@@ -179,7 +179,7 @@ details.edges ul { margin: 8px 0 0; padding-left: 20px; max-width: 80ch; }
   main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   table.chart { font-size: 18px; } table.chart th { font-size: 20px; } table.chart td, table.chart th { padding-inline: 8px; }
   table.chart td.yes, table.chart td.no, table.chart td.ask, table.chart td.none { white-space: normal; }
-  .ln { grid-template-columns: 34px minmax(0, 1fr); } .code .ref { padding-left: 34px; }
+  .ln { grid-template-columns: 44px minmax(0, 1fr); } .code .ref { padding-left: 44px; } .ln .gut, .ln.old .gut, .ln.new .gut { padding-right: 9px; }
   .levels button { padding-inline: 11px; font-size: 20px; }
   .replay li { grid-template-columns: 76px minmax(0, 1fr); }
 }
@@ -224,9 +224,9 @@ main h2:not(:first-child) { margin-top: 26px; }
 .code .body { padding: 10px 14px 12px 0; }
 .ln { grid-template-columns: 46px minmax(0, 1fr); }
 .ln .gut, .ln.old .gut, .ln.new .gut { color: var(--ink-soft); font-size: 12px; padding-right: 14px; }
-.ln .add, .ln .add.whole { color: var(--brand); font-weight: 500; text-decoration: none; }
+.ln .add, .ln .add.whole { color: var(--added); font-weight: 500; text-decoration: none; }
 .ln .del { color: var(--pen-gray); text-decoration: line-through; text-decoration-color: var(--pen-gray); text-decoration-thickness: 1.5px; }
-.ln.focus { background: color-mix(in srgb, var(--brand) 11%, transparent); box-shadow: inset 3px 0 0 var(--brand); }
+.ln.focus { background: color-mix(in srgb, var(--added) 10%, transparent); box-shadow: inset 3px 0 0 var(--added); }
 .ln.old.focus { background: none; box-shadow: inset 3px 0 0 var(--pen-gray); }
 .ln.old.focus .src { color: var(--pen-gray); }
 .ln.untyped { display: none; }
@@ -267,7 +267,7 @@ main h2:not(:first-child) { margin-top: 26px; }
 
   <section class="change" data-name="Compare what they pay" data-pen="blue">
     <p class="verdict">Free shipping looks at the total after the coupon.</p>
-    <script type="text/plain" class="before" data-ref="src/cart/shipping.js:12 on main">
+    <script type="text/plain" class="before" data-ref="src/cart/shipping.js on main">
 function shippingFor(cart) {
   if (cart.subtotal >= FREE_SHIPPING_MIN) {
     return 0;
@@ -275,7 +275,7 @@ function shippingFor(cart) {
   return FLAT_RATE;
 }
     </script>
-    <script type="text/plain" class="after" data-ref="src/cart/shipping.js:12">
+    <script type="text/plain" class="after" data-ref="src/cart/shipping.js">
 function shippingFor(cart) {
   const afterCoupon = cart.subtotal - cart.couponAmount;
   if (afterCoupon >= FREE_SHIPPING_MIN) {
@@ -314,7 +314,7 @@ function shippingFor(cart) {
 
   <section class="change" data-name="No total below zero" data-pen="purple">
     <p class="verdict">A coupon can take off the whole cart and no more.</p>
-    <script type="text/plain" class="after" data-ref="src/cart/coupon.js:40, new code">
+    <script type="text/plain" class="after" data-ref="src/cart/coupon.js, new code">
 const couponAmount = Math.min(coupon.value, cart.subtotal);
     </script>
     <ol class="edits"><li>I cap the coupon at the cart total, so the order can reach zero and no lower.</li></ol>
@@ -390,9 +390,14 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     return share(names(a), names(b)) >= 0.3 ? share(solid(tokens(a)), solid(tokens(b))) : 0;
   }
   // Comment-only lines are dropped. A comment that starts with "..." stays, as a note for lines left out.
-  function cleanLines(text) {
+  function cleanLines(text, spec) {
+    var nos = [], k = 0;
+    (spec || '').trim().split(/\s+/).forEach(function (part) { var m = part.match(/^(\d+)(?:-(\d+))?$/); if (m) { for (var x = +m[1]; x <= +(m[2] || m[1]); x++) { nos.push(x); } } });
     return (text || '').replace(/\t/g, '  ').split('\n').filter(function (line) {
       return line.trim() !== '' && (!/^\s*(\/\/|\/\*|\*|#)/.test(line) || /^\s*(\/\/|#)\s*\.\.\./.test(line));
+    }).map(function (line) {
+      // a String object, so the line can carry its number through the diff
+      var s = new String(line); s.no = /^\s*(\/\/|#)\s*\.\.\./.test(line) ? 0 : (nos[k++] || 0); return s;
     });
   }
   function merge(parts) {
@@ -407,7 +412,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   function row(line, kind, parts) {
     var body = line.trim(), skip = /^(\/\/|#)\s*\.\.\./.test(body);
     if (skip) { body = body.replace(/^(\/\/|#)\s*\.\.\.\s*/, '') || 'lines left out'; }
-    return { kind: kind, indent: line.length - line.replace(/^\s+/, '').length, skip: skip, text: body,
+    return { kind: kind, no: line.no || 0, indent: line.length - line.replace(/^\s+/, '').length, skip: skip, text: body,
       parts: skip ? [[body, '']] : (parts || [[body, kind === 'old' ? 'del' : kind === 'new' ? 'add whole' : '']]) };
   }
   function pairRows(oldLine, newLine) {
@@ -419,8 +424,8 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     });
     return [row(oldLine, 'old', merge(o)), row(newLine, 'new', merge(n))];
   }
-  function diffRows(beforeText, afterText) {
-    var a = cleanLines(beforeText), b = cleanLines(afterText);
+  function diffRows(beforeText, afterText, beforeLines, afterLines) {
+    var a = cleanLines(beforeText, beforeLines), b = cleanLines(afterText, afterLines);
     function plain(list, kind) { return list.map(function (line) { var r = row(line, kind); if (!r.skip) { r.parts = [[r.text, kind === 'new' ? 'add whole' : '']]; } return r; }); }
     if (!a.length) { return { blocks: true, fresh: true, before: [], now: plain(b, 'new') }; }
     var ops = lcs(a, b, function (x, y) { return x.trim() === y.trim(); });
@@ -428,7 +433,7 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     function wordy(line) { return !note(line) && (line.match(/[A-Za-z_$][\w$]*/g) || []).length >= 2; }
     var sameCount = ops.filter(function (o) { return o[0] === '=' && wordy(o[1]); }).length, rows = [], paired = 0, i = 0;
     while (i < ops.length) {
-      if (ops[i][0] === '=') { rows.push(row(ops[i][2], 'same')); i++; continue; }
+      if (ops[i][0] === '=') { var kept = row(ops[i][2], 'same'); kept.was = ops[i][1].no || 0; rows.push(kept); i++; continue; }
       var dels = [], adds = [];
       while (i < ops.length && ops[i][0] !== '=') { (ops[i][0] === '-' ? dels : adds).push(ops[i][1]); i++; }
       var used = 0;
@@ -530,7 +535,9 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
   changeSections.forEach(function (section, index) {
     var labels = (section.getAttribute('data-labels') || 'Before|Now').split('|');
     var beforeSrc = section.querySelector('script.before'), afterSrc = section.querySelector('script.after');
-    var model = diffRows(beforeSrc ? beforeSrc.textContent : '', afterSrc ? afterSrc.textContent : '');
+    var model = diffRows(beforeSrc ? beforeSrc.textContent : '', afterSrc ? afterSrc.textContent : '',
+      beforeSrc ? beforeSrc.getAttribute('data-lines') : '', afterSrc ? afterSrc.getAttribute('data-lines') : '');
+    var numbered = (model.blocks ? model.before.concat(model.now) : model.rows).some(function (r) { return r.no > 0; });
     var key = section.getAttribute('data-key');
     if (key) {
       var test = null;
@@ -541,6 +548,39 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
     var edits = 0;
     if (model.blocks) { edits = 1; }
     else { var inside = false; model.rows.forEach(function (r) { if (r.kind === 'same') { inside = false; r.edit = 0; } else { if (!inside) { edits++; inside = true; } r.edit = edits; } }); }
+    // Live line numbers for the walk. Each edit moves the lines below it by what it adds minus what it
+    // removes, measured between the unchanged lines around it, so lines left out of the excerpt count too.
+    var delta = {};
+    if (!model.blocks && numbered) {
+      var rs = model.rows, groups = {}, seen = 0;
+      rs.forEach(function (r) { if (r.kind === 'same') { r.above = seen; } else { seen = r.edit; } });
+      var anchor = function (r) { return r.kind === 'same' && r.no > 0 && r.was > 0; };
+      for (var e = 1; e <= edits; e++) {
+        var first = -1, last = -1, counted = 0, p, q;
+        rs.forEach(function (r, i) { if (r.edit === e) { if (first < 0) { first = i; } last = i; if (!r.skip) { counted += r.kind === 'new' ? 1 : -1; } } });
+        for (p = first - 1; p >= 0 && !anchor(rs[p]); p--) { }
+        for (q = last + 1; q < rs.length && !anchor(rs[q]); q++) { }
+        delta[e] = counted;
+        rs.slice(first, last + 1).forEach(function (r) { r.prevSame = p >= 0 ? rs[p] : null; r.nextSame = q < rs.length ? rs[q] : null; });
+        (groups[p + ':' + q] = groups[p + ':' + q] || { p: p, q: q, list: [] }).list.push(e);
+      }
+      Object.keys(groups).forEach(function (g) {
+        var x = groups[g];
+        if (x.p < 0 || x.q >= rs.length) { return; }
+        var rest = (rs[x.q].no - rs[x.p].no) - (rs[x.q].was - rs[x.p].was);
+        x.list.slice(0, -1).forEach(function (e) { rest -= delta[e]; });
+        delta[x.list[x.list.length - 1]] = rest;
+      });
+    }
+    // the number a line has while edits 1 to k are in and the rest are not
+    function liveNo(r, k) {
+      if (r.skip) { return 0; }
+      if (r.kind === 'new') { return r.no; }
+      if (r.kind === 'same') { var n = r.no; for (var e = k + 1; e <= r.above; e++) { n -= delta[e] || 0; } return n; }
+      if (r.prevSame) { return liveNo(r.prevSame, k) + (r.no - r.prevSame.was); }
+      if (r.nextSame) { return liveNo(r.nextSame, k) - (r.nextSame.was - r.no); }
+      return 0;
+    }
     var editSays = all('ol.edits li', section).map(function (li) { return li.textContent; });
     var refs = { before: beforeSrc ? beforeSrc.getAttribute('data-ref') : '', now: afterSrc ? afterSrc.getAttribute('data-ref') : '' };
     var boards = all('svg.board', section).map(function (svg) {
@@ -610,14 +650,19 @@ const couponAmount = Math.min(coupon.value, cart.subtotal);
       stopTyping(); typingMs = 0;
       code.textContent = '';
       var tab = el('div', 'tab'), body = el('div', 'body'), number = 0, text = '', focus = null, fresh = [];
+      var file = model.blocks ? (view === 'before' ? 'before' : view === 'now' ? 'now' : (codeStep >= 1 ? 'now' : 'before')) : (view === 'both' ? (codeStep === 0 ? 'before' : 'now') : view);
       code.appendChild(tab); code.appendChild(body);
       function head(name, ref) {
         var path = (ref || '').split(/[ ,]/)[0], file = path.split('/').pop().replace(/:\d+$/, '');
         tab.appendChild(el('b', '', file || name)); tab.appendChild(el('span', '', ref || '')); tab.appendChild(el('span', 'which', name));
       }
       function add(r, mode) {
-        var removed = mode === 'focus' && r.kind === 'old';
-        var line = codeLine(r, mode, r.skip || removed ? 0 : ++number);
+        var removed = mode === 'focus' && r.kind === 'old', n;
+        if (!numbered) { n = r.skip || removed ? 0 : ++number; }
+        else if (file === 'before') { n = r.kind === 'same' ? r.was : r.kind === 'old' ? r.no : 0; }
+        else if (view === 'both' && !model.blocks) { n = r.kind === 'old' && r.edit === codeStep ? 0 : liveNo(r, codeStep); }
+        else { n = r.kind === 'old' ? 0 : r.no; }
+        var line = codeLine(r, mode, n);
         body.appendChild(line);
         if (mode === 'focus') { if (!focus) { focus = line; } if (r.kind === 'new') { fresh.push(line); } }
       }

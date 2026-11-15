@@ -17,6 +17,7 @@ The drawing rules here are measured, not remembered. They come from a study of 4
 - **Before you draw anything,** read [references/board-habits.md](references/board-habits.md): his habits ranked by how often he used them, and which drawing fits which kind of code change.
 - **Before you write the page,** read [references/page.md](references/page.md): how to fill the template and how to write a drawing in SVG.
 - **The page itself** starts from [assets/template.html](assets/template.html). Copy it and replace the content. The style and the script in it are the design.
+- **Line numbers:** [scripts/line-numbers.py](scripts/line-numbers.py) reads each excerpt's file from git and writes its real line numbers into the page.
 
 ## 1. What a PRtifact is
 
@@ -29,7 +30,7 @@ One screen that works like an app. Nothing to scroll through from top to bottom;
 | Level | What it shows | When |
 |---|---|---|
 | Idea | A whiteboard drawing of what happens, built one step at a time | When there is something to draw |
-| Code | The code in an editor view, starting from how it was. Each step types in one edit, with a sentence that says what you are doing and why, as if thinking aloud | Always |
+| Code | The code in an editor view, with the file's real line numbers, starting from how it was. Each step types in one edit, with a sentence that says what you are doing and why, as if thinking aloud | Always |
 | Screen | The interface before on the left and after on the right | When the change has an interface |
 | Replay | The real request run through the old code and the new code, with the log lines that matter | When you captured one |
 
@@ -48,7 +49,7 @@ Under the list, two entries for the whole change:
 6. **Replay the real case if you safely can.** Run the old code and the new code on the same real request, on a local copy, with stand-ins for anything that charges money, sends a message or writes to an outside service. Save both full logs in a `.prtifact/<change>/` folder beside the code and say on the page where they are. Put only the lines that matter on the Replay level. If you cannot capture a replay, leave the level out. Never write a log line you did not capture.
 7. **List the cases.** Every situation where the code behaves differently after the change, and the nearby ones a reviewer will worry about that must stay the same. One row each. Write the case so it is understood without clicking anything, and say what happened before and what happens now in four words or fewer each.
 8. **Write the pending decisions.** Each one is a question the reviewer has to answer, two or three sentences of what they need to know, and two to four real options, listed neutrally. Then the limits: what is tested, what is not, what was never run against the real thing.
-9. **Fill the template** following [references/page.md](references/page.md), check it against section 6, look at it once if you can render it, and hand it over the way the person asked. If they did not say, publish it when your environment can publish a page and give the link; otherwise save the .html file and give its path.
+9. **Fill the template** following [references/page.md](references/page.md), run [scripts/line-numbers.py](scripts/line-numbers.py) on it, check it against section 6, look at it once if you can render it, and hand it over the way the person asked. If they did not say, publish it when your environment can publish a page and give the link; otherwise save the .html file and give its path.
 10. **When a decision comes back** (the reviewer clicked an option, or told you), record it on the pull request, make the change it calls for, and republish the page with that decision marked decided.
 
 ## 3. The drawing rules
@@ -57,7 +58,7 @@ These hold on nearly every board. Follow them on every page.
 
 1. **Black is the base and the working. Color means a link or a change, nothing else.** No color for decoration.
 2. **The old state is not grayed out.** It stays black. In 4,726 drawings he made the old state quieter 13 times. A route or a value that no longer applies stays black and gets a red slash. Gray is only for helper lines, such as a guide or a "now" marker.
-3. **One new thing, one color.** Each entry gets one pen color. Everything that change adds to the drawing is that color: the new arrow, the label, the underline on the conclusion. In the code, what is added is always the Schwartz Tutoring orange, and what is removed is gray and crossed off.
+3. **One new thing, one color.** Each entry gets one pen color. Everything that change adds to the drawing is that color: the new arrow, the label, the underline on the conclusion. In the code, what is added is always the Schwartz Tutoring green, and what is removed is gray and crossed off.
 4. **One color follows one thing** from where it first appears to everywhere it lands. This is his most common habit (42% of drawings).
 5. **Green is right, red is wrong or removed.** Those two never mean anything else. A removed piece gets a red slash and stays readable. Nothing is erased.
 6. **Ink goes on the given material.** Mark up the real code. Do not retype it into boxes.
@@ -103,6 +104,7 @@ The template is the design: an app shell around a whiteboard. The shell (top bar
 - [ ] "Now" is a copy of "Before" with the change added.
 - [ ] No number is presented as real unless it is. A failure nobody has seen says so.
 - [ ] Every edit in the code has its sentence, in the order the page shows them.
+- [ ] The code shows the file's real line numbers: the line number script found every line.
 - [ ] Every replay line was captured from a real run, and the full logs are saved where the page says.
 - [ ] Every pending decision has real options, none marked as the one to pick.
 - [ ] Every Before and After cell in the case chart has a mark and at most four words.
