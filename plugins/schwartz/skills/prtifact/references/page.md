@@ -10,7 +10,7 @@ The example content in the template is a made-up change, kept small so every par
 
 ## 1. Title and header
 
-- `<title>`: two to four words that name this page, such as "Autopay PRtifact". Not a sentence.
+- `<title>`: two to four words that name this page, such as "Shipping PRtifact". Not a sentence.
 - `.kicker`: where the change lives and its state ("Merge request !307, open, not merged").
 - `<h1>`: what the change does, as a short phrase.
 - `.lede`: one or two sentences. What was wrong, what happens now.
