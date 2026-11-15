@@ -24,7 +24,7 @@ One screen that works like an app. Nothing to scroll through from top to bottom;
 
 - **Top bar:** the name of the change and one arrow button that opens it. Nothing else.
 - **Down the left:** the ideas to understand, numbered, six at most. For one pull request, that is one entry per change that matters. For a stack of pull requests, it is one entry per pull request, each with its own arrow to open it. The list folds away.
-- **In the panel:** the entry you picked, as a whiteboard drawing. The options sit on top (Before, Now or Both, then Play). The board starts blank and builds one step at a time, with one sentence under it per step. The one-line conclusion appears last, then a button to the next entry.
+- **In the panel:** the entry you picked, as a whiteboard drawing. The options sit on top (Before, Now or Both, then Play). The board starts blank and builds one step at a time. Beside each drawing is a thread of messages, one per step, like a chat: each message lands, then its step draws in. The one-line conclusion appears last, then a button to the next entry.
 
 Under the list, two entries for the whole change:
 
@@ -56,7 +56,7 @@ These hold on nearly every board. Follow them on every page.
 6. **Draw the situation, not the code.** Sessions, hours, invoices, a timer, two runs at once: the things the code acts on, with their real values. A word from the code goes on the board only after a step has said what it is.
 7. **The conclusion is written in words, and it goes on last.**
 8. **No legend.** A color explains itself by repeating.
-9. **Nothing moves until the reader asks.** The board starts blank. Play adds the steps of the one drawing on screen, slowly enough to read each sentence, then stops and offers the next entry. The small arrows go one step at a time.
+9. **Nothing moves until the reader asks.** The board starts blank. Play runs the steps of the one entry on screen: a typing mark, the message, the step drawn in, a pause long enough to read, then the next. It stops at the end and offers the next entry. The small arrows go one step at a time.
 
 How a drawing is built, from the recorded sessions:
 
@@ -68,7 +68,7 @@ How a drawing is built, from the recorded sessions:
 
 ## 4. Words
 
-- **Few.** A Before or After cell is four words or fewer. A conclusion is one sentence. A step is one or two sentences. If a paragraph is needed, the drawing is wrong.
+- **Few.** A Before or After cell is four words or fewer. A conclusion is one sentence. A step's message is one or two short sentences. A drawing's messages should not run taller than the drawing. If a paragraph is needed, the drawing is wrong.
 - **Plain.** Write what a person on the team would say out loud. Name things by what they do, not by what the code calls them.
 - **Never** the phrase "load-bearing". No em dashes. No "robust", "seamless", "leverage", "comprehensive".
 - **Say what is not tested as plainly as what is.**

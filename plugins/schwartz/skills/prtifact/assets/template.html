@@ -173,6 +173,24 @@ main h2:not(:first-child) { margin-top: 26px; }
 @media (prefers-reduced-motion: reduce) { .verdict.fresh { animation: none; } }
 /* version 7: the Code level is an editor. Added code is Schwartz orange and typed in. Removed code is gray and crossed off. */
 [hidden] { display: none !important; }
+/* the drawing on the left, its messages on the right, starting level with it */
+.boards { max-width: 1000px; }
+.row { display: grid; grid-template-columns: minmax(0, 640px) minmax(220px, 360px); gap: 18px; align-items: start; }
+.thread { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding-top: 22px; min-width: 0; }
+.msg { background: var(--paper-2); border: 1.5px solid var(--hair); border-radius: 14px 14px 14px 4px; padding: 7px 12px; font-size: 15px; line-height: 1.4; max-width: 100%; }
+.msg.last { border-color: var(--pen); box-shadow: inset 3px 0 0 var(--pen); }
+.msg.fresh { animation: msg-in 0.28s ease-out both; }
+@keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.msg.typing { display: inline-flex; gap: 5px; padding: 12px 14px; }
+.msg.typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-soft); animation: dot 1s infinite ease-in-out; }
+.msg.typing span:nth-child(2) { animation-delay: 0.15s; }
+.msg.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes dot { 0%, 60%, 100% { opacity: 0.25; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+.hint { margin: 0; font-size: 14.5px; color: var(--ink-soft); }
+/* the message lands first, then the step draws in */
+svg.board .fresh text, svg.board .fresh .k.dash, svg.board .fresh .k:not(.dash) { animation-delay: 0.35s; }
+@media (max-width: 900px) { .row { grid-template-columns: minmax(0, 1fr); gap: 8px; } .thread { padding-top: 0; } }
+@media (prefers-reduced-motion: reduce) { .msg.fresh, .msg.typing span { animation: none; } }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -321,6 +339,7 @@ main h2:not(:first-child) { margin-top: 26px; }
   }
   function stopPlay() {
     if (timer) { clearTimeout(timer); timer = null; }
+    all('.msg.typing').forEach(function (n) { n.remove(); });
     built.forEach(function (b) { if (b.playButton) { b.playButton.textContent = 'Play'; } });
   }
   // long enough to read the sentence that just appeared
@@ -335,11 +354,13 @@ main h2:not(:first-child) { margin-top: 26px; }
       var figure = el('figure', 'b'), caption = el('figcaption', '', svg.getAttribute('data-view') === 'before' ? labels[0] : labels[1]);
       svg.parentNode.insertBefore(figure, svg); figure.appendChild(caption); figure.appendChild(svg);
       all('.k', svg).forEach(function (n) { if (!n.classList.contains('dash')) { n.setAttribute('pathLength', '1'); } });
-      return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, says: says, steps: steps };
+      var row = el('div', 'row'), thread = el('div', 'thread');
+      thread.setAttribute('aria-live', 'polite'); row.appendChild(figure); row.appendChild(thread);
+      return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, row: row, thread: thread, says: says, steps: steps };
     });
     var verdict = section.querySelector('.verdict');
     var stage = el('div', 'level'), boardBox = el('div', 'boards');
-    boards.forEach(function (b) { boardBox.appendChild(b.figure); }); stage.appendChild(boardBox);
+    boards.forEach(function (b) { boardBox.appendChild(b.row); }); stage.appendChild(boardBox);
 
     // the options sit on top: the view, and the controls that move through the steps
     var bar = el('div', 'bar'), seg = el('div', 'seg'), stepper = el('div', 'stepper');
@@ -357,8 +378,7 @@ main h2:not(:first-child) { margin-top: 26px; }
     if (section.getAttribute('data-href')) {
       var out = el('a', 'out', '↗'); out.href = section.getAttribute('data-href'); out.title = 'Open this change'; out.setAttribute('aria-label', 'Open this change'); bar.appendChild(out);
     }
-    var say = el('p', 'say'); say.setAttribute('aria-live', 'polite');
-    section.appendChild(bar); section.appendChild(stage); section.appendChild(say);
+    section.appendChild(bar); section.appendChild(stage);
     if (verdict) { section.appendChild(verdict); }
     section.appendChild(onward);
 
@@ -368,9 +388,16 @@ main h2:not(:first-child) { margin-top: 26px; }
     function paintBoards(animate) {
       var list = shown(), offset = 0, text = '';
       if (step > total()) { step = total(); }
-      boards.forEach(function (b) { b.figure.hidden = list.indexOf(b) < 0; });
+      boards.forEach(function (b) { b.row.hidden = list.indexOf(b) < 0; });
+      all('.msg.typing, .hint', section).forEach(function (n) { n.remove(); });
       list.forEach(function (b) {
-        var local = step - offset;
+        var local = step - offset, have = all('.msg', b.thread), want = Math.max(0, Math.min(b.steps, local)), k;
+        for (k = have.length; k > want; k--) { have[k - 1].remove(); }
+        for (k = have.length; k < want; k++) {
+          var msg = el('div', 'msg' + (animate ? ' fresh' : ''), b.says[k] || ''); b.thread.appendChild(msg);
+          if (animate && msg.scrollIntoView) { msg.scrollIntoView({ block: 'nearest' }); }
+        }
+        all('.msg', b.thread).forEach(function (m, i, ms) { m.classList.toggle('last', i === ms.length - 1 && local >= 1 && local <= b.steps); });
         all('[data-step]', b.svg).forEach(function (n) {
           var wasOff = n.classList.contains('off'), off = +n.getAttribute('data-step') > local;
           n.classList.toggle('off', off);
@@ -385,8 +412,7 @@ main h2:not(:first-child) { margin-top: 26px; }
     function paint(animate) {
       viewButtons.forEach(function (b) { b.node.setAttribute('aria-pressed', b.view === view ? 'true' : 'false'); });
       var text = paintBoards(animate), of = total();
-      if (!text && of && step === 0) { text = 'Press Play to watch it, or the arrow to go one step at a time.'; }
-      say.textContent = text;
+      if (of && step === 0 && shown().length) { shown()[0].thread.appendChild(el('p', 'hint', 'Press Play to watch it, or the arrow to go one step at a time.')); }
       count.textContent = of ? step + ' / ' + of : '';
       back.disabled = step <= 0; next.disabled = step >= of;
       var done = of > 0 && step >= of;
@@ -398,14 +424,31 @@ main h2:not(:first-child) { margin-top: 26px; }
     function restart() { step = 0; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); return paint(false); }
     back.addEventListener('click', function () { stopPlay(); step--; paint(false); });
     next.addEventListener('click', function () { stopPlay(); step++; paint(true); });
+    function nextThread() {
+      var offset = 0, list = shown(), i;
+      for (i = 0; i < list.length; i++) { if (step < offset + list[i].steps) { return list[i].thread; } offset += list[i].steps; }
+      return null;
+    }
+    function run() {
+      var thread = nextThread();
+      if (!thread) { stopPlay(); return; }
+      all('.hint', section).forEach(function (n) { n.remove(); });
+      var dots = el('div', 'msg typing'); dots.setAttribute('aria-label', 'Writing');
+      dots.appendChild(el('span')); dots.appendChild(el('span')); dots.appendChild(el('span'));
+      thread.appendChild(dots);
+      if (dots.scrollIntoView) { dots.scrollIntoView({ block: 'nearest' }); }
+      timer = setTimeout(function () {
+        var text = forward();
+        if (text === null) { stopPlay(); return; }
+        timer = setTimeout(run, pause(text));
+      }, 1100);
+    }
     playButton.addEventListener('click', function () {
       if (timer) { stopPlay(); return; }
-      if (view !== 'both') { view = 'both'; step = 0; }
-      var text = forward();
-      if (text === null) { restart(); text = forward(); }
-      if (text === null) { stopPlay(); return; }
+      if (view !== 'both') { view = 'both'; step = 0; paint(false); }
+      if (step >= total()) { restart(); }
       playButton.textContent = 'Pause';
-      timer = setTimeout(tick, pause(text));
+      run();
     });
 
     var nav = navButton(section.getAttribute('data-name'), String(index + 1));
@@ -414,13 +457,6 @@ main h2:not(:first-child) { margin-top: 26px; }
       toEnd: function () { step = total(); paint(false); } });
   });
 
-  // Play walks the steps of the one drawing on screen, then stops. One idea at a time.
-  function tick() {
-    timer = null;
-    var text = built[current].forward ? built[current].forward() : null;
-    if (text === null) { stopPlay(); return; }
-    timer = setTimeout(tick, pause(text));
-  }
 
   if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }
   otherSections.forEach(function (section) {
