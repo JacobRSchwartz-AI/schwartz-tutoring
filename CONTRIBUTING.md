@@ -10,6 +10,10 @@
 | `references/rare-situations.md` | What to do when something unusual happens |
 | `references/visuals.md` | How Jacob draws: pen colors, marks and step-by-step recipes for his most common diagrams, from all 2,345 of his whiteboard pages |
 | `references/policies.md` | Conduct rules |
+| `plugins/schwartz/skills/prtifact/SKILL.md` | PRtifact: what goes on a review page, the steps and the drawing rules |
+| `prtifact/references/board-habits.md` | His board habits ranked by count, from 4,726 drawings, and which drawing fits which code change |
+| `prtifact/references/page.md` | How to fill the template and write a drawing |
+| `prtifact/assets/template.html` | The page: its design, the marks and the step buttons |
 
 ## Adding a skill
 
