@@ -1,4 +1,5 @@
 <title>Shipping PRtifact</title>
+<meta charset="utf-8">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Patrick+Hand&display=swap">
 <style>
@@ -144,26 +145,9 @@ a.out { display: inline-grid; place-items: center; width: 32px; height: 30px; bo
 .verdict { margin: 12px 0 0; visibility: hidden; }
 .verdict.shown { visibility: visible; }
 .verdict.fresh { animation: ink-in 0.7s ease-out both; }
-nav.side .n.open { background: var(--pen-brown); border-color: var(--pen-brown); color: var(--paper); }
 .stepper button.one { padding: 3px 12px; font-size: 20px; line-height: 1.1; }
 button.onward { display: block; margin-top: 16px; background: none; border: 0; padding: 4px 0; cursor: pointer; font-family: var(--hand); font-size: 22px; text-decoration: underline; text-underline-offset: 5px; }
-/* decisions */
-.decision { border: 2px solid var(--ink); padding: 12px 16px 14px; max-width: 820px; margin: 0 0 14px; }
-.decision .hand { font-size: 24px; line-height: 1.15; margin: 0 0 6px; }
-.decision p { font-size: 15px; }
-.options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.options button { background: none; border: 1.5px solid var(--ink); border-radius: 2px; padding: 6px 14px; cursor: pointer; font-family: var(--hand); font-size: 19px; line-height: 1.2; text-align: left; }
-.options button:hover:not(:disabled) { background: var(--paper-2); }
-.options button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-.options button:disabled { cursor: default; opacity: 0.55; }
-.options button[aria-pressed="true"]:disabled { opacity: 1; }
-.status { font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
-.status.sent { color: var(--pen-brown); }
-.status.failed { color: var(--pen-red); }
-.status.done { color: var(--pen-green); font-family: var(--hand); font-size: 20px; }
-.status.done .note { font-family: var(--typed); font-size: 14px; color: var(--ink-soft); }
 ul.limits { margin: 0; padding-left: 20px; font-size: 15px; max-width: 80ch; display: grid; gap: 4px; }
-main h2 + .decision, main .decision + h2 { margin-top: 0; }
 main h2:not(:first-child) { margin-top: 26px; }
 @media (prefers-reduced-motion: reduce) { .verdict.fresh { animation: none; } }
 [hidden] { display: none !important; }
@@ -194,7 +178,6 @@ main > section.change { max-width: none; }
 .speed button { padding: 4px 10px; font-family: var(--mono); font-size: 12.5px; }
 .thread-title { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: -2px; }
 .msg .num { font-family: var(--mono); font-weight: 500; font-size: 13.5px; margin-right: 7px; color: var(--ink-soft); }
-.status .follow { margin-left: 10px; font-family: var(--typed); font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 /* on a wide screen a thread is as tall as its drawing and scrolls, like a chat, so it never pushes the next drawing down */
 @media (min-width: 901px) {
   .row { align-items: stretch; }
@@ -233,6 +216,8 @@ figure.scr.big .bigsay { display: block; max-width: 80ch; margin: 4px 0 0; font-
 @media (min-width: 901px) { .row.scr .thread { height: auto; min-height: 0; max-height: 75vh; } }
 /* #change-N-all: every step of a screens entry, one pair under the other */
 .prtifact-all div.screens .shot.off { display: grid; }
+/* #change-N-all is for checking: every message shows, nothing scrolls away */
+.prtifact-all .thread { height: auto !important; max-height: none !important; overflow: visible !important; }
 .prtifact-all div.screens .shot { margin-bottom: 14px; }
 .prtifact-all div.screens .shot::before { content: "Step " attr(data-step); grid-column: 1 / -1; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
 body { margin: 0; }
@@ -301,27 +286,16 @@ div.screens:not(:has(.shot:not(.off)))::after { content: "Press Play, or tap her
     </svg>
     <ol class="says"><li>A $20 cart has a $25 coupon. What does the customer pay?</li><li>The old code takes off the whole coupon, so the total is minus $5.</li><li>An order can't cost less than nothing.</li></ol>
     <svg class="board" data-view="now" viewBox="0 0 640 200" role="img" aria-label="Now: the coupon is capped at the $20 cart, so the total is $0.">
-      <text x="80" y="52">cart</text><text x="260" y="52">$20.00</text><text x="80" y="86">coupon</text><text x="244" y="86">− $25.00</text><path class="k" d="M80 100 H320"/><text x="80" y="134">total</text><text x="260" y="134">−$5.00</text>
-      <g data-step="1"><path class="k red" d="M254 92 L312 74"/><text class="pen" x="336" y="86">$20.00</text><text class="s pen" x="396" y="86">capped at the cart</text></g>
-      <g data-step="2"><path class="k red" d="M254 140 L312 122"/><text class="pen" x="336" y="134">$0.00</text></g>
+      <text x="80" y="52">cart</text><text x="260" y="52">$20.00</text><text x="80" y="86">coupon</text><text class="s" x="140" y="86">($25)</text><path class="k" d="M80 100 H320"/><text x="80" y="134">total</text>
+      <g data-step="1"><text class="pen" x="244" y="86">− $20.00</text><text class="s pen" x="336" y="86">capped at the cart</text></g>
+      <g data-step="2"><text class="pen" x="260" y="134">$0.00</text></g>
       <g data-step="3"><path class="k green" d="M20 166 l6 9 l13 -19"/><text class="green" x="46" y="180">the order comes to $0.00, never less</text></g>
     </svg>
     <ol class="says"><li>Now the coupon is capped at what is in the cart: $20 of the $25.</li><li>So the total comes to $0.</li><li>The rest of the coupon is simply not used.</li></ol>
   </section>
 </section>
 
-<section id="decisions" data-name="Decisions">
-  <h2>Pending decisions</h2>
-  <div class="decision" data-id="exactly-fifty">
-    <p class="hand">At exactly $50 after the coupon, is shipping free?</p>
-    <p>The code says yes. The help page says "orders over $50". One of them should change.</p>
-    <div class="options">
-      <button>Free at exactly $50</button>
-      <button>Free only above $50</button>
-      <button data-other>Something else</button>
-    </div>
-  </div>
-
+<section id="limits" data-name="Limits">
   <h2>Limits</h2>
   <div class="cols">
     <div class="scroll">
@@ -556,92 +530,11 @@ div.screens:not(:has(.shot:not(.off)))::after { content: "Press Play, or tap her
 
 
   if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }
-  var recountDecisions = [];
   otherSections.forEach(function (section) {
     var name = section.getAttribute('data-name') || section.querySelector('h2').textContent;
-    var open = all('.decision:not([data-decided])', section).length;
-    var nav = navButton(name, open ? String(open) : '≡'), index = built.length;
-    if (open) { nav.querySelector('.n').classList.add('open'); }
-    if (all('.decision', section).length) {
-      recountDecisions.push(function () {
-        var left = all('.decision:not([data-decided]):not(.done)', section).length, n = nav.querySelector('.n');
-        n.textContent = left ? String(left) : '≡'; n.classList.toggle('open', left > 0);
-      });
-    }
+    var nav = navButton(name, '≡'), index = built.length;
     nav.addEventListener('click', function () { stopPlay(); show(index); });
     built.push({ section: section, nav: nav, paint: function () {}, playButton: null });
-  });
-
-  // ---- decisions: pick an option and it goes to Claude as a comment on this page ----
-  var commentsApi = null, canSend = 'off';
-  if (window.claude && typeof window.claude.use === 'function') {
-    window.claude.use('comments').then(function (api) {
-      commentsApi = api;
-      if (api && api.canSendToClaude) { api.canSendToClaude().then(function (value) { canSend = value; }, function () { canSend = 'off'; }); }
-    }, function () { commentsApi = null; });
-  }
-  function remember(id, value) { try { localStorage.setItem('prtifact-decision-' + id, value); } catch (error) { /* a convenience only */ } }
-  function recall(id) { try { return localStorage.getItem('prtifact-decision-' + id); } catch (error) { return null; } }
-  all('.decision').forEach(function (box) {
-    var id = box.getAttribute('data-id') || '', question = (box.querySelector('.hand') || box).textContent.trim();
-    var options = all('.options button', box), status = el('p', 'status'); status.setAttribute('aria-live', 'polite');
-    box.appendChild(status);
-    function settle(text, kind) { status.textContent = text; status.className = 'status ' + (kind || ''); }
-    var decided = box.getAttribute('data-decided');
-    if (decided) {
-      options.forEach(function (b) { b.disabled = true; b.setAttribute('aria-pressed', b.textContent.trim() === decided ? 'true' : 'false'); });
-      status.appendChild(mark('yes')); status.appendChild(document.createTextNode('Decided: ' + decided)); status.className = 'status done';
-      // a decision that became its own follow-up change links to that change's page
-      if (box.getAttribute('data-follow')) {
-        var follow = el('a', 'follow', 'Follow-up page ↗'); follow.href = box.getAttribute('data-follow');
-        status.appendChild(document.createTextNode(' ')); status.appendChild(follow);
-      }
-      return;
-    }
-    // an option marked data-nothing needs no work: picking it settles the decision on the spot
-    function done(choice, note) {
-      box.classList.add('done');
-      options.forEach(function (b) { b.disabled = true; b.setAttribute('aria-pressed', b.textContent.trim() === choice ? 'true' : 'false'); });
-      status.textContent = ''; status.className = 'status done';
-      status.appendChild(mark('yes')); status.appendChild(document.createTextNode('Done: ' + choice + '. Nothing else needs to happen.'));
-      if (note) { status.appendChild(el('span', 'note', ' ' + note)); }
-      recountDecisions.forEach(function (fn) { fn(); });
-    }
-    var already = recall('done-' + id);
-    if (already) { done(already, ''); return; }
-    var sent = recall(id);
-    if (sent) { options.forEach(function (b) { b.setAttribute('aria-pressed', b.textContent.trim() === sent ? 'true' : 'false'); }); settle('You chose: ' + sent + '. Sent to Claude; the merge request and this page update when it is done.', 'sent'); }
-    options.forEach(function (button) {
-      button.type = 'button';
-      button.addEventListener('click', function () {
-        var choice = button.textContent.trim();
-        if (button.hasAttribute('data-other')) {
-          if (commentsApi) { commentsApi.openComposer({ element: box }).catch(function () { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }); }
-          else { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }
-          return;
-        }
-        if (button.hasAttribute('data-nothing')) {
-          remember('done-' + id, choice);
-          done(choice, '');
-          var note = 'Decision: ' + question + ' Answer: ' + choice + ' Nothing needs to change. Record it on the merge request and mark it decided on this page.';
-          if (commentsApi && commentsApi.sendToClaude && canSend === 'available') {
-            commentsApi.anchorFor(box).then(function (anchor) { return commentsApi.sendToClaude({ anchor: anchor, text: note }); })
-              .then(function () { done(choice, 'Claude will note it on the merge request.'); }, function () { done(choice, 'Not noted on the merge request; tell Claude if you want it there.'); });
-          } else { done(choice, 'Not noted on the merge request; tell Claude if you want it there.'); }
-          return;
-        }
-        var text = 'Decision: ' + question + ' Answer: ' + choice + ' Record it on the merge request, make the change it calls for, and update this page.';
-        function failed(why) { settle('This could not be sent to Claude from here (' + why + '). Your choice was: ' + choice + '. Tell Claude in the chat.', 'failed'); }
-        if (!commentsApi || !commentsApi.sendToClaude) { failed('comments are not available in this view'); return; }
-        if (canSend !== 'available') { failed(canSend === 'no_session' ? 'no Claude session is watching this page' : 'sending to Claude is off here'); return; }
-        options.forEach(function (b) { b.setAttribute('aria-pressed', b === button ? 'true' : 'false'); });
-        settle('Sending to Claude…', 'sent');
-        commentsApi.anchorFor(box).then(function (anchor) { return commentsApi.sendToClaude({ anchor: anchor, text: text }); }).then(function () {
-          remember(id, choice);
-          settle('You chose: ' + choice + '. Sent to Claude; the merge request and this page update when it is done.', 'sent');
-        }, function (error) { options.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); }); failed(error && error.code ? error.code : 'unknown error'); });
-      });
-    });
   });
 
   function show(index) {

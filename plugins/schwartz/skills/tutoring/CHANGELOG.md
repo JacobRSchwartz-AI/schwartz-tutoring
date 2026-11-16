@@ -59,5 +59,8 @@ No change to the tutoring skill. The plugin now has a second skill, `/schwartz:p
 ## v2.10.0 (2026-11-15)
 No change to the tutoring skill. `/schwartz:prtifact` can now show a change to a page as screens: the real page before and after, side by side, one action per step, with a scrubber, a Bigger view and a ring on the one thing to look at. A small script takes the screenshots from the app running on a local copy, with nothing to install.
 
+## v2.11.0 (2026-11-15)
+No change to the tutoring skill. `/schwartz:prtifact` now draws the After picture fresh instead of marking up the Before one, checks its drawings for overlapping words, has three new kinds of drawing (several systems over time, what counts as one, the edge of a range), and drops the decision buttons: it is for reviewing an open pull request.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
