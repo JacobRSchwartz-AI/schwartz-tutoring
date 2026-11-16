@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.11.0 (2026-11-15)
+Drawings, and no decision buttons.
+- Now is drawn fresh: the same picture as Before, in the same layout, showing what happens now, with the new piece in the pen color. What went away is simply not drawn (a short pen note marks an absence that matters). Before can show a wrong result in red where it happens. This follows his most common board habit, the same picture redrawn per case (457 drawings), instead of marking up the old picture.
+- scripts/check-drawings.mjs opens every entry with all steps showing and lists overlapping words, words off the board and lines through words, and saves a picture of each entry.
+- board-habits.md has three new drawings: swimlanes (one event reaching several systems over time), what counts as one (a join that turns one session into several rows), and the boundary of a range (midnight, time zones, a week cut short).
+- Rules for saying a result was worked out rather than seen, for numbers moved by two fixes at once, for reports checked with read-only queries, and for keeping Before to four or five messages. Wider character widths, formulas for curved arrowheads, and fewer, larger tick labels on time lines.
+- Decisions are gone. A PRtifact is for an open pull request; anything still open is an open row in the case chart and is taken up on the pull request. The last section is Limits.
+- The template declares its character set, so it reads right when opened from disk, and #change-N-all shows every message.
+
 ## v2.10.0 (2026-11-15)
 Screens. An entry can now show the real page instead of a drawing, for changes a reviewer understands by watching someone use the page.
 - A screens entry puts the page before and after side by side, one action per step (open it, type, click), with one scrubber moving both sides, a ring in the entry's color on the one thing to look at, and the step's message in the thread. Tapping the pictures steps on; Bigger fills the window with them. A page can mix drawings and screens.

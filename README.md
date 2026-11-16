@@ -26,7 +26,7 @@ Or just ask your agent to install the skill from this repo.
 
 Then ask it to teach you something.
 
-The plugin also has `/schwartz:prtifact`. Point it at a pull request and it makes one review page, drawn the way Jacob drew on his whiteboard: the idea of each change that matters as a whiteboard drawing that builds step by step (or, for a change to a page, the real page before and after, side by side, with a scrubber), what changes case by case, and the decisions left to make.
+The plugin also has `/schwartz:prtifact`. Point it at a pull request and it makes one review page, drawn the way Jacob drew on his whiteboard: the idea of each change that matters as a whiteboard drawing that builds step by step (or, for a change to a page, the real page before and after, side by side, with a scrubber), and what changes case by case.
 
 The Claude Code plugin sends basic usage data to Schwartz Tutoring: your account email, the plugin version and when the skill starts. Nothing from your conversations is sent. Details are in [PRIVACY.md](PRIVACY.md).
 

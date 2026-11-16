@@ -1,6 +1,6 @@
 ---
 name: prtifact
-description: Turn a pull request, merge request, a stack of them, a branch or a diff into a PRtifact, a one-screen review app that explains the idea of each change the way Jacob Schwartz drew on his whiteboard, with the changes that matter down the left, for each one a drawing that builds step by step (or, for a change people see on a page, the real screens before and after, side by side, with a scrubber), and the pending decisions as buttons. Use when asked to review, explain, walk through or visualize a PR, MR, diff or code change, or to make a PRtifact. The skill carries its own page design and template, so use it in place of any general page-design guidance.
+description: Turn a pull request, merge request, a stack of them, a branch or a diff into a PRtifact, a one-screen review app that explains the idea of each change the way Jacob Schwartz drew on his whiteboard, with the changes that matter down the left, for each one a drawing that builds step by step (or, for a change people see on a page, the real screens before and after, side by side, with a scrubber), and a chart of what changes case by case. Use when asked to review, explain, walk through or visualize a PR, MR, diff or code change, or to make a PRtifact. The skill carries its own page design and template, so use it in place of any general page-design guidance.
 ---
 
 # PRtifact: a code change explained on a whiteboard
@@ -8,6 +8,8 @@ description: Turn a pull request, merge request, a stack of them, a branch or a 
 Jacob Schwartz tutored for about 3,000 hours on a shared whiteboard. A PRtifact explains a code change to a reviewer the way he explained a problem to a student: start from a real case, keep what was already there in black, draw the one new thing in one color, and write the conclusion in words at the end.
 
 The drawing is the whole point. A PRtifact shows the idea of each change and nothing else. The code is already on the pull request, so the page does not show it. A reviewer takes in one idea at a time, so the page shows one idea at a time.
+
+A PRtifact is made for a pull request that is still open: the reviewer reads it before approving, and takes anything open up on the pull request itself. On a merged one it only explains what changed.
 
 An idea is shown one of two ways. A **drawing** shows what happens: the rule, the order, the count that the code gets wrong. **Screens** show what a person sees: the real page before the change and after it, side by side, one action at a time, with a scrubber to move through them. Pick per entry. A change to a page usually wants screens; the reason behind it, if it is not obvious from the screens, wants a drawing as its own entry.
 
@@ -20,6 +22,7 @@ The drawing rules here are measured, not remembered. They come from a study of 4
 - **Before you write the page,** read [references/page.md](references/page.md): how to fill the template and how to write a drawing in SVG.
 - **The page itself** starts from [assets/template.html](assets/template.html). Copy it and replace the content. The style and the script in it are the design.
 - **For a screens entry,** [scripts/screens.mjs](scripts/screens.mjs) takes the pictures (Node 22 or newer, and Chrome or Edge; nothing to install).
+- **Before you hand over a page with drawings,** run [scripts/check-drawings.mjs](scripts/check-drawings.mjs) on it: it lists overlapping words, words off the board and lines through words, and saves a picture of each entry.
 
 ## 1. What a PRtifact is
 
@@ -34,16 +37,18 @@ One screen that works like an app. Nothing to scroll through from top to bottom;
 Under the list, two entries for the whole change:
 
 - **Cases:** a chart with a row per case and the columns Before and After.
-- **Decisions:** each pending decision as a question with options to click, then the limits of the change (what is tested, what was never run).
+- **Limits:** what is tested, what was worked out rather than run, and what was never run against the real thing.
 
 ## 2. Steps
 
 1. **Read the whole change first.** The diff against its target branch, the tests, the description, the ticket or bug report behind it. Run the tests if that is safe and read-only. Do not merge, push or change the branch.
 2. **Find the real case.** The customer, the order, the number from the bug report. The drawings use real numbers, never placeholders. If the page will leave the team, ask before putting a real person's name on it.
 3. **Pick the entries, six at most.** For a stack, one per pull request. For one pull request, the changes that matter: for each candidate ask what goes back to wrong if this statement were wrong or missing. If the answer is nothing, leave it out. A change with no idea to draw (a rename, a config value) is not an entry. For each entry, decide drawing or screens: screens when the reviewer would understand it by watching someone use the page (a button that does nothing, alerts piling up, a list that does not grow), a drawing when the reason is a rule, an order or a count that no screen shows (which two weeks a pay period covers, which payment goes first).
-4. **Write each entry** in this order: a name of two to four words, the Before drawing as steps to recreate, the Now drawing with one sentence per step, and a conclusion of one short sentence. The Before drawing opens with a question: what would have to happen for this to go wrong? Then each step is one thing that has to happen, in order, from the real case to the wrong result, the way a bug report's steps to reproduce read ("A session goes unpaid. Here: the 1-hour session on Sep 27."). The page numbers them under the title Steps to recreate. The real case will not reach every change (a race, a retry, an outage). For those, use the numbers from the test that covers the change, or a small concrete setup, and say so in the step. Never invent a number and present it as real.
+4. **Write each entry** in this order: a name of two to four words, the Before drawing as steps to recreate, the Now drawing with one sentence per step, and a conclusion of one short sentence. The Before drawing opens with a question: what would have to happen for this to go wrong? Then each step is one thing that has to happen, in order, from the real case to the wrong result, the way a bug report's steps to reproduce read ("A session goes unpaid. Here: the 1-hour session on Sep 27."). The page numbers them under the title Steps to recreate. Keep Before to four or five messages of a line or two each, so the whole thread fits beside the drawing; when the idea is a rule rather than a failure (who hears about a change), ask the question the rule answers instead. The real case will not reach every change (a race, a retry, an outage). For those, use the numbers from the test that covers the change, or a small concrete setup, and say so in the step. Never invent a number and present it as real. When one real number moves because of two fixes in the same change, either recompute it with only this entry's fix, or say in the message which part comes from which fix.
 5. **Make every drawing stand alone.** A reviewer who has never seen this code has to follow it. Say what each thing in the drawing is before it does anything (what a "split" is, who "A" and "B" are, where a number comes from). Name things by what they do, never by what the code calls them: "taken back out", not `removeJournalEntry`. If nobody has seen the failure happen and no test shows it, the last step says so. Draw the reason, not only the result: if the change works because of an order or a timing window (something marked first, a lock, a run that waits), the window goes on the board, and an arrow connects the new piece to what it changes. A Now drawing that is mostly words in the pen color is not done.
 6. **Get the real numbers by running the real case, if you safely can.** Run the old code and the new code on the same real request, on a local copy, with stand-ins for anything that charges money, sends a message or writes to an outside service. Use what it prints in the drawings. Save both full logs in a `.prtifact/<change>/` folder beside the code and say in the limits where they are. Never put a number in a drawing that you did not see.
+
+   **When the change is a report or a count,** running the code may not be safe or possible. Then write read-only queries that copy the old logic and the new logic, run both on the same real data, and say in the limits that the numbers come from those queries, not from the code itself.
 
    **For a screens entry, capture the real screens.** Run the app on a local copy twice, against the same data: once at the commit before the change (the target branch, or the merge's first parent) and once at the change itself. One throwaway worktree checked out at each commit in turn is enough; install its packages there (never link another checkout's packages into it). Write a plan for [scripts/screens.mjs](scripts/screens.mjs) and run it on both, changing only `out`, so the two sides show the same actions. Several plans are fine (one per clock time, say) as long as each runs on both sides. The script drives a headless Chrome or Edge, clicks with a real mouse (so whatever covers a button gets the click, as it would for a person), and writes a `log.txt` that says what each click actually landed on. Rules:
    - Only a local copy. Never point the plan at a production site.
@@ -54,19 +59,20 @@ Under the list, two entries for the whole change:
    - The pictures show real data from the copy. If the page will leave the team, use a test account's data or crop out other people's names.
    - Keep the plans, the pictures and both logs in `.prtifact/<change>/screens/`.
 7. **List the cases.** Every situation where the code behaves differently after the change, and the nearby ones a reviewer will worry about that must stay the same. One row each. Write the case so it is understood without clicking anything, and say what happened before and what happens now in four words or fewer each.
-8. **Write the pending decisions.** Each one is a question the reviewer has to answer, two or three sentences of what they need to know, and two to four real options, listed neutrally. An option that needs no work (leave it as it is, accept the behavior) is marked as such, so picking it settles the decision on the spot. Then the limits: what is tested, what is not, what was never run against the real thing.
+8. **Write the limits:** what is tested, what is not, what was worked out from the code rather than run, and what was never run against the real thing. There are no decision buttons. Something you found that is still open (the code and the description disagree, a case nobody decided) is an open row in the case chart, with a question mark in its After cell; the reviewer takes it up on the pull request.
 9. **Fill the template** following [references/page.md](references/page.md), check it against section 6, look at it once if you can render it, and hand it over the way the person asked. If they did not say, publish it when your environment can publish a page and give the link; otherwise save the .html file and give its path.
-10. **When a decision comes back** (the reviewer clicked an option, or told you), record it on the pull request as a comment (on a merged one too: its decisions are follow-ups), make the change it calls for, and republish the page with that decision marked decided. If the decision becomes its own follow-up pull request, do not grow this page into a stack: make the follow-up its own PRtifact (often a single entry) and link it from the decided decision.
 
 ## 3. The drawing rules
 
 These hold on nearly every board. Follow them on every page.
 
 1. **Black is the base and the working. Color means a link or a change, nothing else.** No color for decoration.
-2. **The old state is not grayed out.** It stays black. In 4,726 drawings he made the old state quieter 13 times. A route or a value that no longer applies stays black and gets a red slash. Gray is only for helper lines, such as a guide or a "now" marker.
+2. **The old state is not grayed out.** Before is drawn in black, at full strength. In 4,726 drawings he made the old state quieter 13 times. Gray is only for helper lines, such as a guide or a "now" marker.
 3. **One new thing, one color.** Each entry gets one pen color. Everything that change adds to the drawing is that color: the new arrow, the label, the underline on the conclusion.
 4. **One color follows one thing** from where it first appears to everywhere it lands. This is his most common habit (42% of drawings).
-5. **Green is right, red is wrong or removed.** Those two never mean anything else. A removed piece gets a red slash and stays readable. Nothing is erased.
+5. **Green is right, red is wrong.** Those two never mean anything else. In Before, a wrong result can be red right where it happens (the second Slack post, the 40 sessions). A red slash is for a removal the reader would otherwise miss.
+10. **Now is drawn fresh, not edited.** His most common habit (457 drawings) is the same picture redrawn once per case with one thing changed, not the old picture marked up. So Now is a clean drawing of what happens now, in the same layout as Before (same time line, same lanes, same places), so the eye can jump between the two. What the change adds is in the pen color. What it took away is simply not there; Before, right above, still shows it. If the absence is the point, a short pen note sits in the empty spot ("nothing sent"). Slashes and struck values on Now are the exception, not the method.
+11. **Say when an outcome was worked out, not seen.** If a result on the board comes from reading the code or from made-up times rather than from real data or a run, its words on the board say so ("worked out", "made-up times"), not only the message.
 6. **Draw the situation, not the code.** Sessions, hours, invoices, a timer, two runs at once: the things the code acts on, with their real values. A word from the code goes on the board only after a step has said what it is. A quantity is drawn as one: hours left as a meter with the threshold line on it, a session as a bar, an hour as a block that moves. A label that only names the quantity ("balance: 0 hours") is not a drawing.
 7. **The conclusion is written in words, and it goes on last.**
 8. **No legend.** A color explains itself by repeating.
@@ -78,7 +84,7 @@ How a drawing is built, from the recorded sessions:
 - Then a question. In more than half of the recorded drawings he asked first and the answer became the next mark. So the first step of the Before drawing puts the named parts on the board, and its message is the question.
 - Then the change, in its color.
 - Then the conclusion, with a check or an X.
-- "Now" starts as a copy of the black ink of "Before": the situation, without the red marks of what went wrong and without the conclusion. He copied an earlier drawing forward and edited the copy; he did not start over. A step can only add ink, so what no longer applies is slashed, not removed.
+- "Now" is the same picture drawn again for the new code: the parts that did not change on the board from the start, in black, in the same places as in Before; then, step by step, what happens now, with the new piece in the pen color; then the conclusion.
 
 ### Screens
 
@@ -116,9 +122,10 @@ The template is the design: an app shell around a whiteboard. The shell (top bar
 - [ ] Every drawing can be followed by someone who has never seen the code: each thing in it is named before it acts, and no code name appears unexplained.
 - [ ] No drawing grays out the old state. What no longer applies has a red slash.
 - [ ] Every drawing starts with a question and ends with a check or an X and a few words.
-- [ ] "Now" is a copy of "Before" with the change added.
+- [ ] "Now" is a clean drawing of what happens now, in Before's layout, with the new piece in the pen color, not Before covered in slashes.
+- [ ] `scripts/check-drawings.mjs` reports no problems, and you looked at the pictures it saved.
 - [ ] No number is presented as real unless it is. A failure nobody has seen says so.
-- [ ] Every pending decision has real options, none marked as the one to pick.
+- [ ] Anything still open is an open row in the case chart, not a separate section.
 - [ ] Every Before and After cell in the case chart has a mark and at most four words.
 - [ ] No em dashes, no "load-bearing".
 

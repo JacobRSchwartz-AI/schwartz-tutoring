@@ -4,7 +4,7 @@ Start from a copy of [../assets/template.html](../assets/template.html). It is o
 
 1. A `<title>`, a font link and a `<style>` block. Leave them alone, except to change the title.
 2. The content, between `<!-- PRTIFACT CONTENT START -->` and `<!-- PRTIFACT CONTENT END -->`. Replace all of it.
-3. A `<script>` at the bottom. Leave it alone. It builds the app from what you wrote: the top bar, the list down the left, the options row, the steps of each drawing, the marks, Play, and the decision buttons.
+3. A `<script>` at the bottom. Leave it alone. It builds the app from what you wrote: the top bar, the list down the left, the options row, the steps of each drawing, the marks and Play.
 
 You write plain sections in order. The script turns them into one screen. The page opens on the first entry with a blank board.
 
@@ -46,7 +46,7 @@ The `p.verdict` is the conclusion. It stays hidden until the last step of the dr
 Each entry has two boards, `data-view="before"` and `data-view="now"`. They stack, and the steps run through the first board and then the second. The second board stays off the screen until its first message starts. The board starts blank. Each board has a thread of messages on its right, starting level with the top of the board. Play shows a typing mark in the thread, then the step's message, then draws the step in, waits long enough to read, and goes on; it stops at the end of this entry and offers the next one. The two small arrows go one step back or forward. Each new step is drawn in.
 
 - Wrap what appears together in `<g data-step="1">`, `<g data-step="2">` and so on. Anything outside a step group is on the board from the start.
-- In the "before" board put everything in steps, so it starts blank. In the "now" board write the base outside any group: the black ink of the finished "before" picture, without its red marks of what went wrong and without its conclusion. Put only the change in steps.
+- In the "before" board put everything in steps, so it starts blank. In the "now" board, write outside any group the parts that are the same as in Before (the time line, the lanes, the names), at the same coordinates. Then draw what happens now in steps: the new piece in the pen color, nothing from Before's wrong result. Do not copy Before's ink and slash it; leave out what no longer happens, and put a short pen note where its absence matters.
 - After each board, an `<ol class="says">` with one `<li>` per step: the message that lands in the thread beside the drawing at that step. The "before" board is the steps to recreate: its first message is the question ("What would have to happen for a family to pay twice?"), and each later message is one thing that has to happen, in order. The page never numbers the first "before" message and numbers every one after it, under the title Steps to recreate. Step 1 of the "before" board draws the named parts and goes with the question. A message for a step that names the real case says so: "Here: Sep 27, 1 hour, $56.00."
 - Draw the things the code acts on (sessions, hours, invoices, a timer), not the code. Name every thing before it acts. If the drawing has "A" and "B", the step that brings them in says who they are. If it uses a word from the code ("split", "held back"), an early step shows what that is.
 - Give each board a `role="img"` and an `aria-label` that says what the finished drawing shows.
@@ -57,8 +57,8 @@ Each entry has two boards, `data-view="before"` and `data-view="now"`. They stac
 
 | Class | On | Result |
 |---|---|---|
-| (none) | `<text>` | Handwriting, 20 px, black. About 7.1 units per character. |
-| `s` | `<text>` | Smaller handwriting, 16.5 px. About 6.0 units per character. |
+| (none) | `<text>` | Handwriting, 20 px, black. About 7.1 units per character on average, up to 8 for words with wide letters (m, w, capitals). |
+| `s` | `<text>` | Smaller handwriting, 16.5 px. About 6.0 units per character, up to 6.7. |
 | `k` | `<path>`, `<rect>`, `<line>` | A black pen stroke, no fill. |
 | `pen` | text or stroke | This entry's color. Use it for everything the change adds. |
 | `red`, `green` | text or stroke | Wrong or removed, and right. |
@@ -80,12 +80,16 @@ For a slanted or curved arrow, draw the two head strokes about 11 units long, ea
 
 - Check: `<path class="k green" d="M20 190 l6 9 l13 -19"/>`
 - X: `<path class="k red" d="M20 170 l14 14 m0 -14 l-14 14"/>`
-- Red slash through a word or an arrow: a `k red` line from just below its left end to just above its right end. Size it from the character widths above, so it does not run past the word. This is how a step takes something away: a step can add ink but cannot hide or recolor what is already drawn.
+- Red slash through a word or an arrow: a `k red` line from just below its left end to just above its right end. Size it from the character widths above, so it does not run past the word. Use it in Now only when the reader would otherwise miss that something went away; normally Now just does not draw it.
 - The conclusion of a board sits at the bottom left: the mark at x 20, its words at x 46.
 
 **Keep it to words and lines.** Names joined by arrows, a ruled table, a time line with ticks, a bar cut in parts, two columns split by a rule. No rounded boxes around every word, no icons, no fills, no gradients.
 
-**Check the layout.** Estimate where each text ends from the character widths above, and keep 12 units clear between any two pieces. To see every step at once, open the page with `#change-2-all` at the end of the address (the 2 is the number of the entry). `#cases` and `#decisions` open the two whole-change panels.
+**Check the layout.** Estimate where each text ends from the character widths above, and keep 12 units clear between any two pieces. Then run `node scripts/check-drawings.mjs page.html`: it opens every entry with all steps showing, lists words that overlap, words off the board and lines that run through words (red slashes excepted), and saves a picture of each entry. Fix, run it again, and look at the pictures.
+
+**Curved and slanted arrows.** For a head at the end point (x, y), take the direction the line arrives from: for a curve, from its last control point to (x, y). With that angle a, the two head strokes go from (x, y) to (x − 11·cos(a − 28°), y − 11·sin(a − 28°)) and (x − 11·cos(a + 28°), y − 11·sin(a + 28°)). A slash across a curve goes at the point halfway along it: in a browser, `path.getPointAtLength(path.getTotalLength() / 2)`.
+
+**Time lines with many labels.** Every tick label on a time line is something the reader must read, so use few ticks and the large hand for them: only the times the steps talk about. If the dates do not fit at 20 px, the board is too wide in time; cut it to the part the change is about. To see every step at once, open the page with `#change-2-all` at the end of the address (the 2 is the number of the entry). `#cases` and `#decisions` open the two whole-change panels.
 
 ### Screens, in place of the two drawings
 
@@ -137,7 +141,7 @@ Run it once with `"out": "screens/before"` against the old commit and once with 
 
 ## 3. The case chart
 
-This goes in `<section id="cases" data-name="Cases">`. In the template the order is: the header, the cases, then `<section id="changes">` holding the entries, then the decisions. The list on the left always shows the entries first and the cases and decisions under them, whatever the order in the file.
+This goes in `<section id="cases" data-name="Cases">`. In the template the order is: the header, the cases, then `<section id="changes">` holding the entries, then the limits. The list on the left always shows the entries first and the cases and limits under them, whatever the order in the file.
 
 ```html
 <table class="chart">
@@ -154,32 +158,23 @@ This goes in `<section id="cases" data-name="Cases">`. In the template the order
 - Write the case itself in full, including the real numbers, so the row is understood by reading it. Nothing in the chart is clickable.
 - Put changed rows first, then the rows that stay the same, then the open ones. An open row is a `changed` row whose After cell is `ask`.
 
-## 4. Decisions and limits
+## 4. Limits
 
-This goes in `<section id="decisions" data-name="Decisions">`, last. The number of open decisions shows beside its name in the list.
+This goes in `<section id="limits" data-name="Limits">`, last.
 
 ```html
-<h2>Pending decisions</h2>
-<div class="decision" data-id="exactly-fifty">
-  <p class="hand">At exactly $50 after the coupon, is shipping free?</p>
-  <p>The code says yes. The help page says "orders over $50". One of them should change.</p>
-  <div class="options">
-    <button>Free at exactly $50</button>
-    <button>Free only above $50</button>
-    <button data-other>Something else</button>
+<section id="limits" data-name="Limits">
+  <h2>Limits</h2>
+  <div class="cols">
+    <div class="scroll"><table class="chart"> ... columns Piece and Tested ... </table></div>
+    <ul class="limits"><li>Never run against the live checkout.</li></ul>
   </div>
-</div>
-<h2>Limits</h2>
-... a chart with the columns Piece and Tested, and a short list ...
+</section>
 ```
 
-- `data-id` is a short name for the decision, unique on the page.
-- Two to four options, each a real choice, in a few words. List them neutrally. A `data-other` button opens a comment box for an answer that is not on the list.
-- Mark an option `data-nothing` when picking it needs no work: leave the code as it is, accept the behavior, no follow-up. Picking it settles the decision on the spot ("Done: Leave it as it is. Nothing else needs to happen."), the open count goes down, and the page still tells Claude so the choice is noted on the pull request. Every other option is work, so it says the choice was sent and waits for Claude.
-- When the reviewer clicks an option on a page published as a Claude artifact, the page posts it as a comment to Claude. That is the signal to act on it (SKILL.md, step 10). Publish the page with the `comments` capability so this works. Anywhere else, the button tells the reviewer to pass the answer on in the chat.
-- When a decision is made, republish with `data-decided="the option's exact words"` on that decision. It then shows as decided, with its buttons off.
-- When the decision became its own follow-up pull request with its own PRtifact, also add `data-follow="the follow-up page's link"`. A "Follow-up page" link shows beside "Decided".
-- Under the decisions, the limits: a chart of each piece and how it was checked: `yes` with the number of tests, or with "run by hand" or "seen in real data" when that is what happened; `no` with "not checked". and a short list of what the change was never run against and what is still to do by hand. If the author of the code made the page, say so here.
+- A chart of each piece and how it was checked: `yes` with the number of tests, or with "run by hand", "seen in real data" or "worked out from the code" when that is what happened; `no` with "not checked". Mark its rows `changed` so the marks show in color.
+- Then a short list: what the change was never run against, what was mocked or made up, and what is still to do by hand. If the author of the code made the page, say so here.
+- There are no decision buttons. What is still open is an open row in the case chart.
 
 ## 5. The technical rules the template already meets
 
