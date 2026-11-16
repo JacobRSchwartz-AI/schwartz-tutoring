@@ -54,7 +54,7 @@ These hold on nearly every board. Follow them on every page.
 3. **One new thing, one color.** Each entry gets one pen color. Everything that change adds to the drawing is that color: the new arrow, the label, the underline on the conclusion.
 4. **One color follows one thing** from where it first appears to everywhere it lands. This is his most common habit (42% of drawings).
 5. **Green is right, red is wrong or removed.** Those two never mean anything else. A removed piece gets a red slash and stays readable. Nothing is erased.
-6. **Draw the situation, not the code.** Sessions, hours, invoices, a timer, two runs at once: the things the code acts on, with their real values. A word from the code goes on the board only after a step has said what it is.
+6. **Draw the situation, not the code.** Sessions, hours, invoices, a timer, two runs at once: the things the code acts on, with their real values. A word from the code goes on the board only after a step has said what it is. A quantity is drawn as one: hours left as a meter with the threshold line on it, a session as a bar, an hour as a block that moves. A label that only names the quantity ("balance: 0 hours") is not a drawing.
 7. **The conclusion is written in words, and it goes on last.**
 8. **No legend.** A color explains itself by repeating.
 9. **Nothing moves until the reader asks.** The board starts blank. Play runs the steps of the one entry on screen: a typing mark, the message, the step drawn in, a pause long enough to read, then the next. It stops at the end and offers the next entry. The small arrows go one step at a time.
