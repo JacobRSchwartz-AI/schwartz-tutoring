@@ -208,6 +208,22 @@ main > section.change { max-width: none; }
   .bar { gap: 8px 12px; }
   .speed { margin-left: 0; }
 }
+/* screens: the real page before and after, side by side, one step per action, one scrubber for both */
+.row.scr { grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); }
+div.screens { cursor: pointer; }
+div.screens .heads, div.screens .shot { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+div.screens .heads span { font-family: var(--hand); font-size: 22px; line-height: 1.2; padding: 2px 0 4px; }
+div.screens .shot.off { display: none; }
+div.screens .shot.fresh { animation: ink-in 0.35s ease-out both; }
+div.screens .pane { position: relative; min-width: 0; align-self: start; }
+div.screens .pane img { display: block; width: 100%; height: auto; border: 1.5px solid var(--hair); border-radius: 3px; background: #fff; }
+div.screens .pane .gone { display: grid; place-items: center; min-height: 120px; border: 1.5px dashed var(--hair); border-radius: 3px; font-family: var(--hand); font-size: 20px; color: var(--ink-soft); padding: 12px; text-align: center; }
+/* a ring in the pen color around the one thing to look at, placed in percent of the picture */
+div.screens .ring { position: absolute; border: 3px solid var(--pen); border-radius: 8px; pointer-events: none; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7); }
+div.screens .ring.red { border-color: var(--pen-red); } div.screens .ring.green { border-color: var(--pen-green); }
+input.scrub { display: block; width: 100%; margin: 10px 0 6px; accent-color: var(--pen); cursor: pointer; }
+@media (max-width: 900px) { .row.scr { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { div.screens .shot.fresh { animation: none; } }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -368,18 +384,29 @@ main > section.change { max-width: none; }
   side.appendChild(el('div', 'group', header.getAttribute('data-list') || 'The changes'));
   changeSections.forEach(function (section, index) {
     var labels = (section.getAttribute('data-labels') || 'Before|Now').split('|');
-    var boards = all('svg.board', section).map(function (svg) {
+    var boards = all('svg.board, div.screens', section).map(function (svg) {
+      var screens = svg.matches('div.screens');
       var says = svg.nextElementSibling && svg.nextElementSibling.matches('ol.says') ? all('li', svg.nextElementSibling).map(function (li) { return li.textContent; }) : [];
       var steps = Math.max(says.length, Math.max.apply(null, [0].concat(all('[data-step]', svg).map(function (n) { return +n.getAttribute('data-step'); }))));
-      var figure = el('figure', 'b'), caption = el('figcaption', '', svg.getAttribute('data-view') === 'before' ? labels[0] : labels[1]);
+      var figure = el('figure', 'b' + (screens ? ' scr' : '')), caption = el('figcaption', '', screens ? (svg.getAttribute('data-caption') || 'On screen') : svg.getAttribute('data-view') === 'before' ? labels[0] : labels[1]);
       svg.parentNode.insertBefore(figure, svg); figure.appendChild(caption); figure.appendChild(svg);
       all('.k', svg).forEach(function (n) { if (!n.classList.contains('dash')) { n.setAttribute('pathLength', '1'); } });
-      var row = el('div', 'row'), thread = el('div', 'thread'), n = 0;
+      var row = el('div', 'row' + (screens ? ' scr' : '')), thread = el('div', 'thread'), n = 0, scrub = null;
+      if (screens) {
+        // the two screens side by side, one scrubber moving both; tapping the picture goes one step on
+        var heads = el('div', 'heads');
+        (svg.getAttribute('data-labels') || labels.join('|')).split('|').forEach(function (t) { heads.appendChild(el('span', '', t)); });
+        svg.insertBefore(heads, svg.firstChild);
+        scrub = el('input', 'scrub'); scrub.type = 'range'; scrub.min = '0'; scrub.max = String(steps); scrub.step = '1'; scrub.value = '0';
+        scrub.setAttribute('aria-label', 'Scrub through the screens');
+        figure.appendChild(scrub);
+        svg.addEventListener('click', function () { if (!next.disabled) { next.click(); } });
+      }
       // Before is the steps to recreate: a question first, then each thing that has to happen, numbered
-      var nums = says.map(function (s, i) { return svg.getAttribute('data-view') === 'before' && i > 0 ? ++n : 0; });
-      if (n) { thread.appendChild(el('div', 'thread-title', 'Steps to recreate')); }
+      var nums = says.map(function (s, i) { return (screens || svg.getAttribute('data-view') === 'before') && i > 0 ? ++n : 0; });
+      if (n) { thread.appendChild(el('div', 'thread-title', screens ? 'Steps' : 'Steps to recreate')); }
       thread.setAttribute('aria-live', 'polite'); row.appendChild(figure); row.appendChild(thread);
-      return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, row: row, thread: thread, says: says, nums: nums, steps: steps };
+      return { view: svg.getAttribute('data-view'), svg: svg, screens: screens, scrub: scrub, figure: figure, row: row, thread: thread, says: says, nums: nums, steps: steps };
     });
     var verdict = section.querySelector('.verdict');
     var stage = el('div', 'level'), boardBox = el('div', 'boards');
@@ -428,8 +455,10 @@ main > section.change { max-width: none; }
         all('.thread-title', b.thread).forEach(function (n) { n.hidden = want < 1; });
         all('.msg', b.thread).forEach(function (m, i, ms) { m.classList.toggle('last', i === ms.length - 1 && local >= 1 && local <= b.steps); });
         b.thread.scrollTop = b.thread.scrollHeight;
+        if (b.scrub) { b.scrub.value = String(want); }
         all('[data-step]', b.svg).forEach(function (n) {
-          var wasOff = n.classList.contains('off'), off = +n.getAttribute('data-step') > local;
+          // a screen shows only its own step; a drawing keeps every step so far
+          var wasOff = n.classList.contains('off'), off = b.screens ? +n.getAttribute('data-step') !== want : +n.getAttribute('data-step') > local;
           n.classList.toggle('off', off);
           n.classList.toggle('fresh', Boolean(animate) && wasOff && !off);
         });
@@ -454,6 +483,11 @@ main > section.change { max-width: none; }
     function restart() { step = 0; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); return paint(false); }
     back.addEventListener('click', function () { stopPlay(); step--; paint(false); });
     next.addEventListener('click', function () { stopPlay(); step++; paint(true); });
+    boards.forEach(function (b, i) {
+      if (!b.scrub) { return; }
+      var before = boards.slice(0, i).reduce(function (sum, x) { return sum + x.steps; }, 0);
+      b.scrub.addEventListener('input', function () { stopPlay(); step = before + +b.scrub.value; paint(false); });
+    });
     function nextThread() {
       var offset = 0, list = shown(), i;
       for (i = 0; i < list.length; i++) { if (step < offset + list[i].steps) { return list[i].thread; } offset += list[i].steps; }
