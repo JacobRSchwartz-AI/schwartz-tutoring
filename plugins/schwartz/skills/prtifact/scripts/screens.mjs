@@ -37,7 +37,9 @@
 //   ]
 // }
 //
-// Run one plan per side (Before, Now), with a different "out" for each. log.txt is appended to, one block per run.
+// Run every plan on both sides (Before, Now), with a different "out" for each. Several plans are fine (one per
+// clock time, say), as long as each runs on both sides. A selector list ("#oldId, #newId") keeps one plan valid
+// when the change renamed an element. log.txt is appended to, one block per run.
 // Mocks answer with the request's own Origin and allow credentials, so axios withCredentials calls accept them.
 //
 // Every picture is of a real page on a local copy. Never point a plan at a production site, and never
@@ -219,9 +221,9 @@ try {
     } else if (verb === 'wait') {
       await sleep(step.wait);
     } else if (verb === 'eval') {
-      note(`  = ${JSON.stringify(await js(step.eval))}`.slice(0, 600));
+      note(`  = ${JSON.stringify(await js(step.eval))}`);
     } else if (verb === 'evalFile') {
-      note(`  = ${JSON.stringify(await js(readFileSync(resolve(dirname(resolve(planPath)), step.evalFile), 'utf8')))}`.slice(0, 600));
+      note(`  = ${JSON.stringify(await js(readFileSync(resolve(dirname(resolve(planPath)), step.evalFile), 'utf8')))}`);
     } else if (verb === 'rect') {
       const box = await js(`(() => {
         const e = document.querySelector(${q(step.rect)}); if (!e) { throw new Error('no element ' + ${q(step.rect)}); }
@@ -243,8 +245,9 @@ try {
         params.clip = { ...b, scale: 1 }; params.captureBeyondViewport = true;
       }
       const { data } = await send('Page.captureScreenshot', params);
-      writeFileSync(join(out, `${step.shot}.png`), Buffer.from(data, 'base64'));
-      note(`  saved ${step.shot}.png`);
+      const png = Buffer.from(data, 'base64');
+      writeFileSync(join(out, `${step.shot}.png`), png);
+      note(`  saved ${step.shot}.png, ${png.readUInt32BE(16)} x ${png.readUInt32BE(20)} px` + (params.clip ? ` (crop ${Math.round(params.clip.x)}, ${Math.round(params.clip.y)}, ${Math.round(params.clip.width)} x ${Math.round(params.clip.height)} CSS px)` : ''));
     } else {
       throw new Error(`unknown step: ${JSON.stringify(step)}`);
     }

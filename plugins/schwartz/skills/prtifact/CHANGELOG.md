@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.10.0 (2026-11-15)
+Screens. An entry can now show the real page instead of a drawing, for changes a reviewer understands by watching someone use the page.
+- A screens entry puts the page before and after side by side, one action per step (open it, type, click), with one scrubber moving both sides, a ring in the entry's color on the one thing to look at, and the step's message in the thread. Tapping the pictures steps on; Bigger fills the window with them. A page can mix drawings and screens.
+- scripts/screens.mjs takes the pictures: it drives a headless Chrome or Edge through a short plan (go, type, click, hover, select, wait, shot), clicks with a real mouse and logs what each click landed on, answers chosen requests itself (`mocks`), sets the page's clock (`now`) and prints ring positions (`rect`). Node 22 or newer; nothing to install.
+- SKILL.md says when to pick screens, how to run the old and the new commit safely on a local copy (switch off timers and outside services first, never a production site, test sign-ins only), and the rules for the pictures: real screenshots only, the same plan on both sides, cropped to about 500 pixels, one message per picture pair.
+- Tried on three merged changes before release (a sign-in alert fix, an admin page-size fix, a payroll window with a pay-period drawing); their notes shaped the Bigger view, the box crops and the safety rules.
+
 ## v2.9.0 (2026-11-15)
 First version. `/schwartz:prtifact` turns a pull request, merge request or diff into a one-screen review app drawn the way Jacob drew on his whiteboard.
 - Built from a study of all his saved boards: 4,726 drawings on 2,000 pages, 970 of them from 99 recorded sessions where the order things went on the board is known. references/board-habits.md has the habits ranked by count and says which drawing fits which kind of code change.
