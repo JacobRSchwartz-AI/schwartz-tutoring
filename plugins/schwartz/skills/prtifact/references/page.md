@@ -114,9 +114,9 @@ A screens entry has one `div.screens` and its `ol.says`, instead of the two boar
 </section>
 ```
 
-- One `div.shot` per step, `data-step` from 1. Each has two `div.pane`, Before on the left and Now on the right. The page shows only the current step's pair, with a scrubber under it that moves both sides together. Tapping the pictures goes one step on.
+- One `div.shot` per step, `data-step` from 1, and exactly one `<li>` per `div.shot`: the first `<li>` (the question) goes with the first pair. The page warns in the console when the counts differ. Each shot has two `div.pane`, Before on the left and Now on the right. The page shows only the current step's pair, with a scrubber under it that moves both sides together. Tapping the pictures goes one step on. A Bigger button fills the window with the two pictures; the arrow keys step and Esc comes back. `#change-N-all` shows every pair, one under the other.
 - `data-caption` on `div.screens` names the page shown ("Sign-in page"). `data-labels="Before|Now"` renames the two columns; it defaults to the entry's labels.
-- A `span.ring` marks the one thing to look at. Place it in percent of the picture: `left` and `top` of its corner, `width` and `height`. It takes the entry's pen color; add `red` for what is wrong or `green` for what is right. Measure from the picture's size in pixels (the script's crop), not by eye.
+- A `span.ring` marks the one thing to look at. Place it in percent of the picture: `left` and `top` of its corner, `width` and `height`. It takes the entry's pen color; add `red` for what is wrong or `green` for what is right. Never place it by eye: add a `{ "rect": "<the element>", "within": <the same clip as the shot> }` step to the plan, and copy the `style` it prints into log.txt.
 - `div.gone` stands in for a picture when one side has nothing to show at that step. Say in a few words why.
 - Every `<img>` has an `alt` that says what it shows.
 - Pictures are files next to the page. When publishing as a Claude artifact, send them as the artifact's supporting files at the same relative paths (`screens/before/1-open.png`). Where the page must be a single file, embed each picture as a data URI instead; keep the whole page under 16 MB.

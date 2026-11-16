@@ -18,21 +18,32 @@
 //     { "go": "http://localhost:3002/login" },
 //     { "type": ["#email", "someone@example.com"] },
 //     { "click": "button[type=submit]" },   a real mouse click at the middle of the element: whatever is
-//                                           on top there gets it, and log.txt says what that was
+//                                           on top there gets it, and log.txt says what that was. The page
+//                                           scrolls only if the element is out of the window
+//     { "hover": ".alert" },                 move the mouse onto an element (no click)
+//     { "moveTo": [20, 20] },                move the mouse to a point (for example, away from something)
 //     { "clickAt": [640, 760] },             a real click at a point
 //     { "select": ["#pageSize", "50"] },     set a <select> and fire its change event
 //     { "key": "Enter" },
 //     { "waitFor": ".alert" },               up to 10 s
 //     { "wait": 800 },
 //     { "eval": "document.title" },          result goes to log.txt
-//     { "shot": "1-start" },                 saves 1-start.png (the window); add "clip": "selector" for one element
+//     { "evalFile": "count-rows.js" },       the same, from a file next to the plan (no JSON escaping)
+//     { "rect": ".alert", "within": [0, 380, 640, 280] }   where an element sits inside a crop, in percent,
+//                                           ready for a ring: left, top, width, height ("within" may also be a
+//                                           selector, or left out for the whole window)
+//     { "shot": "1-start" },                 saves 1-start.png (the window); add "clip": "selector" for one
+//                                           element, or "clip": [x, y, width, height] in CSS pixels of the window
 //   ]
 // }
+//
+// Run one plan per side (Before, Now), with a different "out" for each. log.txt is appended to, one block per run.
+// Mocks answer with the request's own Origin and allow credentials, so axios withCredentials calls accept them.
 //
 // Every picture is of a real page on a local copy. Never point a plan at a production site, and never
 // put a real password in a plan file.
 import { spawn } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, appendFileSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -116,17 +127,19 @@ listeners.push((msg) => {
 });
 const mocks = plan.mocks || [];
 if (mocks.length) {
-  await send('Fetch.enable', { patterns: [{ urlPattern: '*' }] });
+  await send('Fetch.enable', { patterns: mocks.map((m) => ({ urlPattern: `*${m.match}*` })) });
   listeners.push(async (msg) => {
     if (msg.method !== 'Fetch.requestPaused') { return; }
     const { requestId, request } = msg.params;
     const mock = mocks.find((m) => request.url.includes(m.match) && (!m.method || m.method === request.method));
     if (!mock) { send('Fetch.continueRequest', { requestId }).catch(() => {}); return; }
     const body = mock.json !== undefined ? JSON.stringify(mock.json) : (mock.body || '');
+    const origin = Object.entries(request.headers || {}).find(([k]) => k.toLowerCase() === 'origin');
     note(`  mock: ${request.method} ${request.url} -> ${mock.status || 200}`);
     send('Fetch.fulfillRequest', { requestId, responseCode: mock.status || 200,
       responseHeaders: [{ name: 'Content-Type', value: mock.json !== undefined ? 'application/json' : (mock.contentType || 'text/html') },
-        { name: 'Access-Control-Allow-Origin', value: '*' }],
+        { name: 'Access-Control-Allow-Origin', value: origin ? origin[1] : '*' },
+        { name: 'Access-Control-Allow-Credentials', value: 'true' }],
       body: Buffer.from(body).toString('base64') }).catch(() => {});
   });
 }
@@ -141,6 +154,13 @@ async function clickAt(x, y) {
   await send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: 'left', clickCount: 1 });
   await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', clickCount: 1 });
 }
+// the middle of an element, scrolling it into the window only if it is outside it
+const middleOf = (selector) => js(`(() => {
+  const e = [...document.querySelectorAll(${q(selector)})].find((n) => { const r = n.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(n).visibility !== 'hidden'; });
+  if (!e) { throw new Error('nothing visible matches ' + ${q(selector)}); }
+  let b = e.getBoundingClientRect();
+  if (b.bottom < 0 || b.top > innerHeight || b.right < 0 || b.left > innerWidth) { e.scrollIntoView({ block: 'center' }); b = e.getBoundingClientRect(); }
+  return { x: b.left + b.width / 2, y: b.top + b.height / 2 }; })()`);
 async function waitFor(selector, ms = 10000) {
   for (const end = Date.now() + ms; Date.now() < end; await sleep(150)) {
     if (await js(`!!document.querySelector(${q(selector)})`)) { return true; }
@@ -151,9 +171,14 @@ async function waitFor(selector, ms = 10000) {
 let failed = false;
 try {
   for (const [i, step] of (plan.steps || []).entries()) {
-    const [verb] = Object.keys(step).filter((k) => k !== 'clip');
+    const [verb] = Object.keys(step).filter((k) => k !== 'clip' && k !== 'within');
     note(`${i + 1}. ${verb} ${JSON.stringify(step[verb])}`);
     if (verb === 'go') {
+      // a new address that differs only after # would not load again, so clear the page first
+      const here = await js('location.href');
+      if (here.split('#')[0] === step.go.split('#')[0] && here !== step.go) {
+        const blank = once('Page.loadEventFired'); await send('Page.navigate', { url: 'about:blank' }); await blank;
+      }
       const loaded = once('Page.loadEventFired');
       await send('Page.navigate', { url: step.go });
       if (!(await loaded)) { note('  (no load event in 15 s; going on)'); }
@@ -165,10 +190,16 @@ try {
       await send('Input.insertText', { text });
     } else if (verb === 'click') {
       await waitFor(step.click);
-      const r = await js(`(() => { const e = document.querySelector(${q(step.click)}); e.scrollIntoView({ block: 'center' });
-        const b = e.getBoundingClientRect(); return { x: b.left + b.width / 2, y: b.top + b.height / 2 }; })()`);
+      const r = await middleOf(step.click);
       await clickAt(r.x, r.y);
       await sleep(300);
+    } else if (verb === 'hover') {
+      await waitFor(step.hover);
+      const r = await middleOf(step.hover);
+      note(`  on top at (${Math.round(r.x)}, ${Math.round(r.y)}): ${await topAt(r.x, r.y)}`);
+      await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x, y: r.y }); await sleep(200);
+    } else if (verb === 'moveTo') {
+      await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: step.moveTo[0], y: step.moveTo[1] }); await sleep(200);
     } else if (verb === 'clickAt') {
       await clickAt(step.clickAt[0], step.clickAt[1]); await sleep(300);
     } else if (verb === 'select') {
@@ -189,9 +220,24 @@ try {
       await sleep(step.wait);
     } else if (verb === 'eval') {
       note(`  = ${JSON.stringify(await js(step.eval))}`.slice(0, 600));
+    } else if (verb === 'evalFile') {
+      note(`  = ${JSON.stringify(await js(readFileSync(resolve(dirname(resolve(planPath)), step.evalFile), 'utf8')))}`.slice(0, 600));
+    } else if (verb === 'rect') {
+      const box = await js(`(() => {
+        const e = document.querySelector(${q(step.rect)}); if (!e) { throw new Error('no element ' + ${q(step.rect)}); }
+        const r = e.getBoundingClientRect(), w = ${JSON.stringify(step.within ?? null)};
+        let c = { x: 0, y: 0, width: innerWidth, height: innerHeight };
+        if (Array.isArray(w)) { c = { x: w[0], y: w[1], width: w[2], height: w[3] }; }
+        else if (w) { const b = document.querySelector(w).getBoundingClientRect(); c = { x: b.left, y: b.top, width: b.width, height: b.height }; }
+        const pc = (v) => Math.round(v * 1000) / 10;
+        return 'left:' + pc((r.left - c.x) / c.width) + '%; top:' + pc((r.top - c.y) / c.height) + '%; width:' + pc(r.width / c.width) + '%; height:' + pc(r.height / c.height) + '%'; })()`);
+      note(`  ring: style="${box}"`);
     } else if (verb === 'shot') {
       const params = { format: 'png' };
-      if (step.clip) {
+      if (Array.isArray(step.clip)) {
+        const [x, y, w, h] = step.clip;
+        params.clip = { x, y, width: w, height: h, scale: 1 };
+      } else if (step.clip) {
         const b = await js(`(() => { const r = document.querySelector(${q(step.clip)}).getBoundingClientRect();
           return { x: r.left + scrollX, y: r.top + scrollY, width: r.width, height: r.height }; })()`);
         params.clip = { ...b, scale: 1 }; params.captureBeyondViewport = true;
@@ -206,7 +252,7 @@ try {
 } catch (error) {
   failed = true; note(`FAILED: ${error.message}`);
 } finally {
-  writeFileSync(join(out, 'log.txt'), log.join('\n') + '\n');
+  appendFileSync(join(out, 'log.txt'), `=== ${planPath} (${new Date().toISOString()})\n` + log.join('\n') + '\n\n');
   ws.close(); browser.kill();
   await sleep(500);
   try { rmSync(profile, { recursive: true, force: true }); } catch { /* the browser may still hold it for a moment */ }
