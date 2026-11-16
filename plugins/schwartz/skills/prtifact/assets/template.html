@@ -161,6 +161,7 @@ button.onward { display: block; margin-top: 16px; background: none; border: 0; p
 .status.sent { color: var(--pen-brown); }
 .status.failed { color: var(--pen-red); }
 .status.done { color: var(--pen-green); font-family: var(--hand); font-size: 20px; }
+.status.done .note { font-family: var(--typed); font-size: 14px; color: var(--ink-soft); }
 ul.limits { margin: 0; padding-left: 20px; font-size: 15px; max-width: 80ch; display: grid; gap: 4px; }
 main h2 + .decision, main .decision + h2 { margin-top: 0; }
 main h2:not(:first-child) { margin-top: 26px; }
@@ -555,11 +556,18 @@ div.screens:not(:has(.shot:not(.off)))::after { content: "Press Play, or tap her
 
 
   if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }
+  var recountDecisions = [];
   otherSections.forEach(function (section) {
     var name = section.getAttribute('data-name') || section.querySelector('h2').textContent;
     var open = all('.decision:not([data-decided])', section).length;
     var nav = navButton(name, open ? String(open) : '≡'), index = built.length;
     if (open) { nav.querySelector('.n').classList.add('open'); }
+    if (all('.decision', section).length) {
+      recountDecisions.push(function () {
+        var left = all('.decision:not([data-decided]):not(.done)', section).length, n = nav.querySelector('.n');
+        n.textContent = left ? String(left) : '≡'; n.classList.toggle('open', left > 0);
+      });
+    }
     nav.addEventListener('click', function () { stopPlay(); show(index); });
     built.push({ section: section, nav: nav, paint: function () {}, playButton: null });
   });
@@ -590,6 +598,17 @@ div.screens:not(:has(.shot:not(.off)))::after { content: "Press Play, or tap her
       }
       return;
     }
+    // an option marked data-nothing needs no work: picking it settles the decision on the spot
+    function done(choice, note) {
+      box.classList.add('done');
+      options.forEach(function (b) { b.disabled = true; b.setAttribute('aria-pressed', b.textContent.trim() === choice ? 'true' : 'false'); });
+      status.textContent = ''; status.className = 'status done';
+      status.appendChild(mark('yes')); status.appendChild(document.createTextNode('Done: ' + choice + '. Nothing else needs to happen.'));
+      if (note) { status.appendChild(el('span', 'note', ' ' + note)); }
+      recountDecisions.forEach(function (fn) { fn(); });
+    }
+    var already = recall('done-' + id);
+    if (already) { done(already, ''); return; }
     var sent = recall(id);
     if (sent) { options.forEach(function (b) { b.setAttribute('aria-pressed', b.textContent.trim() === sent ? 'true' : 'false'); }); settle('You chose: ' + sent + '. Sent to Claude; the merge request and this page update when it is done.', 'sent'); }
     options.forEach(function (button) {
@@ -599,6 +618,16 @@ div.screens:not(:has(.shot:not(.off)))::after { content: "Press Play, or tap her
         if (button.hasAttribute('data-other')) {
           if (commentsApi) { commentsApi.openComposer({ element: box }).catch(function () { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }); }
           else { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }
+          return;
+        }
+        if (button.hasAttribute('data-nothing')) {
+          remember('done-' + id, choice);
+          done(choice, '');
+          var note = 'Decision: ' + question + ' Answer: ' + choice + ' Nothing needs to change. Record it on the merge request and mark it decided on this page.';
+          if (commentsApi && commentsApi.sendToClaude && canSend === 'available') {
+            commentsApi.anchorFor(box).then(function (anchor) { return commentsApi.sendToClaude({ anchor: anchor, text: note }); })
+              .then(function () { done(choice, 'Claude will note it on the merge request.'); }, function () { done(choice, 'Not noted on the merge request; tell Claude if you want it there.'); });
+          } else { done(choice, 'Not noted on the merge request; tell Claude if you want it there.'); }
           return;
         }
         var text = 'Decision: ' + question + ' Answer: ' + choice + ' Record it on the merge request, make the change it calls for, and update this page.';
