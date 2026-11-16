@@ -161,6 +161,7 @@ button.onward { display: block; margin-top: 16px; background: none; border: 0; p
 .status.sent { color: var(--pen-brown); }
 .status.failed { color: var(--pen-red); }
 .status.done { color: var(--pen-green); font-family: var(--hand); font-size: 20px; }
+.status.done .note { font-family: var(--typed); font-size: 14px; color: var(--ink-soft); }
 ul.limits { margin: 0; padding-left: 20px; font-size: 15px; max-width: 80ch; display: grid; gap: 4px; }
 main h2 + .decision, main .decision + h2 { margin-top: 0; }
 main h2:not(:first-child) { margin-top: 26px; }
@@ -208,6 +209,38 @@ main > section.change { max-width: none; }
   .bar { gap: 8px 12px; }
   .speed { margin-left: 0; }
 }
+/* screens: the real page before and after, side by side, one step per action, one scrubber for both */
+.row.scr { grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); }
+div.screens { cursor: pointer; }
+div.screens .heads, div.screens .shot { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+div.screens .heads span { font-family: var(--hand); font-size: 22px; line-height: 1.2; padding: 2px 0 4px; }
+div.screens .shot.off { display: none; }
+div.screens .shot.fresh { animation: ink-in 0.35s ease-out both; }
+div.screens .pane { position: relative; min-width: 0; align-self: start; }
+div.screens .pane img { display: block; width: 100%; height: auto; border: 1.5px solid var(--hair); border-radius: 3px; background: #fff; }
+div.screens .pane .gone { display: grid; place-items: center; min-height: 120px; border: 1.5px dashed var(--hair); border-radius: 3px; font-family: var(--hand); font-size: 20px; color: var(--ink-soft); padding: 12px; text-align: center; }
+/* a ring in the pen color around the one thing to look at, placed in percent of the picture */
+div.screens .ring { position: absolute; border: 3px solid var(--pen); border-radius: 8px; pointer-events: none; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7); }
+div.screens .ring.red { border-color: var(--pen-red); } div.screens .ring.green { border-color: var(--pen-green); }
+input.scrub { display: block; width: 100%; margin: 10px 0 6px; accent-color: var(--pen); cursor: pointer; }
+figure.scr figcaption { display: flex; align-items: center; gap: 10px; }
+figure.scr .bigger { margin-left: auto; background: none; border: 1.5px solid var(--ink); border-radius: 2px; padding: 2px 10px; font-family: var(--mono); font-size: 12px; color: var(--ink); cursor: pointer; }
+figure.scr.big { position: fixed; inset: 0; z-index: 20; background: var(--paper); overflow: auto; border: 0; padding-block: max(10px, env(safe-area-inset-top, 0px)) 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+/* with Bigger on, the step's message sits under the pictures, since the thread is covered */
+.bigsay { display: none; }
+figure.scr.big .bigsay { display: block; max-width: 80ch; margin: 4px 0 0; font-size: 17px; line-height: 1.45; }
+/* a screens board has no drawing under it, so its thread may run longer than the pictures */
+@media (min-width: 901px) { .row.scr .thread { height: auto; min-height: 0; max-height: 75vh; } }
+/* #change-N-all: every step of a screens entry, one pair under the other */
+.prtifact-all div.screens .shot.off { display: grid; }
+.prtifact-all div.screens .shot { margin-bottom: 14px; }
+.prtifact-all div.screens .shot::before { content: "Step " attr(data-step); grid-column: 1 / -1; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+body { margin: 0; }
+/* before the first step, the frame says how to start instead of standing empty */
+div.screens:not(:has(.shot:not(.off)))::after { content: "Press Play, or tap here, to start."; display: grid; place-items: center; min-height: 160px; border: 1.5px dashed var(--hair); border-radius: 3px; font-family: var(--hand); font-size: 22px; color: var(--ink-soft); }
+.prtifact-all div.screens::after { display: none; }
+@media (max-width: 900px) { .row.scr { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { div.screens .shot.fresh { animation: none; } }
 /* PRTIFACT STYLE END */
 </style>
 
@@ -368,18 +401,43 @@ main > section.change { max-width: none; }
   side.appendChild(el('div', 'group', header.getAttribute('data-list') || 'The changes'));
   changeSections.forEach(function (section, index) {
     var labels = (section.getAttribute('data-labels') || 'Before|Now').split('|');
-    var boards = all('svg.board', section).map(function (svg) {
+    var boards = all('svg.board, div.screens', section).map(function (svg) {
+      var screens = svg.matches('div.screens');
       var says = svg.nextElementSibling && svg.nextElementSibling.matches('ol.says') ? all('li', svg.nextElementSibling).map(function (li) { return li.textContent; }) : [];
       var steps = Math.max(says.length, Math.max.apply(null, [0].concat(all('[data-step]', svg).map(function (n) { return +n.getAttribute('data-step'); }))));
-      var figure = el('figure', 'b'), caption = el('figcaption', '', svg.getAttribute('data-view') === 'before' ? labels[0] : labels[1]);
+      var figure = el('figure', 'b' + (screens ? ' scr' : '')), caption = el('figcaption', '', screens ? (svg.getAttribute('data-caption') || 'On screen') : svg.getAttribute('data-view') === 'before' ? labels[0] : labels[1]);
       svg.parentNode.insertBefore(figure, svg); figure.appendChild(caption); figure.appendChild(svg);
       all('.k', svg).forEach(function (n) { if (!n.classList.contains('dash')) { n.setAttribute('pathLength', '1'); } });
-      var row = el('div', 'row'), thread = el('div', 'thread'), n = 0;
+      var row = el('div', 'row' + (screens ? ' scr' : '')), thread = el('div', 'thread'), n = 0, scrub = null;
+      if (screens && says.length !== all('.shot', svg).length) { console.warn('PRtifact: "' + section.getAttribute('data-name') + '" has ' + all('.shot', svg).length + ' screens and ' + says.length + ' messages; give it one message per screen.'); }
+      if (screens) {
+        // the two screens side by side, one scrubber moving both; tapping the picture goes one step on
+        var heads = el('div', 'heads');
+        (svg.getAttribute('data-labels') || labels.join('|')).split('|').forEach(function (t) { heads.appendChild(el('span', '', t)); });
+        svg.insertBefore(heads, svg.firstChild);
+        scrub = el('input', 'scrub'); scrub.type = 'range'; scrub.min = '0'; scrub.max = String(steps); scrub.step = '1'; scrub.value = '0';
+        scrub.setAttribute('aria-label', 'Scrub through the screens');
+        figure.appendChild(scrub);
+        var say = el('p', 'bigsay'); figure.appendChild(say);
+        svg.addEventListener('click', function () { if (!next.disabled) { next.click(); } });
+        // Bigger fills the window with the two screens; the arrow keys still step, Esc comes back
+        var big = el('button', 'bigger', 'Bigger'); big.type = 'button'; big.setAttribute('aria-pressed', 'false');
+        big.title = 'Fill the window with the screens (Esc to come back)';
+        big.addEventListener('click', function () {
+          var on = !figure.classList.contains('big'); figure.classList.toggle('big', on);
+          big.setAttribute('aria-pressed', on ? 'true' : 'false'); big.textContent = on ? 'Smaller' : 'Bigger';
+        });
+        caption.appendChild(big);
+        document.addEventListener('keydown', function (e) {
+          if (!figure.classList.contains('big')) { return; }
+          if (e.key === 'Escape') { big.click(); } else if (e.key === 'ArrowRight' && !next.disabled) { next.click(); } else if (e.key === 'ArrowLeft' && !back.disabled) { back.click(); }
+        });
+      }
       // Before is the steps to recreate: a question first, then each thing that has to happen, numbered
-      var nums = says.map(function (s, i) { return svg.getAttribute('data-view') === 'before' && i > 0 ? ++n : 0; });
-      if (n) { thread.appendChild(el('div', 'thread-title', 'Steps to recreate')); }
+      var nums = says.map(function (s, i) { return (screens || svg.getAttribute('data-view') === 'before') && i > 0 ? ++n : 0; });
+      if (n) { thread.appendChild(el('div', 'thread-title', screens ? 'Steps' : 'Steps to recreate')); }
       thread.setAttribute('aria-live', 'polite'); row.appendChild(figure); row.appendChild(thread);
-      return { view: svg.getAttribute('data-view'), svg: svg, figure: figure, row: row, thread: thread, says: says, nums: nums, steps: steps };
+      return { view: svg.getAttribute('data-view'), svg: svg, screens: screens, scrub: scrub, say: screens ? figure.querySelector('.bigsay') : null, figure: figure, row: row, thread: thread, says: says, nums: nums, steps: steps };
     });
     var verdict = section.querySelector('.verdict');
     var stage = el('div', 'level'), boardBox = el('div', 'boards');
@@ -428,8 +486,10 @@ main > section.change { max-width: none; }
         all('.thread-title', b.thread).forEach(function (n) { n.hidden = want < 1; });
         all('.msg', b.thread).forEach(function (m, i, ms) { m.classList.toggle('last', i === ms.length - 1 && local >= 1 && local <= b.steps); });
         b.thread.scrollTop = b.thread.scrollHeight;
+        if (b.scrub) { b.scrub.value = String(want); b.say.textContent = want ? (b.nums[want - 1] ? b.nums[want - 1] + '. ' : '') + (b.says[want - 1] || '') : ''; }
         all('[data-step]', b.svg).forEach(function (n) {
-          var wasOff = n.classList.contains('off'), off = +n.getAttribute('data-step') > local;
+          // a screen shows only its own step; a drawing keeps every step so far
+          var wasOff = n.classList.contains('off'), off = b.screens ? +n.getAttribute('data-step') !== want : +n.getAttribute('data-step') > local;
           n.classList.toggle('off', off);
           n.classList.toggle('fresh', Boolean(animate) && wasOff && !off);
         });
@@ -454,6 +514,11 @@ main > section.change { max-width: none; }
     function restart() { step = 0; all('[data-step]', section).forEach(function (n) { n.classList.add('off'); }); return paint(false); }
     back.addEventListener('click', function () { stopPlay(); step--; paint(false); });
     next.addEventListener('click', function () { stopPlay(); step++; paint(true); });
+    boards.forEach(function (b, i) {
+      if (!b.scrub) { return; }
+      var before = boards.slice(0, i).reduce(function (sum, x) { return sum + x.steps; }, 0);
+      b.scrub.addEventListener('input', function () { stopPlay(); step = before + +b.scrub.value; paint(false); });
+    });
     function nextThread() {
       var offset = 0, list = shown(), i;
       for (i = 0; i < list.length; i++) { if (step < offset + list[i].steps) { return list[i].thread; } offset += list[i].steps; }
@@ -491,11 +556,18 @@ main > section.change { max-width: none; }
 
 
   if (otherSections.length) { side.appendChild(el('div', 'group', 'The whole change')); }
+  var recountDecisions = [];
   otherSections.forEach(function (section) {
     var name = section.getAttribute('data-name') || section.querySelector('h2').textContent;
     var open = all('.decision:not([data-decided])', section).length;
     var nav = navButton(name, open ? String(open) : '≡'), index = built.length;
     if (open) { nav.querySelector('.n').classList.add('open'); }
+    if (all('.decision', section).length) {
+      recountDecisions.push(function () {
+        var left = all('.decision:not([data-decided]):not(.done)', section).length, n = nav.querySelector('.n');
+        n.textContent = left ? String(left) : '≡'; n.classList.toggle('open', left > 0);
+      });
+    }
     nav.addEventListener('click', function () { stopPlay(); show(index); });
     built.push({ section: section, nav: nav, paint: function () {}, playButton: null });
   });
@@ -526,6 +598,17 @@ main > section.change { max-width: none; }
       }
       return;
     }
+    // an option marked data-nothing needs no work: picking it settles the decision on the spot
+    function done(choice, note) {
+      box.classList.add('done');
+      options.forEach(function (b) { b.disabled = true; b.setAttribute('aria-pressed', b.textContent.trim() === choice ? 'true' : 'false'); });
+      status.textContent = ''; status.className = 'status done';
+      status.appendChild(mark('yes')); status.appendChild(document.createTextNode('Done: ' + choice + '. Nothing else needs to happen.'));
+      if (note) { status.appendChild(el('span', 'note', ' ' + note)); }
+      recountDecisions.forEach(function (fn) { fn(); });
+    }
+    var already = recall('done-' + id);
+    if (already) { done(already, ''); return; }
     var sent = recall(id);
     if (sent) { options.forEach(function (b) { b.setAttribute('aria-pressed', b.textContent.trim() === sent ? 'true' : 'false'); }); settle('You chose: ' + sent + '. Sent to Claude; the merge request and this page update when it is done.', 'sent'); }
     options.forEach(function (button) {
@@ -535,6 +618,16 @@ main > section.change { max-width: none; }
         if (button.hasAttribute('data-other')) {
           if (commentsApi) { commentsApi.openComposer({ element: box }).catch(function () { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }); }
           else { settle('Comments are not available here. Tell Claude in the chat.', 'failed'); }
+          return;
+        }
+        if (button.hasAttribute('data-nothing')) {
+          remember('done-' + id, choice);
+          done(choice, '');
+          var note = 'Decision: ' + question + ' Answer: ' + choice + ' Nothing needs to change. Record it on the merge request and mark it decided on this page.';
+          if (commentsApi && commentsApi.sendToClaude && canSend === 'available') {
+            commentsApi.anchorFor(box).then(function (anchor) { return commentsApi.sendToClaude({ anchor: anchor, text: note }); })
+              .then(function () { done(choice, 'Claude will note it on the merge request.'); }, function () { done(choice, 'Not noted on the merge request; tell Claude if you want it there.'); });
+          } else { done(choice, 'Not noted on the merge request; tell Claude if you want it there.'); }
           return;
         }
         var text = 'Decision: ' + question + ' Answer: ' + choice + ' Record it on the merge request, make the change it calls for, and update this page.';
@@ -564,7 +657,7 @@ main > section.change { max-width: none; }
   if (asked) { start = +asked[1] - 1; }
   else if (location.hash.length > 1) { built.forEach(function (b, i) { if (b.section.id === location.hash.slice(1)) { start = i; } }); }
   show(start);
-  if (asked && asked[2] === 'all' && built[current].toEnd) { built[current].toEnd(); }
+  if (asked && asked[2] === 'all' && built[current].toEnd) { document.documentElement.classList.add('prtifact-all'); built[current].toEnd(); }
 })();
 /* PRTIFACT ENGINE END */
 </script>

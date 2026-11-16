@@ -87,6 +87,54 @@ For a slanted or curved arrow, draw the two head strokes about 11 units long, ea
 
 **Check the layout.** Estimate where each text ends from the character widths above, and keep 12 units clear between any two pieces. To see every step at once, open the page with `#change-2-all` at the end of the address (the 2 is the number of the entry). `#cases` and `#decisions` open the two whole-change panels.
 
+### Screens, in place of the two drawings
+
+A screens entry has one `div.screens` and its `ol.says`, instead of the two boards.
+
+```html
+<section class="change" data-name="One alert, then gone" data-pen="blue">
+  <p class="verdict">A wrong password shows one alert, and Sign in still works.</p>
+  <div class="screens" data-caption="Sign-in page">
+    <div class="shot" data-step="1">
+      <div class="pane"><img src="screens/before/1-open.png" alt="Before: the empty sign-in form"></div>
+      <div class="pane"><img src="screens/now/1-open.png" alt="Now: the same form"></div>
+    </div>
+    <div class="shot" data-step="2">
+      <div class="pane"><img src="screens/before/2-wrong.png" alt="Before: two red alerts cover the button">
+        <span class="ring red" style="left:8%; top:70%; width:84%; height:24%"></span></div>
+      <div class="pane"><img src="screens/now/2-wrong.png" alt="Now: one alert, the button clear">
+        <span class="ring" style="left:8%; top:78%; width:84%; height:12%"></span></div>
+    </div>
+    <div class="shot" data-step="3">
+      <div class="pane"><div class="gone">the click lands on the alert strip; nothing happens</div></div>
+      <div class="pane"><img src="screens/now/3-click.png" alt="Now: signing in"></div>
+    </div>
+  </div>
+  <ol class="says"><li>What does a parent see after typing a wrong password twice?</li><li>...</li><li>...</li></ol>
+</section>
+```
+
+- One `div.shot` per step, `data-step` from 1, and exactly one `<li>` per `div.shot`: the first `<li>` (the question) goes with the first pair. The page warns in the console when the counts differ. Each shot has two `div.pane`, Before on the left and Now on the right. The page shows only the current step's pair, with a scrubber under it that moves both sides together. Tapping the pictures goes one step on. A Bigger button fills the window with the two pictures; the arrow keys step and Esc comes back. `#change-N-all` shows every pair, one under the other.
+- `data-caption` on `div.screens` names the page shown ("Sign-in page"). `data-labels="Before|Now"` renames the two columns; it defaults to the entry's labels.
+- A `span.ring` marks the one thing to look at. Place it in percent of the picture: `left` and `top` of its corner, `width` and `height`. It takes the entry's pen color; add `red` for what is wrong or `green` for what is right. Never place it by eye: add a `{ "rect": "<the element>", "within": <the same clip as the shot> }` step to the plan, and copy the `style` it prints into log.txt.
+- `div.gone` stands in for a picture when one side has nothing to show at that step. Say in a few words why.
+- Every `<img>` has an `alt` that says what it shows.
+- Pictures are files next to the page. When publishing as a Claude artifact, send them as the artifact's supporting files at the same relative paths (`screens/before/1-open.png`). Where the page must be a single file, embed each picture as a data URI instead; keep the whole page under 16 MB.
+
+The screens come from [../scripts/screens.mjs](../scripts/screens.mjs). Its header lists every step a plan can use. A plan for the example above:
+
+```json
+{ "out": "screens/before", "width": 1280, "height": 800, "scale": 2,
+  "mocks": [{ "match": "/auth/login", "status": 401, "json": { "message": "Invalid username or password" } }],
+  "steps": [
+    { "go": "http://localhost:3001/login" }, { "shot": "1-open", "clip": "form" },
+    { "type": ["#email", "test@example.com"] }, { "type": ["#password", "wrong"] },
+    { "click": "button[type=submit]" }, { "click": "button[type=submit]" }, { "wait": 500 }, { "shot": "2-wrong", "clip": "main" },
+    { "click": "button[type=submit]" }, { "shot": "3-click", "clip": "main" } ] }
+```
+
+Run it once with `"out": "screens/before"` against the old commit and once with `"out": "screens/now"` against the new one. Read both `log.txt` files: they say what each click landed on, which is often the whole story.
+
 ## 3. The case chart
 
 This goes in `<section id="cases" data-name="Cases">`. In the template the order is: the header, the cases, then `<section id="changes">` holding the entries, then the decisions. The list on the left always shows the entries first and the cases and decisions under them, whatever the order in the file.
@@ -127,6 +175,7 @@ This goes in `<section id="decisions" data-name="Decisions">`, last. The number 
 
 - `data-id` is a short name for the decision, unique on the page.
 - Two to four options, each a real choice, in a few words. List them neutrally. A `data-other` button opens a comment box for an answer that is not on the list.
+- Mark an option `data-nothing` when picking it needs no work: leave the code as it is, accept the behavior, no follow-up. Picking it settles the decision on the spot ("Done: Leave it as it is. Nothing else needs to happen."), the open count goes down, and the page still tells Claude so the choice is noted on the pull request. Every other option is work, so it says the choice was sent and waits for Claude.
 - When the reviewer clicks an option on a page published as a Claude artifact, the page posts it as a comment to Claude. That is the signal to act on it (SKILL.md, step 10). Publish the page with the `comments` capability so this works. Anywhere else, the button tells the reviewer to pass the answer on in the chat.
 - When a decision is made, republish with `data-decided="the option's exact words"` on that decision. It then shows as decided, with its buttons off.
 - When the decision became its own follow-up pull request with its own PRtifact, also add `data-follow="the follow-up page's link"`. A "Follow-up page" link shows beside "Decided".
@@ -137,7 +186,7 @@ This goes in `<section id="decisions" data-name="Decisions">`, last. The number 
 These are requirements for a page published as a Claude artifact. The template meets them. Keep it that way when you edit the content.
 
 - The file has no `<!doctype>`, `<html>`, `<head>` or `<body>` tags. It starts with `<title>`.
-- Fonts load from Google Fonts only. Nothing else loads from another site: no script, no image, no stylesheet. Embed images as data URIs.
+- Fonts load from Google Fonts only. Nothing else loads from another site: no script, no image, no stylesheet. Screen pictures are the page's own supporting files or data URIs, never links to another site.
 - Every color is a variable defined on `:root`, with a dark set under `prefers-color-scheme: dark` and `[data-theme="dark"]`. Do not write a literal color in the content.
 - The page is one screen high. The list on the left and the panel each scroll by themselves if they need to; the page does not, and nothing scrolls sideways.
 - Nothing moves until the reader presses Play or an arrow.

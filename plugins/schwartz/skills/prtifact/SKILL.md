@@ -1,6 +1,6 @@
 ---
 name: prtifact
-description: Turn a pull request, merge request, a stack of them, a branch or a diff into a PRtifact, a one-screen review app that explains the idea of each change the way Jacob Schwartz drew on his whiteboard, with the changes that matter down the left, for each one a drawing that builds step by step, and the pending decisions as buttons. Use when asked to review, explain, walk through or visualize a PR, MR, diff or code change, or to make a PRtifact. The skill carries its own page design and template, so use it in place of any general page-design guidance.
+description: Turn a pull request, merge request, a stack of them, a branch or a diff into a PRtifact, a one-screen review app that explains the idea of each change the way Jacob Schwartz drew on his whiteboard, with the changes that matter down the left, for each one a drawing that builds step by step (or, for a change people see on a page, the real screens before and after, side by side, with a scrubber), and the pending decisions as buttons. Use when asked to review, explain, walk through or visualize a PR, MR, diff or code change, or to make a PRtifact. The skill carries its own page design and template, so use it in place of any general page-design guidance.
 ---
 
 # PRtifact: a code change explained on a whiteboard
@@ -8,6 +8,8 @@ description: Turn a pull request, merge request, a stack of them, a branch or a 
 Jacob Schwartz tutored for about 3,000 hours on a shared whiteboard. A PRtifact explains a code change to a reviewer the way he explained a problem to a student: start from a real case, keep what was already there in black, draw the one new thing in one color, and write the conclusion in words at the end.
 
 The drawing is the whole point. A PRtifact shows the idea of each change and nothing else. The code is already on the pull request, so the page does not show it. A reviewer takes in one idea at a time, so the page shows one idea at a time.
+
+An idea is shown one of two ways. A **drawing** shows what happens: the rule, the order, the count that the code gets wrong. **Screens** show what a person sees: the real page before the change and after it, side by side, one action at a time, with a scrubber to move through them. Pick per entry. A change to a page usually wants screens; the reason behind it, if it is not obvious from the screens, wants a drawing as its own entry.
 
 The drawing rules here are measured, not remembered. They come from a study of 4,726 of his drawings on 2,000 board pages, 970 of them from recorded sessions where the order things went on the board is known. [references/board-habits.md](references/board-habits.md) has the counts.
 
@@ -17,6 +19,7 @@ The drawing rules here are measured, not remembered. They come from a study of 4
 - **Before you draw anything,** read [references/board-habits.md](references/board-habits.md): his habits ranked by how often he used them, and which drawing fits which kind of code change.
 - **Before you write the page,** read [references/page.md](references/page.md): how to fill the template and how to write a drawing in SVG.
 - **The page itself** starts from [assets/template.html](assets/template.html). Copy it and replace the content. The style and the script in it are the design.
+- **For a screens entry,** [scripts/screens.mjs](scripts/screens.mjs) takes the pictures (Node 22 or newer, and Chrome or Edge; nothing to install).
 
 ## 1. What a PRtifact is
 
@@ -26,6 +29,7 @@ One screen that works like an app. Nothing to scroll through from top to bottom;
 - **Down the left:** the ideas to understand, numbered, six at most. For one pull request, that is one entry per change that matters. For a stack of pull requests, it is one entry per pull request, each with its own arrow to open it. The list folds away.
 - **On a phone:** one drawing at a time, with its newest messages in a short strip under it. When the Now drawing starts, the Before drawing steps aside.
 - **In the panel:** the entry you picked, as a whiteboard drawing. The controls sit on top: Play, one step back or forward, and the speed. The Before drawing starts blank and builds one step at a time; the Now drawing appears under it only when its first message starts, so the reader takes in one thing at a time. Beside each drawing is a thread of messages, one per step, like a chat: each message lands, then its step draws in. The one-line conclusion appears last, then a button to the next entry.
+- **A screens entry** has one board instead of two: Before and Now side by side, each step one action on the real page (open it, type, click) with the result on both sides, a ring around the one thing to look at, and a scrubber under the pictures. Tapping the pictures goes one step on. The thread beside it says what the person does at each step and what they see.
 
 Under the list, two entries for the whole change:
 
@@ -36,12 +40,21 @@ Under the list, two entries for the whole change:
 
 1. **Read the whole change first.** The diff against its target branch, the tests, the description, the ticket or bug report behind it. Run the tests if that is safe and read-only. Do not merge, push or change the branch.
 2. **Find the real case.** The customer, the order, the number from the bug report. The drawings use real numbers, never placeholders. If the page will leave the team, ask before putting a real person's name on it.
-3. **Pick the entries, six at most.** For a stack, one per pull request. For one pull request, the changes that matter: for each candidate ask what goes back to wrong if this statement were wrong or missing. If the answer is nothing, leave it out. A change with no idea to draw (a rename, a config value) is not an entry.
+3. **Pick the entries, six at most.** For a stack, one per pull request. For one pull request, the changes that matter: for each candidate ask what goes back to wrong if this statement were wrong or missing. If the answer is nothing, leave it out. A change with no idea to draw (a rename, a config value) is not an entry. For each entry, decide drawing or screens: screens when the reviewer would understand it by watching someone use the page (a button that does nothing, alerts piling up, a list that does not grow), a drawing when the reason is a rule, an order or a count that no screen shows (which two weeks a pay period covers, which payment goes first).
 4. **Write each entry** in this order: a name of two to four words, the Before drawing as steps to recreate, the Now drawing with one sentence per step, and a conclusion of one short sentence. The Before drawing opens with a question: what would have to happen for this to go wrong? Then each step is one thing that has to happen, in order, from the real case to the wrong result, the way a bug report's steps to reproduce read ("A session goes unpaid. Here: the 1-hour session on Sep 27."). The page numbers them under the title Steps to recreate. The real case will not reach every change (a race, a retry, an outage). For those, use the numbers from the test that covers the change, or a small concrete setup, and say so in the step. Never invent a number and present it as real.
 5. **Make every drawing stand alone.** A reviewer who has never seen this code has to follow it. Say what each thing in the drawing is before it does anything (what a "split" is, who "A" and "B" are, where a number comes from). Name things by what they do, never by what the code calls them: "taken back out", not `removeJournalEntry`. If nobody has seen the failure happen and no test shows it, the last step says so. Draw the reason, not only the result: if the change works because of an order or a timing window (something marked first, a lock, a run that waits), the window goes on the board, and an arrow connects the new piece to what it changes. A Now drawing that is mostly words in the pen color is not done.
 6. **Get the real numbers by running the real case, if you safely can.** Run the old code and the new code on the same real request, on a local copy, with stand-ins for anything that charges money, sends a message or writes to an outside service. Use what it prints in the drawings. Save both full logs in a `.prtifact/<change>/` folder beside the code and say in the limits where they are. Never put a number in a drawing that you did not see.
+
+   **For a screens entry, capture the real screens.** Run the app on a local copy twice, against the same data: once at the commit before the change (the target branch, or the merge's first parent) and once at the change itself. One throwaway worktree checked out at each commit in turn is enough; install its packages there (never link another checkout's packages into it). Write a plan for [scripts/screens.mjs](scripts/screens.mjs) and run it on both, changing only `out`, so the two sides show the same actions. Several plans are fine (one per clock time, say) as long as each runs on both sides. The script drives a headless Chrome or Edge, clicks with a real mouse (so whatever covers a button gets the click, as it would for a person), and writes a `log.txt` that says what each click actually landed on. Rules:
+   - Only a local copy. Never point the plan at a production site.
+   - Before starting a server, make it unable to reach the outside. Search all of its code, not only the job loop, for timers (`setInterval`, `setTimeout`, cron), work started at boot and in constructors (token refreshes, connection checks), and every outside service it can call (email, chat, payments, accounting, cloud storage, analytics). Switch the timers off in the throwaway copy, never committed, and point every outside service's setting at nothing (a closed local port, a blank key, the service's off switch). Keep sessions in memory. If you cannot tell that something is off, do not start the server; say so.
+   - A request the page makes that you cannot or should not serve (a sign-in, a payment, the API behind a front end) can be answered by the plan's `mocks`, with the same status and body the real service returns (read its code). Say in the limits which ones were.
+   - Sign in only with a test account or the local copy's shared test password. Never a real person's password. If the app's sign-in form lives in another app, use any sign-in form the app still has, or mock the sign-in, and say which.
+   - Crop each picture to the part that changes (`clip`, an element or a box), about 500 CSS pixels wide or less, and take it at `scale` 2. Two pictures share the panel, so a wider crop shrinks its text past reading. For a wide page, use a narrower window so the layout wraps the way it does on a small laptop. Place each ring from the plan's `rect` step, which prints its position inside the crop.
+   - The pictures show real data from the copy. If the page will leave the team, use a test account's data or crop out other people's names.
+   - Keep the plans, the pictures and both logs in `.prtifact/<change>/screens/`.
 7. **List the cases.** Every situation where the code behaves differently after the change, and the nearby ones a reviewer will worry about that must stay the same. One row each. Write the case so it is understood without clicking anything, and say what happened before and what happens now in four words or fewer each.
-8. **Write the pending decisions.** Each one is a question the reviewer has to answer, two or three sentences of what they need to know, and two to four real options, listed neutrally. Then the limits: what is tested, what is not, what was never run against the real thing.
+8. **Write the pending decisions.** Each one is a question the reviewer has to answer, two or three sentences of what they need to know, and two to four real options, listed neutrally. An option that needs no work (leave it as it is, accept the behavior) is marked as such, so picking it settles the decision on the spot. Then the limits: what is tested, what is not, what was never run against the real thing.
 9. **Fill the template** following [references/page.md](references/page.md), check it against section 6, look at it once if you can render it, and hand it over the way the person asked. If they did not say, publish it when your environment can publish a page and give the link; otherwise save the .html file and give its path.
 10. **When a decision comes back** (the reviewer clicked an option, or told you), record it on the pull request as a comment (on a merged one too: its decisions are follow-ups), make the change it calls for, and republish the page with that decision marked decided. If the decision becomes its own follow-up pull request, do not grow this page into a stack: make the follow-up its own PRtifact (often a single entry) and link it from the decided decision.
 
@@ -67,6 +80,17 @@ How a drawing is built, from the recorded sessions:
 - Then the conclusion, with a check or an X.
 - "Now" starts as a copy of the black ink of "Before": the situation, without the red marks of what went wrong and without the conclusion. He copied an earlier drawing forward and edited the copy; he did not start over. A step can only add ink, so what no longer applies is slashed, not removed.
 
+### Screens
+
+The same habits, applied to pictures of the real page.
+
+- **Real pictures only.** Every picture is a screenshot of the app running at that commit. Never rebuild a screen in HTML or draw one to look like the app.
+- **One action per step, the same action on both sides.** Step 1 is the page as the person finds it. Each later step is one thing they do (type a wrong password, press Sign in, pick 50) and what each side shows right after. If one side has nothing to show for a step (the click went nowhere), say so in its place instead of leaving it blank.
+- **One message per picture pair.** The first message is the question, as in a drawing ("What does a parent see after a wrong password?"), and it goes with the first pair, the page as found. Each later message goes with its own pair and is numbered.
+- **At most one ring per picture,** around the one thing to look at: the pen color for what the change made, red for what is wrong, green for what already worked before the change. When one side simply lacks the thing, leave that side unringed and say in the message that it is missing. The page as found, and a setup step that looks the same on both sides, need no ring. Any other picture without a ring has nothing to look at, so cut it.
+- **The thread says what you could not see in a picture:** what the log says the click landed on, that ten seconds passed, that the request was answered by a mock.
+- **Time is a step.** If the change is about something that happens later (an alert that goes away after 10 seconds), take a picture after the wait and say how long it was.
+
 ## 4. Words
 
 - **Few.** A Before or After cell is four words or fewer. A conclusion is one sentence. A step's message is one or two short sentences. Aim for a drawing's messages to fit beside it; the thread scrolls when they don't, but then the reader loses the earlier steps. If a paragraph is needed, the drawing is wrong.
@@ -86,7 +110,8 @@ The template is the design: an app shell around a whiteboard. The shell (top bar
 ## 6. Before you publish
 
 - [ ] The top bar has the name of the change and one arrow that opens it, and nothing else.
-- [ ] Six entries at most, each with a Before and a Now drawing. For a stack, one per pull request, each with its own link.
+- [ ] Six entries at most, each with a Before and a Now drawing, or one screens board. For a stack, one per pull request, each with its own link.
+- [ ] Every screen picture was taken from the app at that commit on a local copy, with the same plan on both sides, cropped to what changes, with at most one ring placed from `rect`. A screens entry has exactly one message per picture pair.
 - [ ] Each entry has one pen color, and nothing else in its panel uses that color.
 - [ ] Every drawing can be followed by someone who has never seen the code: each thing in it is named before it acts, and no code name appears unexplained.
 - [ ] No drawing grays out the old state. What no longer applies has a red slash.
@@ -101,6 +126,7 @@ The template is the design: an app shell around a whiteboard. The shell (top bar
 
 - A long page to scroll. It is one screen.
 - A code view, a diff or code excerpts. The code is on the pull request.
+- A screen made up in HTML, or a picture of anything other than the app running on a local copy.
 - Anything that moves before the reader asks for it, or that runs on into the next idea by itself.
 - A drawing that uses a word it never explained.
 - Boxes and arrows in six colors with a legend.

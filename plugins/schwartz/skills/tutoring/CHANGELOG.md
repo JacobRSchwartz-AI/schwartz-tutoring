@@ -56,5 +56,8 @@ The joke dial is now a pun hunt. Instead of rolling a die for any joke, flip a c
 ## v2.9.0 (2026-11-15)
 No change to the tutoring skill. The plugin now has a second skill, `/schwartz:prtifact`, which turns a pull request into one review page drawn the way Jacob drew on his whiteboard: the idea of each change as a whiteboard drawing built step by step, with the steps to recreate the bug, a chart of what changes case by case, and the open decisions as buttons. It ships with the Claude Code plugin and with `npx skills add`; `tutoring.zip` holds the tutoring skill only.
 
+## v2.10.0 (2026-11-15)
+No change to the tutoring skill. `/schwartz:prtifact` can now show a change to a page as screens: the real page before and after, side by side, one action per step, with a scrubber, a Bigger view and a ring on the one thing to look at. A small script takes the screenshots from the app running on a local copy, with nothing to install.
+
 ## Next
 v3: full pass over the remaining ~1,000 whiteboard PDFs; board conventions and boxed rules get folded in here.
